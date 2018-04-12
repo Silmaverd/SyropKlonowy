@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/maintenance")
-@Api(value = "Library Managment API")
+@Api(value = "Warehouse Managment API")
 class MaintenanceApi {
 
     @RequestMapping(path = "/maintenance/param", method = {RequestMethod.GET})
