@@ -1,12 +1,14 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Data
+@Getter
+@ToString
 @NoArgsConstructor
 @Entity
 public class Product {
@@ -23,15 +25,15 @@ public class Product {
     private Category category;
 
     @Temporal(TemporalType.DATE)
-    private Date dataProduction;
+    private Date dateProduction;
 
     private String description;
 
-    public Product(String name, Double price, Category category, Date dataProduction, String description) {
+    public Product(String name, Double price, Category category, Date dateProduction, String description) {
         this.name = name;
         this.price = price;
         this.category = category;
-        this.dataProduction = dataProduction;
+        this.dateProduction = dateProduction;
         this.description = description;
     }
 }
