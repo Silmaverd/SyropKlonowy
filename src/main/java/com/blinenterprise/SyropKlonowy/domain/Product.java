@@ -25,15 +25,15 @@ public class Product {
     private Category category;
 
     @Temporal(TemporalType.DATE)
-    private Date dateProduction;
+    private Date productionDate;
 
     private String description;
 
-    public Product(String name, Double price, Category category, Date dateProduction, String description) {
+    public Product(String name, Double price, Category category, Date productionDate, String description) {
         this.name = name;
         this.price = price;
         this.category = category;
-        this.dateProduction = dateProduction;
+        this.productionDate = productionDate;
         this.description = description;
     }
 }
