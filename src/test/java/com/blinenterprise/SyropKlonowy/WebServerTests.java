@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SyropKlonowyApplicationTests {
+public class WebServerTests {
 
 	@Test
 	public void contextLoads() {
