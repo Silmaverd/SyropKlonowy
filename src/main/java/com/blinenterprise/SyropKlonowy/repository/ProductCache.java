@@ -35,7 +35,7 @@ public class ProductCache {
                 log.info(product.getId().toString());
             });
         } catch (Exception e) {
-            log.error("Failed to refresh product cache within process " + operation.processID.toString(), e);
+            log.error("Failed to refresh product cache within process " + operation.getProcessID().toString(), e);
         }
     }
 }
