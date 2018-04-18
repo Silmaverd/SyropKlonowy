@@ -1,24 +1,24 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
 import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.web.UserOperation;
-import org.slf4j.LoggerFactory;
+import com.blinenterprise.SyropKlonowy.events.Operation;
+import com.blinenterprise.SyropKlonowy.events.UserOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
+@Slf4j
 @Component
 public class ProductCache {
-
-    private org.slf4j.Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ProductRepository repository;
     private HashMap<Long, Product> productCashe = new HashMap<>();
 
-    public void purgeCashe(UserOperation userOperation){
-        log.info("Clearing product cache within process " + userOperation.processID.toString());
+    public void purgeCashe(Operation operation){
+        operation.persist();
         productCashe = new HashMap<>();
     }
 
@@ -26,16 +26,16 @@ public class ProductCache {
         return productCashe.get(id);
     }
 
-    public void refreshCache(UserOperation userOperation){
+    public void refreshCache(Operation operation){
         try {
-            log.info("Refreshing product cache within proces " + userOperation.processID.toString());
+            operation.persist();
             Iterable<Product> products = repository.findAll();
             products.forEach(product -> {
                 productCashe.put(product.getId(), product);
                 log.info(product.getId().toString());
             });
         } catch (Exception e) {
-            log.error("Failed to refresh product cache within process " + userOperation.processID.toString(), e);
+            log.error("Failed to refresh product cache within process " + operation.processID.toString(), e);
         }
     }
 }
