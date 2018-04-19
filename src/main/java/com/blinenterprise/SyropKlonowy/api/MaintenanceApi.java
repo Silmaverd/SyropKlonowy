@@ -19,8 +19,6 @@ class MaintenanceApi {
     public Response<ExampleResponse> displayAParameter(@RequestParam(value = "title", required = true) String param) {
         return new Response<ExampleResponse>(true, new ExampleResponse());
     }
-
     // TODO: its an example method; remove after adding any other method
-
 
 }
