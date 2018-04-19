@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain.Order;
+package com.blinenterprise.SyropKlonowy.domain;
 
 import com.blinenterprise.SyropKlonowy.domain.Client;
 import lombok.Getter;
@@ -28,20 +28,12 @@ public class Order {
     private Date orderDate;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval=true)
-    Set<OrderedProduct> orderedProducts;
+    Set<OrderedProduct> orderedProducts = new HashSet<>(0);
 
     private Double price;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
-
-    public Order(Client client, Date orderDate, Double price, OrderStatus orderStatus) {
-        this.client = client;
-        this.orderDate = orderDate;
-        this.orderedProducts = new HashSet<>();
-        this.price = price;
-        this.orderStatus = orderStatus;
-    }
+    private OrderedProduct orderStatus;
 
     public void addOrderedProduct(OrderedProduct orderedProduct){
         orderedProducts.add(orderedProduct);

@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain.Order;
+package com.blinenterprise.SyropKlonowy.domain;
 
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @Entity
-class OrderedProduct {
+public class OrderedProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
