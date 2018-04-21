@@ -16,8 +16,13 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    String street;
-    String city;
-    int zipCode;
+    private String street;
+    private String city;
+    private int zipCode;
 
+    public Address(String street, String city, int zipCode) {
+        this.street = street;
+        this.city = city;
+        this.zipCode = zipCode;
+    }
 }
