@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-    <PRODUCT id="1" price="5.0" category="PHONE" />
-    <PRODUCT id="2" price="3.0" category="PHONE" />
-    <PRODUCT id="3" price="2.0" category="AUDIO"/>
-    <PRODUCT id="4" price="6.0" category="AUDIO" />
-</dataset>
