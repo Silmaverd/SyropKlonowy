@@ -5,7 +5,8 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
-
+import java.util.List;
+import java.util.Optional;
 
 
 public abstract class CrudService<T, ID, Repository extends CrudRepository<T, ID>> {
