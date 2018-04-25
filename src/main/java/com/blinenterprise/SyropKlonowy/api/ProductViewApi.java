@@ -5,6 +5,7 @@ import com.blinenterprise.SyropKlonowy.service.ProductService;
 import com.blinenterprise.SyropKlonowy.view.ProductView;
 import com.blinenterprise.SyropKlonowy.web.ExampleResponse;
 import com.blinenterprise.SyropKlonowy.web.Response;
+import com.blinenterprise.SyropKlonowy.web.SingleResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,9 @@ class ProductViewApi{
         Response<ProductView> response;
         try {
             Product result = ps.findById(id);
-            response = new Response<ProductView>(true, ProductView.from(result));
+            response = new SingleResponse<ProductView>(true, ProductView.from(result));
         } catch (Exception e){
-            response = new Response<ProductView>(false, java.util.Optional.ofNullable(e.getMessage()));
+            response = new SingleResponse<ProductView>(false, java.util.Optional.ofNullable(e.getMessage()));
         }
         return response;
     }

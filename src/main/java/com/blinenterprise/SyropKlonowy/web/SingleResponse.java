@@ -1,5 +1,5 @@
 package com.blinenterprise.SyropKlonowy.web;
 
-public class SingleResponse extends Response{
+public class SingleResponse<T extends View> extends Response{
 
 }
