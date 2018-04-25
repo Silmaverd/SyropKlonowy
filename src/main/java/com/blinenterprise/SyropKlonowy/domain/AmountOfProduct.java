@@ -20,4 +20,15 @@ public class AmountOfProduct {
         this.productId = productId;
         this.quantity = quantity;
     }
+
+    public void increasedQuantityBy(Integer quantity) {
+        this.quantity += quantity;
+    }
+
+    public void descreaseQuantityBy(Integer quantity) {
+        if (this.quantity >= quantity) {
+            this.quantity -= quantity;
+        }
+        throw new IllegalArgumentException();
+    }
 }

@@ -27,7 +27,7 @@ public class DataLoader {
     private WarehouseRepository warehouseRepository;
 
     public void run() {
-        Warehouse warehouse = Warehouse.getWarehouseInstance();
+        Warehouse warehouse = new Warehouse();
         warehouseRepository.save(warehouse);
 
         List<Product> products = Arrays.asList(
@@ -40,10 +40,10 @@ public class DataLoader {
         );
         productRepository.saveAll(products);
 
-        List<AmountOfProduct> productIdWithQuantities = new ArrayList<>();
-        products.forEach(product -> productIdWithQuantities.add(new AmountOfProduct(product.getId(), 20)));
+        List<AmountOfProduct> amountOfProducts = new ArrayList<>();
+        products.forEach(product -> amountOfProducts.add(new AmountOfProduct(product.getId(), 20)));
 
-        warehouse.addAllProductIdWithQuantity(productIdWithQuantities);
+        amountOfProducts.forEach(warehouse::addAmountOfProduct);
         warehouseRepository.save(warehouse);
     }
 }

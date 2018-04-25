@@ -1,14 +1,16 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @ToString
+@NoArgsConstructor
 @Entity
 public class Warehouse {
 
@@ -17,31 +19,28 @@ public class Warehouse {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    private static Warehouse warehouseInstance = null;
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<AmountOfProduct> productIdWithQuantities = new ArrayList<>();
+    private Map<Long, AmountOfProduct> amountOfProducts = new HashMap<>();
 
-    private Warehouse(){
-
+    public Warehouse(Map<Long, AmountOfProduct> amountOfProducts) {
+        this.amountOfProducts = amountOfProducts;
     }
 
-    public static synchronized Warehouse getWarehouseInstance(){
-        if(warehouseInstance == null){
-            warehouseInstance = new Warehouse();
+    public void addAmountOfProduct(AmountOfProduct amountOfProduct) {
+        Long productId = amountOfProduct.getProductId();
+        if (amountOfProducts.containsKey(productId)) {
+            amountOfProducts.get(productId).increasedQuantityBy(amountOfProduct.getQuantity());
+            return;
         }
-        return warehouseInstance;
+        amountOfProducts.put(productId, amountOfProduct);
     }
 
-    public void addProductIdWithQuantity(AmountOfProduct amountOfProduct){
-        productIdWithQuantities.add(amountOfProduct);
-    }
-
-    public void addAllProductIdWithQuantity(List<AmountOfProduct> productIdWithQuantities){
-        this.productIdWithQuantities.addAll(productIdWithQuantities);
-    }
-
-    public void removeProductIdWithQuantity(AmountOfProduct amountOfProduct){
-        productIdWithQuantities.remove(amountOfProduct);
+    public void removeAmountOfProduct(AmountOfProduct amountOfProduct) {
+        Long productId = amountOfProduct.getProductId();
+        if (amountOfProducts.containsKey(productId)) {
+            amountOfProducts.get(productId).descreaseQuantityBy(amountOfProduct.getQuantity());
+            return;
+        }
+        throw new IllegalArgumentException();
     }
 }
