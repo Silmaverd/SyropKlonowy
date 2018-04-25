@@ -15,13 +15,12 @@ public class ProductLine {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Product product;
+    private Long productId;
 
     private Integer quantity;
 
-    public ProductLine(Product product, Integer quantity) {
-        this.product = product;
+    public ProductLine(Long productId, Integer quantity) {
+        this.productId = productId;
         this.quantity = quantity;
     }
 }
