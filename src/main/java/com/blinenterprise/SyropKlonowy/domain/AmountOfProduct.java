@@ -8,18 +8,15 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @Entity
-public class ProductLine {
+public class AmountOfProduct {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
-
     private Long productId;
 
     private Integer quantity;
 
-    public ProductLine(Long productId, Integer quantity) {
+    public AmountOfProduct(Long productId, Integer quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

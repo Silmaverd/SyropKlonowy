@@ -2,11 +2,11 @@ package com.blinenterprise.SyropKlonowy;
 
 import com.blinenterprise.SyropKlonowy.domain.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.ProductLine;
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.repository.ProductRepository;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
-import com.google.common.collect.Lists;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Deprecated
 @Component
@@ -26,6 +27,9 @@ public class DataLoader {
     private WarehouseRepository warehouseRepository;
 
     public void run() {
+        Warehouse warehouse = Warehouse.getWarehouseInstance();
+        warehouseRepository.save(warehouse);
+
         List<Product> products = Arrays.asList(
                 new Product("PC1", 155.56, Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC"),
                 new Product("Laptop1", 3563.42, Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusYears(4)), "laptop 1"),
@@ -36,10 +40,10 @@ public class DataLoader {
         );
         productRepository.saveAll(products);
 
-        List<ProductLine> productLines = new ArrayList<>();
-        products.forEach(product -> productLines.add(new ProductLine(product.getId(), 20)));
+        List<AmountOfProduct> productIdWithQuantities = new ArrayList<>();
+        products.forEach(product -> productIdWithQuantities.add(new AmountOfProduct(product.getId(), 20)));
 
-        Warehouse warehouse = new Warehouse(productLines);
+        warehouse.addAllProductIdWithQuantity(productIdWithQuantities);
         warehouseRepository.save(warehouse);
     }
 }
