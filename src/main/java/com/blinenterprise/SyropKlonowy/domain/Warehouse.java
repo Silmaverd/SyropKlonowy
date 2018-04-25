@@ -28,18 +28,18 @@ public class Warehouse {
     public void addAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         if (amountOfProducts.containsKey(productId)) {
-            amountOfProducts.get(productId).increasedQuantityBy(amountOfProduct.getQuantity());
-            return;
+            amountOfProducts.get(productId).increaseQuantityBy(amountOfProduct.getQuantity());
+        } else {
+            amountOfProducts.put(productId, amountOfProduct);
         }
-        amountOfProducts.put(productId, amountOfProduct);
     }
 
     public void removeAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         if (amountOfProducts.containsKey(productId)) {
             amountOfProducts.get(productId).descreaseQuantityBy(amountOfProduct.getQuantity());
-            return;
+        } else {
+            throw new IllegalArgumentException();
         }
-        throw new IllegalArgumentException();
     }
 }
