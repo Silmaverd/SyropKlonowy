@@ -12,7 +12,7 @@ import java.util.Optional;
 public abstract class CrudService<T, ID, Repository extends CrudRepository<T, ID>> {
 
     @Autowired
-    private Repository repository;
+    protected Repository repository;
 
     public boolean exists(ID id){
         return repository.existsById(id);
