@@ -38,9 +38,9 @@ class ProductViewApi{
         Response<ProductView> response;
         try {
             Product result = ps.findByName(name);
-            response = new Response<ProductView>(true, ProductView.from(result));
+            response = new SingleResponse<ProductView>(true, ProductView.from(result));
         } catch (Exception e){
-            response = new Response<ProductView>(false, java.util.Optional.ofNullable(e.getMessage()));
+            response = new SingleResponse<ProductView>(false, java.util.Optional.ofNullable(e.getMessage()));
         }
         return response;
     }
