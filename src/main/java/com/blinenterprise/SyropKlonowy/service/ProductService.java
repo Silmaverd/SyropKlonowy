@@ -20,14 +20,14 @@ public class ProductService extends CrudService<Product, Long, ProductRepository
         return null;
     }
 
-//    public ArrayList<Product> findByMinPrice(Double price){
-//        Iterable<Product> searchList = repository.findAll();
-//        ArrayList<Product> resultsList = new ArrayList<Product>;
-//        for(Product product : searchList) {
-//            if (product.getPrice() >= price) {
-//                resultsList.add(product);
-//            }
-//        }
-//        return null;
-//    }
+    public ArrayList<Product> findByMinPrice(Double price){
+        Iterable<Product> searchList = repository.findAll();
+        ArrayList<Product> resultsList = new ArrayList<Product>();
+        for(Product product : searchList) {
+            if (product.getPrice() >= price) {
+                resultsList.add(product);
+            }
+        }
+        return resultsList;
+    }
 }

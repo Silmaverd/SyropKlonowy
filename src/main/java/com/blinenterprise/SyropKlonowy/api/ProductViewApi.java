@@ -4,6 +4,7 @@ import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
 import com.blinenterprise.SyropKlonowy.view.ProductView;
 import com.blinenterprise.SyropKlonowy.web.ExampleResponse;
+import com.blinenterprise.SyropKlonowy.web.ListResponse;
 import com.blinenterprise.SyropKlonowy.web.Response;
 import com.blinenterprise.SyropKlonowy.web.SingleResponse;
 import io.swagger.annotations.Api;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/productview")
@@ -45,18 +48,18 @@ class ProductViewApi{
         return response;
     }
 
-//    @RequestMapping(path = "/productview/name", method = {RequestMethod.GET})
-//    @ApiOperation(value = "Display product name", response = Response.class)
-//    public Response<ProductView> getProductsByMinPrice(@RequestParam(value = "price", required = true) Double price) {
-//        Response<ProductView> response;
-//        try {
-//            //Product result = ps.findByMinPrice(price);
-//            response = new Response<ProductView>(true, ProductView.from(result));
-//        } catch (Exception e){
-//            response = new Response<ProductView>(false, java.util.Optional.ofNullable(e.getMessage()));
-//        }
-//        return response;
-//    }
+    @RequestMapping(path = "/productview/name", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display product name", response = Response.class)
+    public Response<ProductView> getProductsByMinPrice(@RequestParam(value = "price", required = true) Double price) {
+        Response<ProductView> response;
+        try {
+            List<Product> result = ps.findByMinPrice(price);
+            response = new ListResponse<ProductView>(true, ProductView.from(result));
+        } catch (Exception e){
+            response = new ListResponse<ProductView>(false, java.util.Optional.ofNullable(e.getMessage()));
+        }
+        return response;
+    }
 
 
 }

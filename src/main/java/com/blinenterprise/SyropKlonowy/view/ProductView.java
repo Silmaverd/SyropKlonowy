@@ -10,7 +10,9 @@ import lombok.ToString;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @ToString
@@ -32,6 +34,19 @@ public class ProductView implements View {
         pv.productionDate = product.getProductionDate();
         pv.description = product.getDescription();
         return pv;
+    }
+    public static ArrayList<ProductView> from(List<Product> products) {
+        ArrayList<ProductView> productViewList = new ArrayList<ProductView>();
+        for (Product product : products) {
+            ProductView pv = new ProductView();
+            pv.name = product.getName();
+            pv.price = product.getPrice();
+            pv.category = product.getCategory();
+            pv.productionDate = product.getProductionDate();
+            pv.description = product.getDescription();
+            productViewList.add(pv);
+        }
+        return productViewList;
     }
 
 
