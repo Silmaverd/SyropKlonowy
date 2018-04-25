@@ -25,11 +25,14 @@ public class ProductView implements View {
     private String description;
 
     public static ProductView from(Product product) {
-        this.name = product.getName();
-        this.price = product.getPrice();
-        this.category = product.getCategory();
-        this.productionDate = product.getProductionDate();
-        this.description = product.getDescription();
+        ProductView pv = new ProductView();
+        pv.name = product.getName();
+        pv.price = product.getPrice();
+        pv.category = product.getCategory();
+        pv.productionDate = product.getProductionDate();
+        pv.description = product.getDescription();
+        return pv;
     }
+
 
 }
