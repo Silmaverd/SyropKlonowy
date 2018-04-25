@@ -3,6 +3,7 @@ package com.blinenterprise.SyropKlonowy;
 import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureWorker;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,6 +17,8 @@ import java.util.concurrent.Executors;
 public class WebServer implements CommandLineRunner {
 
     @Autowired
+    private DataLoader dataLoader;
+    @Autowired
     private ConfigContainer configContainer;
 
     public static void main(String[] args) {
@@ -24,6 +27,7 @@ public class WebServer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws InterruptedException {
+        dataLoader.run();
 
         ExecutorService executor = Executors.newCachedThreadPool();
 

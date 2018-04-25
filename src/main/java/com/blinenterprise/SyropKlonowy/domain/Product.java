@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 public class Product {
