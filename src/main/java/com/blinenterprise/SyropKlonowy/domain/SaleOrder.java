@@ -1,6 +1,5 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
-import com.blinenterprise.SyropKlonowy.domain.Client;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -14,7 +13,7 @@ import java.util.Set;
 @ToString
 @NoArgsConstructor
 @Entity
-public class Order {
+public class SaleOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,9 +24,9 @@ public class Order {
     private Client client;
 
     @Temporal(TemporalType.DATE)
-    private Date orderDate;
+    private Date dateOfOrder;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     Set<OrderedProduct> orderedProducts = new HashSet<>(0);
 
     private Double price;
@@ -35,11 +34,11 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderedProduct orderStatus;
 
-    public void addOrderedProduct(OrderedProduct orderedProduct){
-        orderedProducts.add(orderedProduct);
-    }
-
-    public void removeOrderedProduct(OrderedProduct orderedProduct){
-        orderedProducts.remove(orderedProduct);
+    public SaleOrder(Client client, Date dateOfOrder, Set<OrderedProduct> orderedProducts, Double price, OrderedProduct orderStatus) {
+        this.client = client;
+        this.dateOfOrder = dateOfOrder;
+        this.orderedProducts = orderedProducts;
+        this.price = price;
+        this.orderStatus = orderStatus;
     }
 }
