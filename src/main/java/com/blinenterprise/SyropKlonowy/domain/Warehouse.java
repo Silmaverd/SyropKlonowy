@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 public class Warehouse {

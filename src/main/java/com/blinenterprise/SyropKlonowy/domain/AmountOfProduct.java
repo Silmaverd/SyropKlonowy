@@ -5,7 +5,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 public class AmountOfProduct {
