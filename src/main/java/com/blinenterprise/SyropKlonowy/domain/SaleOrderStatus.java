@@ -1,6 +1,6 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
-public enum OrderStatus {
+public enum SaleOrderStatus {
     NEW,
     PAID,
     SENT,

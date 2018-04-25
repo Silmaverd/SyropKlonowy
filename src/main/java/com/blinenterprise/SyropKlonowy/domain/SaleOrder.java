@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -10,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 public class SaleOrder {
@@ -20,25 +18,24 @@ public class SaleOrder {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Client client;
+    private Long clientId;
 
     @Temporal(TemporalType.DATE)
     private Date dateOfOrder;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<OrderedProduct> orderedProducts = new HashSet<>(0);
+    Set<SaleOrderedProduct> saleOrderedProducts = new HashSet<>(0);
 
-    private Double price;
+    private Double totalPrice;
 
     @Enumerated(EnumType.STRING)
-    private OrderedProduct orderStatus;
+    private SaleOrderStatus saleOrderStatus;
 
-    public SaleOrder(Client client, Date dateOfOrder, Set<OrderedProduct> orderedProducts, Double price, OrderedProduct orderStatus) {
-        this.client = client;
+    public SaleOrder(Long clientId, Date dateOfOrder, Set<SaleOrderedProduct> saleOrderedProducts, Double totalPrice, SaleOrderStatus saleOrderStatus) {
+        this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;
-        this.orderedProducts = orderedProducts;
-        this.price = price;
-        this.orderStatus = orderStatus;
+        this.saleOrderedProducts = saleOrderedProducts;
+        this.totalPrice = totalPrice;
+        this.saleOrderStatus = saleOrderStatus;
     }
 }
