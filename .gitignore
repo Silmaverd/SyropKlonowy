@@ -26,3 +26,6 @@ mvnw.cmd
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Syrop Klonowy ###
+*.log
