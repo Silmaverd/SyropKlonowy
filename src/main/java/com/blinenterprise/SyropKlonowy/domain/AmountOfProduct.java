@@ -24,7 +24,7 @@ public class AmountOfProduct {
         this.quantity += quantity;
     }
 
-    public void descreaseQuantityBy(Integer quantity) {
+    public void decreaseQuantityBy(Integer quantity) {
         if (this.quantity >= quantity) {
             this.quantity -= quantity;
         }

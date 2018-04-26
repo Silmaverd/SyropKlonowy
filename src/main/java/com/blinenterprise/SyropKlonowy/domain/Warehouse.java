@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class Warehouse {
     public void removeAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         if (amountOfProducts.containsKey(productId)) {
-            amountOfProducts.get(productId).descreaseQuantityBy(amountOfProduct.getQuantity());
+            amountOfProducts.get(productId).decreaseQuantityBy(amountOfProduct.getQuantity());
         } else {
             throw new IllegalArgumentException();
         }

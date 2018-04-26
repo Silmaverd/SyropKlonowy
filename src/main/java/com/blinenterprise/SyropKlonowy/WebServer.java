@@ -27,7 +27,7 @@ public class WebServer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws InterruptedException {
-        dataLoader.run();
+        dataLoader.loadData();
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
