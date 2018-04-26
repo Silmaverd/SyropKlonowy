@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,7 +29,7 @@ class ProductApi {
     public Response<ProductView> getAllProducts() {
         Response<ProductView> response;
         try {
-            ArrayList<Product> result = Lists.newArrayList(productService.findAll());
+            List<Product> result = productService.findAll();
             response = new Response<ProductView>(true, ProductView.from(result));
         } catch (Exception e) {
             response = new Response<ProductView>(false, Optional.of(e.getMessage()));
@@ -56,8 +57,9 @@ class ProductApi {
     public Response<ProductView> getProductByName(@RequestParam(value = "id", required = true) Long id) {
         Response<ProductView> response;
         try {
-            Optional<Product> result = productService.findById(id);
-            response = new Response<ProductView>(true, Lists.newArrayList(ProductView.from(result.get())));
+            ArrayList<Product> result = new ArrayList<>();
+            result.add(productService.findById(id));
+            response = new Response<ProductView>(true, ProductView.from(result));
         } catch (Exception e) {
             response = new Response<ProductView>(false, Optional.of(e.getMessage()));
         }
