@@ -23,7 +23,7 @@ class ProductApi {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping(path = "/product/name", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/getByName", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products by name", response = Response.class)
     public Response<ProductView> getProductByName(@RequestParam(value = "name", required = true) String name) {
         Response<ProductView> response;
@@ -34,6 +34,7 @@ class ProductApi {
             response = new Response<ProductView>(false, Optional.of(e.getMessage()));
         }
         return response;
+
     }
 
 }
