@@ -28,6 +28,7 @@ public class Client {
 
     private boolean isVerifiedStatus;
 
+    @OneToOne
     private Address deliveryAddress;
 
     @Enumerated(EnumType.STRING)

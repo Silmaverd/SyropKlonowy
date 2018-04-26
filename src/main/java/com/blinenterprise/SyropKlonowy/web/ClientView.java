@@ -27,14 +27,15 @@ public class ClientView implements View {
     private Enterprise enterpriseType;
 
 
-    public ClientView from(Client client) {
-        this.firstName = client.getFirstName();
-        this.lastName = client.getLastName();
-        this.company = client.getCompany();
-        this.isVerifiedStatus = client.isVerifiedStatus();
-        this.deliveryAddress = client.getDeliveryAddress();
-        this.enterpriseType = client.getEnterpriseType();
-        return this;
+    public static ClientView from(Client client) {
+        ClientView clientView = new ClientView();
+        clientView.firstName = client.getFirstName();
+        clientView.lastName = client.getLastName();
+        clientView.company = client.getCompany();
+        clientView.isVerifiedStatus = client.isVerifiedStatus();
+        clientView.deliveryAddress = client.getDeliveryAddress();
+        clientView.enterpriseType = client.getEnterpriseType();
+        return clientView;
     }
 
 }

@@ -11,6 +11,9 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    Client findByClient(long id){return clientRepository.findById(id);}
+    public Client create(Client client){return clientRepository.save(client);}
 
+    public Client findById(long id){return clientRepository.findById(id);}
+
+    public Client findByFistNameAndLastName(String firstName, String lastName){return clientRepository.findByFirstNameAndLastName(firstName, lastName);}
 }
