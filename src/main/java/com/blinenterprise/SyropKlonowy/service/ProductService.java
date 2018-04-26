@@ -7,87 +7,64 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+
+
 
 
 @Service
 public class ProductService extends CrudService<Product, Long, ProductRepository>{
-    // TODO: Zgeneralizować używając wyrażeń lambda
 
-    public Product findOneByName(String name){
+    public Product findOneByCriterion(SearchCriterion<Product> criterion){
         Iterable<Product> searchList = repository.findAll();
         for(Product product : searchList) {
-            if (product.getName().equals(name)) {
+            if (criterion.fulfilledBy(product)) {
                 return product;
             }
         }
         return null;
     }
 
-    public ArrayList<Product> findAllByName(String name) {
+    public ArrayList<Product> findAllByCriterion(SearchCriterion<Product> criterion){
         Iterable<Product> searchList = repository.findAll();
         ArrayList<Product> resultsList = new ArrayList<Product>();
         for(Product product : searchList) {
-            if (product.getName().equals(name)) {
+            if (criterion.fulfilledBy(product)) {
                 resultsList.add(product);
             }
         }
-        return resultsList;
+        if (resultsList.isEmpty()) {
+            return null;
+        } else {
+            return resultsList;
+        }
+    }
+
+    public Product findOneByName(String name){
+        return findOneByCriterion(product -> product.getName().equals(name));
+    }
+
+    public ArrayList<Product> findAllByName(String name) {
+        return findAllByCriterion(product -> product.getName().equals(name));
     }
 
     public ArrayList<Product> findByMinPrice(Double price){
-        Iterable<Product> searchList = repository.findAll();
-        ArrayList<Product> resultsList = new ArrayList<Product>();
-        for(Product product : searchList) {
-            if (product.getPrice() >= price) {
-                resultsList.add(product);
-            }
-        }
-        return resultsList;
+        return findAllByCriterion(product -> product.getPrice() >= price);
     }
 
     public ArrayList<Product> findByMaxPrice(Double price){
-        Iterable<Product> searchList = repository.findAll();
-        ArrayList<Product> resultsList = new ArrayList<Product>();
-        for(Product product : searchList) {
-            if (product.getPrice() <= price) {
-                resultsList.add(product);
-            }
-        }
-        return resultsList;
+        return findAllByCriterion(product -> product.getPrice() <= price);
     }
 
     public ArrayList<Product> findAllOfCategory(Category category){
-        Iterable<Product> searchList = repository.findAll();
-        ArrayList<Product> resultsList = new ArrayList<Product>();
-        for(Product product : searchList) {
-            if (product.getCategory().equals(category)) {
-                resultsList.add(product);
-            }
-        }
-        return resultsList;
+        return findAllByCriterion(product -> product.getCategory().equals(category));
     }
 
     public ArrayList<Product> findAllFromDate(Date date){
-        Iterable<Product> searchList = repository.findAll();
-        ArrayList<Product> resultsList = new ArrayList<Product>();
-        for(Product product : searchList) {
-            if (product.getProductionDate().after(date)) {
-                resultsList.add(product);
-            }
-        }
-        return resultsList;
+        return findAllByCriterion(product -> product.getProductionDate().after(date));
     }
 
     public ArrayList<Product> findAllToDate(Date date){
-        Iterable<Product> searchList = repository.findAll();
-        ArrayList<Product> resultsList = new ArrayList<Product>();
-        for(Product product : searchList) {
-            if (product.getProductionDate().before(date)) {
-                resultsList.add(product);
-            }
-        }
-        return resultsList;
+        return findAllByCriterion(product -> product.getProductionDate().before(date));
     }
 
 
