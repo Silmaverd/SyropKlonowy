@@ -23,6 +23,20 @@ class ProductApi {
     @Autowired
     private ProductService productService;
 
+    @RequestMapping(path = "/product/getAll", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display products by name", response = Response.class)
+    public Response<ProductView> getAllProducts() {
+        Response<ProductView> response;
+        try {
+            ArrayList<Product> result = Lists.newArrayList(productService.findAll());
+            response = new Response<ProductView>(true, ProductView.from(result));
+        } catch (Exception e) {
+            response = new Response<ProductView>(false, Optional.of(e.getMessage()));
+        }
+        return response;
+
+    }
+
     @RequestMapping(path = "/product/getByName", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products by name", response = Response.class)
     public Response<ProductView> getProductByName(@RequestParam(value = "name", required = true) String name) {
@@ -36,5 +50,21 @@ class ProductApi {
         return response;
 
     }
+
+    @RequestMapping(path = "/product/getById", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display product by id", response = Response.class)
+    public Response<ProductView> getProductByName(@RequestParam(value = "id", required = true) Long id) {
+        Response<ProductView> response;
+        try {
+            Optional<Product> result = productService.findById(id);
+            response = new Response<ProductView>(true, Lists.newArrayList(ProductView.from(result.get())));
+        } catch (Exception e) {
+            response = new Response<ProductView>(false, Optional.of(e.getMessage()));
+        }
+        return response;
+
+    }
+
+
 
 }
