@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor
@@ -24,14 +23,14 @@ public class SaleOrder {
     private Date dateOfOrder;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<SaleOrderedProduct> saleOrderedProducts = new HashSet<>(0);
+    List<SaleOrderedProduct> saleOrderedProducts = new ArrayList<>(0);
 
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
     private SaleOrderStatus saleOrderStatus;
 
-    public SaleOrder(Long clientId, Date dateOfOrder, Set<SaleOrderedProduct> saleOrderedProducts, Double totalPrice, SaleOrderStatus saleOrderStatus) {
+    public SaleOrder(Long clientId, Date dateOfOrder, List<SaleOrderedProduct> saleOrderedProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
         this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;
         this.saleOrderedProducts = saleOrderedProducts;

@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @ToString
@@ -19,7 +21,7 @@ public class Product {
     private Long id;
 
     private String name;
-    private Double price;
+    private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -29,7 +31,7 @@ public class Product {
 
     private String description;
 
-    public Product(String name, Double price, Category category, Date productionDate, String description) {
+    public Product(String name, BigDecimal price, Category category, Date productionDate, String description) {
         this.name = name;
         this.price = price;
         this.category = category;
