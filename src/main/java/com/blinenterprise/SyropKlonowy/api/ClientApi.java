@@ -36,9 +36,8 @@ public class ClientApi {
         }
     }
 
-    @RequestMapping(path = "/client/show", method = {RequestMethod.GET})
-    public Response<ClientView> showClient(@RequestParam(value = "name", required = true) String name) {
-        Client client = clientService.findByName(name).iterator().next();
-        return new Response<ClientView>(false, ClientView.from(client));
+    @RequestMapping(path = "/client/getClient", method = {RequestMethod.GET})
+    public Response<ClientView> getClient(@RequestParam(value = "name", required = true) String name) {
+        return new Response<ClientView>(false, ClientView.from(null));
     }
 }
