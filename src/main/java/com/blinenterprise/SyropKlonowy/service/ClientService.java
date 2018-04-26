@@ -15,5 +15,5 @@ public class ClientService {
 
     public Client findById(long id){return clientRepository.findById(id);}
 
-    public Client findByFistNameAndLastName(String firstName, String lastName){return clientRepository.findByFirstNameAndLastName(firstName, lastName);}
+    public Client findByName(String name){return clientRepository.findByName(name);}
 }

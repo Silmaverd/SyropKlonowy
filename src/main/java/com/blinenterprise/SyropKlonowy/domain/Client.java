@@ -17,13 +17,12 @@ public class Client {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    private String firstName;
-    private String lastName;
+    private String name;
 
     private String company;
 
     @Temporal(TemporalType.DATE)
-    private Date creationDate;
+    private final Date creationDate = new Date();
 
     private boolean isVerifiedStatus;
 
@@ -33,11 +32,9 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private Enterprise enterpriseType;
 
-    public Client(String firstName, String lastName, String company, Date creationDate, boolean isVerifiedStatus, Address deliveryAddress, Enterprise enterpriseType) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Client(String name, String company, boolean isVerifiedStatus, Address deliveryAddress, Enterprise enterpriseType) {
+        this.name = name;
         this.company = company;
-        this.creationDate = creationDate;
         this.isVerifiedStatus = isVerifiedStatus;
         this.deliveryAddress = deliveryAddress;
         this.enterpriseType = enterpriseType;

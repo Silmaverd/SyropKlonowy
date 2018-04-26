@@ -11,7 +11,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -24,11 +23,11 @@ public class ClientApi {
 
     @RequestMapping(path = "/client/add", method = {RequestMethod.PUT})
     @ApiOperation(value = "Add a client", response = Response.class)
-    public Response<ClientView> AddClient(@PathVariable(value = "firstName")String firstName, @PathVariable(value = "lastName") String lastName,
-                                          @PathVariable(value = "company") String company, @PathVariable(value = "street") String street,
-                                          @PathVariable(value = "buildingNumber") String buildingNumber, @PathVariable(value = "city") String city,
-                                          @PathVariable(value = "zipCode") int zipCode, @PathVariable(value = "enterpriseType") Enterprise enterpriseType) {
-        Client client = new Client(firstName,lastName, company, new Date(), false, new Address(street, buildingNumber, city, zipCode), enterpriseType);
+    public Response<ClientView> AddClient(@PathVariable(value = "name")String name,@PathVariable(value = "company") String company,
+                                          @PathVariable(value = "street") String street, @PathVariable(value = "buildingNumber") String buildingNumber,
+                                          @PathVariable(value = "city") String city, @PathVariable(value = "zipCode") int zipCode,
+                                          @PathVariable(value = "enterpriseType") Enterprise enterpriseType) {
+        Client client = new Client(name, company, false, new Address(street, buildingNumber, city, zipCode), enterpriseType);
         if(clientService.create(client).equals(client)) {
             return new Response<ClientView>(true, Optional.empty());
         }
@@ -38,8 +37,8 @@ public class ClientApi {
     }
 
     @RequestMapping(path = "/client/show", method = {RequestMethod.GET})
-    public Response<ClientView> showClient(@PathVariable(value = "firstName")String firstName, @PathVariable(value = "lastName") String lastName) {
-        Client client = clientService.findByFistNameAndLastName(firstName, lastName);
+    public Response<ClientView> showClient(@PathVariable(value = "name") String name) {
+        Client client = clientService.findByName(name);
         return new Response<ClientView>(false, ClientView.from(client));
     }
 }
