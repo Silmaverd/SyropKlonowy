@@ -10,6 +10,7 @@ import com.blinenterprise.SyropKlonowy.web.ClientView;
 import com.blinenterprise.SyropKlonowy.web.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
@@ -45,6 +46,12 @@ public class ClientApi {
 
     @RequestMapping(path = "/client/getClient", method = {RequestMethod.GET})
     public Response<ClientView> getClient(@RequestParam(value = "name", required = true) String name) {
-        return new Response<ClientView>(false, ClientView.from(null));
+        try {
+            Client client = clientService.findByName(name).iterator().next();
+            return new Response<ClientView>(true, Lists.newArrayList(ClientView.from(client)));
+        }
+        catch (Exception e){
+            return new Response<ClientView>(false, Optional.of(e.getMessage()));
+        }
     }
 }
