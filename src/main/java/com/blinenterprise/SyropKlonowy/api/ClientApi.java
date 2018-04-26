@@ -23,10 +23,10 @@ public class ClientApi {
 
     @RequestMapping(path = "/client/add", method = {RequestMethod.PUT})
     @ApiOperation(value = "Add a client", response = Response.class)
-    public Response<ClientView> AddClient(@PathVariable(value = "name")String name,@PathVariable(value = "company") String company,
-                                          @PathVariable(value = "street") String street, @PathVariable(value = "buildingNumber") String buildingNumber,
-                                          @PathVariable(value = "city") String city, @PathVariable(value = "zipCode") int zipCode,
-                                          @PathVariable(value = "enterpriseType") Enterprise enterpriseType) {
+    public Response<ClientView> AddClient(@RequestParam(value = "name", required = true)String name,@RequestParam(value = "company", required = true) String company,
+                                          @RequestParam(value = "street", required = true) String street, @RequestParam(value = "buildingNumber", required = true) String buildingNumber,
+                                          @RequestParam(value = "city", required = true) String city, @RequestParam(value = "zipCode", required = true) int zipCode,
+                                          @RequestParam(value = "enterpriseType", required = true) Enterprise enterpriseType) {
         Client client = new Client(name, company, false, new Address(street, buildingNumber, city, zipCode), enterpriseType);
         if(clientService.create(client).equals(client)) {
             return new Response<ClientView>(true, Optional.empty());
@@ -37,7 +37,7 @@ public class ClientApi {
     }
 
     @RequestMapping(path = "/client/show", method = {RequestMethod.GET})
-    public Response<ClientView> showClient(@PathVariable(value = "name") String name) {
+    public Response<ClientView> showClient(@RequestParam(value = "name", required = true) String name) {
         Client client = clientService.findByName(name);
         return new Response<ClientView>(false, ClientView.from(client));
     }
