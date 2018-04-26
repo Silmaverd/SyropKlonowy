@@ -59,11 +59,11 @@ public class ProductService extends CrudService<Product, Long, ProductRepository
         return findAllByCriterion(product -> product.getCategory().equals(category));
     }
 
-    public ArrayList<Product> findAllFromDate(Date date){
+    public ArrayList<Product> findAllAfterDate(Date date){
         return findAllByCriterion(product -> product.getProductionDate().after(date));
     }
 
-    public ArrayList<Product> findAllToDate(Date date){
+    public ArrayList<Product> findAllBeforeDate(Date date){
         return findAllByCriterion(product -> product.getProductionDate().before(date));
     }
 
