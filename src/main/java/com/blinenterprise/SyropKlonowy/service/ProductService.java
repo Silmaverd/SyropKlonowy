@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @Service
-public class ProductService extends CrudService<Product, Long, ProductRepository>{
+public class ProductService{
 
     @Autowired
     private ProductRepository productRepository;
