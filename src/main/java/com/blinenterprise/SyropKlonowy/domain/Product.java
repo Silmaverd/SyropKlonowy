@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.Objects;
 
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 public class Product {
