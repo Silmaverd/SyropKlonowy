@@ -20,13 +20,13 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/productview")
+@RequestMapping("/api/product")
 @Api(value = "Product Viewing API")
-class ProductViewApi{
+class ProductApi {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping(path = "/productview/id", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/id", method = {RequestMethod.GET})
     @ApiOperation(value = "Display product id", response = Response.class)
     public Response<ProductView> getProductById(@RequestParam(value = "id", required = true) Long id) {
         Response<ProductView> response;
@@ -39,7 +39,7 @@ class ProductViewApi{
         return response;
     }
 
-    @RequestMapping(path = "/productview/name", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/name", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products by name", response = Response.class)
     public Response<ProductView> getProductByName(@RequestParam(value = "name", required = true) String name) {
         Response<ProductView> response;
@@ -52,7 +52,7 @@ class ProductViewApi{
         return response;
     }
 
-    @RequestMapping(path = "/productview/minprice", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/minprice", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products of at least given price", response = Response.class)
     public Response<ProductView> getProductsByMinPrice(@RequestParam(value = "price", required = true) Double price) {
         Response<ProductView> response;
@@ -65,7 +65,7 @@ class ProductViewApi{
         return response;
     }
 
-    @RequestMapping(path = "/productview/maxprice", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/maxprice", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products of at most given price", response = Response.class)
     public Response<ProductView> getProductsByMaxPrice(@RequestParam(value = "price", required = true) Double price) {
         Response<ProductView> response;
@@ -78,7 +78,7 @@ class ProductViewApi{
         return response;
     }
 
-    @RequestMapping(path = "/productview/category", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/category", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products of given category", response = Response.class)
     public Response<ProductView> getProductsByCategory(@RequestParam(value = "category", required = true) Category category) {
         Response<ProductView> response;
@@ -91,7 +91,7 @@ class ProductViewApi{
         return response;
     }
 
-    @RequestMapping(path = "/productview/fromdate", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/fromdate", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products added after a date", response = Response.class)
     public Response<ProductView> getProductsFromDate(@RequestParam(value = "productionDate", required = true) Date date) {
         Response<ProductView> response;
@@ -104,7 +104,7 @@ class ProductViewApi{
         return response;
     }
 
-    @RequestMapping(path = "/productview/todate", method = {RequestMethod.GET})
+    @RequestMapping(path = "/product/todate", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products added before a date", response = Response.class)
     public Response<ProductView> getProductsAfterDate(@RequestParam(value = "productionDate", required = true) Date date) {
         Response<ProductView> response;
