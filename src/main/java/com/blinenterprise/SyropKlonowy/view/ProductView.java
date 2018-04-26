@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ProductView implements View {
 
 
     private String name;
-    private Double price;
+    private BigDecimal price;
     private Category category;
     private Date productionDate;
     private String description;
