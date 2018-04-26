@@ -13,7 +13,7 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 
     Product findByName(String name);
 
-    Product findById(long id);
+    List<Product> findAllByName(String name);
 
     List<Product> findAllByCategory(Category category);
 
