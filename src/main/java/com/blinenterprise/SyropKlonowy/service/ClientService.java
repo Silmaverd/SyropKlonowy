@@ -5,6 +5,9 @@ import com.blinenterprise.SyropKlonowy.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ClientService {
 
@@ -13,7 +16,12 @@ public class ClientService {
 
     public Client create(Client client){return clientRepository.save(client);}
 
-    public Client findById(long id){return clientRepository.findById(id);}
+    public Client findById(long id){
+        Optional<Client> mayBeClient= clientRepository.findById(id);
+        return mayBeClient.orElse(null);
+    }
 
-    public Client findByName(String name){return clientRepository.findByName(name);}
+    public Iterable<Client> findByName(String name){
+        return clientRepository.findAllByName(name);
+    }
 }
