@@ -27,16 +27,18 @@ public class ProductView implements View {
     private String description;
 
 
+    private ProductView(String name, BigDecimal price, Category category, Date productionDate, String description) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.productionDate = productionDate;
+        this.description = description;
+    }
 
     public static ArrayList<ProductView> from(List<Product> products) {
         ArrayList<ProductView> productViewList = new ArrayList<ProductView>();
         for (Product product : products) {
-            ProductView pv = new ProductView();
-            pv.name = product.getName();
-            pv.price = product.getPrice();
-            pv.category = product.getCategory();
-            pv.productionDate = product.getProductionDate();
-            pv.description = product.getDescription();
+            ProductView pv = new ProductView(product.getName(), product.getPrice(), product.getCategory(), product.getProductionDate(), product.getDescription());
             productViewList.add(pv);
         }
         return productViewList;
