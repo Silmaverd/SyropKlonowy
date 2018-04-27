@@ -13,6 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -47,8 +50,15 @@ public class ClientApi {
     @RequestMapping(path = "/client/getClient", method = {RequestMethod.GET})
     public Response<ClientView> getClient(@RequestParam(value = "name", required = true) String name) {
         try {
-            Client client = clientService.findByName(name).iterator().next();
-            return new Response<ClientView>(true, Lists.newArrayList(ClientView.from(client)));
+
+            List<Client> listOfClients = clientService.findByName(name);
+            List<ClientView> returnList = new ArrayList<>();
+
+            for(Client c : listOfClients){
+                returnList.add(ClientView.from(c));
+            }
+
+            return new Response<ClientView>(true, returnList);
         }
         catch (Exception e){
             return new Response<ClientView>(false, Optional.of(e.getMessage()));
