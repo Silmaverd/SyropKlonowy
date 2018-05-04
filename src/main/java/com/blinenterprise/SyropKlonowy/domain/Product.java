@@ -39,4 +39,8 @@ public class Product {
         this.description = description;
         this.code = code;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

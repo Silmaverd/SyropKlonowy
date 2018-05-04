@@ -5,11 +5,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ProductSupplied {
+public class SuppliedProduct {
     private Product product;
     private Integer quanity;
 
-    public ProductSupplied(Product product, Integer quanity) {
+    public SuppliedProduct(Product product, Integer quanity) {
         this.product = product;
         this.quanity = quanity;
     }

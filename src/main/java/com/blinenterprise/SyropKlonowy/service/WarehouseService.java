@@ -2,7 +2,7 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.ProductSupplied;
+import com.blinenterprise.SyropKlonowy.domain.SuppliedProduct;
 import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import org.assertj.core.util.Lists;
@@ -15,10 +15,14 @@ import java.util.Optional;
 @Service
 public class WarehouseService {
 
-    @Autowired
     private WarehouseRepository warehouseRepository;
-    @Autowired
     private ProductService productService;
+
+    @Autowired
+    public WarehouseService(WarehouseRepository warehouseRepository, ProductService productService) {
+        this.warehouseRepository = warehouseRepository;
+        this.productService = productService;
+    }
 
     public Optional<Warehouse> findById(Long id) {
         return warehouseRepository.findById(id);
@@ -36,15 +40,15 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
-    public void addProductSupplied(ProductSupplied productSupplied, String warehouseName) {
-        Product product = productSupplied.getProduct();
+    public Warehouse addProductSupplied(SuppliedProduct suppliedProduct, String warehouseName) {
+        Product product = suppliedProduct.getProduct();
         Optional<Product> productInStockOptional = productService.findByCode(product.getCode());
         Product productInStock = productInStockOptional.orElseGet(() -> productService.save(product));
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent()) {
             Warehouse warehouse = warehouseOptional.get();
-            warehouse.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), productSupplied.getQuanity()));
-            saveOrUpdate(warehouse);
+            warehouse.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), suppliedProduct.getQuanity()));
+            return saveOrUpdate(warehouse);
         } else {
             throw new IllegalArgumentException();
         }
