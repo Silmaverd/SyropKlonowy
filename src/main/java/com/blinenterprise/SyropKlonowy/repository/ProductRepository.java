@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends CrudRepository<Product, Long> {
@@ -24,4 +25,6 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     List<Product> findAllByPriceLessThanEqualAndCategory(BigDecimal price, Category category);
 
     List<Product> findAllByPriceGreaterThanEqualAndCategory(BigDecimal price, Category category);
+
+    Optional<Product> findByCode(String code);
 }
