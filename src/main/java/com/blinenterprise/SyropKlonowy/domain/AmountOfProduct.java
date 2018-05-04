@@ -3,9 +3,7 @@ package com.blinenterprise.SyropKlonowy.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
@@ -13,6 +11,7 @@ import javax.persistence.Id;
 public class AmountOfProduct {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
