@@ -71,9 +71,10 @@ public class WarehouseServiceSpec {
 
     @Test
     public void shouldAddNewProduct() {
+        product.setId(1L);
         SuppliedProduct suppliedProduct = new SuppliedProduct(product, PRODUCT_QUANTITY);
 
-        Warehouse updatedWarehouse = warehouseService.addProductSupplied(suppliedProduct, WAREHOUSE_NAME);
+        Warehouse updatedWarehouse = warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
 
         Assert.assertEquals(1, updatedWarehouse.getAmountOfProducts().size());
     }
@@ -86,18 +87,12 @@ public class WarehouseServiceSpec {
         SuppliedProduct suppliedProduct2 = new SuppliedProduct(product, PRODUCT_QUANTITY);
         SuppliedProduct suppliedProduct3 = new SuppliedProduct(product2, PRODUCT_QUANTITY);
 
-        warehouseService.addProductSupplied(suppliedProduct, WAREHOUSE_NAME);
-        warehouseService.addProductSupplied(suppliedProduct2, WAREHOUSE_NAME);
-        Warehouse updatedWarehouse = warehouseService.addProductSupplied(suppliedProduct3, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(suppliedProduct2, WAREHOUSE_NAME);
+        Warehouse updatedWarehouse = warehouseService.addSuppliedProduct(suppliedProduct3, WAREHOUSE_NAME);
         Integer productQuantity = updatedWarehouse.getAmountOfProducts().get(product.getId()).getQuantity();
 
         Assert.assertEquals(2, updatedWarehouse.getAmountOfProducts().size());
         Assert.assertEquals(productQuantity.toString(), "30");
     }
-
-    @Test
-    public void trueTrue() {
-        Assert.assertTrue(true);
-    }
-
 }

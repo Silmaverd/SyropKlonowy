@@ -40,7 +40,7 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
-    public Warehouse addProductSupplied(SuppliedProduct suppliedProduct, String warehouseName) {
+    public Warehouse addSuppliedProduct(SuppliedProduct suppliedProduct, String warehouseName) {
         Product product = suppliedProduct.getProduct();
         Optional<Product> productInStockOptional = productService.findByCode(product.getCode());
         Product productInStock = productInStockOptional.orElseGet(() -> productService.save(product));
