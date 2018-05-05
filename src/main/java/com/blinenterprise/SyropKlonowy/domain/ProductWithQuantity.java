@@ -21,4 +21,8 @@ public class ProductWithQuantity {
 
     int quantity;
 
+    public ProductWithQuantity(Product product, int quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
 }

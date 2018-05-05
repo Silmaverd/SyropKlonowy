@@ -25,7 +25,7 @@ class ProductApi {
     private ProductService productService;
 
     @RequestMapping(path = "/product/getAll", method = {RequestMethod.GET})
-    @ApiOperation(value = "Display products by name", response = Response.class)
+    @ApiOperation(value = "Display all products", response = Response.class)
     public Response<ProductView> getAllProducts() {
         Response<ProductView> response;
         try {
@@ -54,7 +54,7 @@ class ProductApi {
 
     @RequestMapping(path = "/product/getById", method = {RequestMethod.GET})
     @ApiOperation(value = "Display product by id", response = Response.class)
-    public Response<ProductView> getProductByName(@RequestParam(value = "id", required = true) Long id) {
+    public Response<ProductView> getProductById(@RequestParam(value = "id", required = true) Long id) {
         Response<ProductView> response;
         try {
             ArrayList<Product> result = new ArrayList<>();

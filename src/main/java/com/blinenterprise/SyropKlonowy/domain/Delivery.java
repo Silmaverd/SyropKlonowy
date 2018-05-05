@@ -22,4 +22,14 @@ public class Delivery {
     private Date deliveryDate;
 
     private ArrayList<ProductWithQuantity> listOfProducts;
+
+    public Delivery(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public Delivery(Long id, Date deliveryDate, ArrayList<ProductWithQuantity> listOfProducts) {
+        this.id = id;
+        this.deliveryDate = deliveryDate;
+        this.listOfProducts = listOfProducts;
+    }
 }
