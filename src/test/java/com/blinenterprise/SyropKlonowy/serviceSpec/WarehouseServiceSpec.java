@@ -1,9 +1,6 @@
 package com.blinenterprise.SyropKlonowy.serviceSpec;
 
-import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.SuppliedProduct;
-import com.blinenterprise.SyropKlonowy.domain.Warehouse;
+import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.domain.builder.ProductBuilder;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
@@ -27,11 +24,11 @@ import static org.mockito.ArgumentMatchers.any;
 @SpringBootTest
 public class WarehouseServiceSpec {
 
-    private WarehouseRepository warehouseRepository = Mockito.mock(WarehouseRepository.class);
-    private ProductService productService = Mockito.mock(ProductService.class);
-    private WarehouseService warehouseService = new WarehouseService(warehouseRepository, productService);
+    private WarehouseRepository warehouseRepositoryMock = Mockito.mock(WarehouseRepository.class);
+    private ProductService productServiceMock = Mockito.mock(ProductService.class);
+    private WarehouseService warehouseService = new WarehouseService(warehouseRepositoryMock, productServiceMock);
 
-    private final Product product = ProductBuilder.aProduct()
+    private Product product = ProductBuilder.aProduct()
             .withCategory(Category.AUDIO)
             .withCode("XXX3")
             .withDescription("Opis produktu")
@@ -40,11 +37,11 @@ public class WarehouseServiceSpec {
             .withProductionDate(Date.valueOf(LocalDate.now().minusWeeks(5)))
             .build();
 
-    private final Product product2 = ProductBuilder.aProduct()
-            .withCategory(Category.AUDIO)
+    private Product product2 = ProductBuilder.aProduct()
+            .withCategory(Category.SPEAKER)
             .withCode("XXX5")
             .withDescription("Opis produktu")
-            .withName("produkt3")
+            .withName("produkt2")
             .withPrice(new BigDecimal(20))
             .withProductionDate(Date.valueOf(LocalDate.now().minusWeeks(7)))
             .build();
@@ -54,24 +51,20 @@ public class WarehouseServiceSpec {
     private final String WAREHOUSE_NAME = "Main";
     private Warehouse warehouse = new Warehouse(WAREHOUSE_NAME);
 
-
     @Before
     public void setUp() {
-        Mockito.when(warehouseRepository.findByName(any(String.class))).thenReturn(Optional.of(warehouse));
-        Mockito.when(productService.findByCode(product.getCode())).thenReturn(Optional.of(product));
-        Mockito.when(productService.findByCode(product2.getCode())).thenReturn(Optional.of(product2));
-        Mockito.when(warehouseRepository.save(any(Warehouse.class))).thenReturn(warehouse);
+        product.setId(1L);
+        product2.setId(2L);
+        Mockito.when(warehouseRepositoryMock.findByName(any(String.class))).thenReturn(Optional.of(warehouse));
+        Mockito.when(productServiceMock.findByCode(product.getCode())).thenReturn(Optional.of(product));
+        Mockito.when(productServiceMock.findByCode(product2.getCode())).thenReturn(Optional.of(product2));
+        Mockito.when(warehouseRepositoryMock.save(any(Warehouse.class))).thenReturn(warehouse);
+        Mockito.when(productServiceMock.findById(any(Long.class))).thenReturn(Optional.of(product));
     }
 
-    @Test
-    public void findByNameWarehouse() {
-        Optional<Warehouse> w2 = warehouseService.findByName(WAREHOUSE_NAME);
-        Assert.assertEquals(warehouse.getName(), w2.get().getName());
-    }
 
     @Test
     public void shouldAddNewProduct() {
-        product.setId(1L);
         SuppliedProduct suppliedProduct = new SuppliedProduct(product, PRODUCT_QUANTITY);
 
         Warehouse updatedWarehouse = warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
@@ -81,8 +74,6 @@ public class WarehouseServiceSpec {
 
     @Test
     public void shouldIncrementProductQuantity() {
-        product.setId(1L);
-        product2.setId(2L);
         SuppliedProduct suppliedProduct = new SuppliedProduct(product, PRODUCT_QUANTITY);
         SuppliedProduct suppliedProduct2 = new SuppliedProduct(product, PRODUCT_QUANTITY);
         SuppliedProduct suppliedProduct3 = new SuppliedProduct(product2, PRODUCT_QUANTITY);
@@ -90,9 +81,27 @@ public class WarehouseServiceSpec {
         warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
         warehouseService.addSuppliedProduct(suppliedProduct2, WAREHOUSE_NAME);
         Warehouse updatedWarehouse = warehouseService.addSuppliedProduct(suppliedProduct3, WAREHOUSE_NAME);
-        Integer productQuantity = updatedWarehouse.getAmountOfProducts().get(product.getId()).getQuantity();
+
+        Integer actualProductQuantity = updatedWarehouse.getAmountOfProducts().get(product.getId()).getQuantity();
+        Integer expectedProductQuantity = 30;
 
         Assert.assertEquals(2, updatedWarehouse.getAmountOfProducts().size());
-        Assert.assertEquals(productQuantity.toString(), "30");
+        Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
+    }
+
+    @Test
+    public void shouldDecreaseProductQuantity() {
+        SuppliedProduct suppliedProduct = new SuppliedProduct(product, PRODUCT_QUANTITY);
+        SuppliedProduct suppliedProduct2 = new SuppliedProduct(product, PRODUCT_QUANTITY);
+        SaleOrderedProduct saleOrderedProduct = new SaleOrderedProduct(product.getId(), 30);
+
+        warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(suppliedProduct2, WAREHOUSE_NAME);
+        Warehouse updatedWarehouse = warehouseService.removeSaleOrderedProduct(saleOrderedProduct, WAREHOUSE_NAME);
+
+        Integer actualProductQuantity = updatedWarehouse.getAmountOfProducts().get(product.getId()).getQuantity();
+        Integer expectedProductQuantity = 0;
+
+        Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
     }
 }

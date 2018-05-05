@@ -1,9 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.SuppliedProduct;
-import com.blinenterprise.SyropKlonowy.domain.Warehouse;
+import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +44,23 @@ public class WarehouseService {
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent()) {
             Warehouse warehouse = warehouseOptional.get();
-            warehouse.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), suppliedProduct.getQuanity()));
+            warehouse.addAmountOfProduct(new AmountOfProduct(
+                    productInStock.getId(),
+                    suppliedProduct.getQuanity()));
             return saveOrUpdate(warehouse);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public Warehouse removeSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct, String warehouseName) {
+        Optional<Product> productInStockOptional = productService.findById(saleOrderedProduct.getProductId());
+        Optional<Warehouse> warehouseOptional = findByName(warehouseName);
+        if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {
+            warehouseOptional.get().removeAmountOfProduct(new AmountOfProduct(
+                    productInStockOptional.get().getId(),
+                    saleOrderedProduct.getQuantity()));
+            return saveOrUpdate(warehouseOptional.get());
         } else {
             throw new IllegalArgumentException();
         }
