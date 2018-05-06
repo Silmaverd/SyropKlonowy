@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @ToString
 @Getter
@@ -15,11 +16,11 @@ public class DeliveryView implements View {
 
     private Long id;
     private Date deliveryDate;
-    private ArrayList<ProductWithQuantity> listOfProducts;
+    private List<ProductWithQuantity> listOfProducts;
 
     public static DeliveryView from(Delivery delivery){return new DeliveryView(delivery.getId(), delivery.getDeliveryDate(), delivery.getListOfProducts());}
 
-    public DeliveryView(Long id, Date deliveryDate, ArrayList<ProductWithQuantity> listOfProducts) {
+    public DeliveryView(Long id, Date deliveryDate, List<ProductWithQuantity> listOfProducts) {
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.listOfProducts = listOfProducts;

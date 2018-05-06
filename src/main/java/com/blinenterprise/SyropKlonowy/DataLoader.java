@@ -3,7 +3,9 @@ package com.blinenterprise.SyropKlonowy;
 import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
 import com.blinenterprise.SyropKlonowy.repository.ProductRepository;
+import com.blinenterprise.SyropKlonowy.repository.ProductWithQuantityRepository;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ public class DataLoader {
     private WarehouseRepository warehouseRepository;
     @Autowired
     private DeliveryRepository deliveryRepository;
+    @Autowired
+    private ProductWithQuantityRepository productWithQuantityRepository;
 
     public void loadData() {
         Warehouse warehouse = new Warehouse();
@@ -45,9 +49,35 @@ public class DataLoader {
         amountOfProducts.forEach(warehouse::addAmountOfProduct);
         warehouseRepository.save(warehouse);
 
+    }
+
+
+    public void loadDeliveries(){
+
+        List<Product> products = Arrays.asList(
+                new Product("phone", new BigDecimal(100.12), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone"),
+                new Product("audio", new BigDecimal(50.33), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio"),
+                new Product("speaker", new BigDecimal(30.23), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker"),
+                new Product("computer", new BigDecimal(50.33), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer")
+        );
+        productRepository.saveAll(products);
+
+
+        ArrayList<ProductWithQuantity> products1= Lists.newArrayList(
+                new ProductWithQuantity(products.get(0), 10),
+                new ProductWithQuantity(products.get(1), 5)
+        );
+        productWithQuantityRepository.saveAll(products1);
+
+        ArrayList<ProductWithQuantity> products2= Lists.newArrayList(
+                new ProductWithQuantity(products.get(2), 50),
+                new ProductWithQuantity(products.get(3), 15)
+        );
+        productWithQuantityRepository.saveAll(products2);
+
         List<Delivery> deliveries = Arrays.asList(
-                new Delivery(),
-                new Delivery()
+                new Delivery(products1),
+                new Delivery(products2)
         );
         deliveryRepository.saveAll(deliveries);
     }

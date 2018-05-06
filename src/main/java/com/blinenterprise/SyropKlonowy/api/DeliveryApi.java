@@ -41,7 +41,9 @@ public class DeliveryApi {
     @RequestMapping(path = "/delivery/getDelivery", method = {RequestMethod.GET})
     public Response<DeliveryView> getDelivery(@RequestParam(value = "id", required = true) Long id){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAllById(id).stream().map( delivery -> DeliveryView.from(delivery) ).collect(Collectors.toList()));
+            return new Response<DeliveryView>(true, deliveryService.findAllById(id).stream().map( delivery ->
+                    DeliveryView.from(delivery)
+            ).collect(Collectors.toList()));
         }
         catch (Exception e){
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
@@ -52,7 +54,9 @@ public class DeliveryApi {
     @RequestMapping(path = "/delivery/getAllDelivery", method = {RequestMethod.GET})
     public Response<DeliveryView> getAllDelivery(){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAll().stream().map( delivery -> DeliveryView.from(delivery) ).collect(Collectors.toList()));
+            return new Response<DeliveryView>(true, deliveryService.findAll().stream().map( delivery ->
+                    DeliveryView.from(delivery)
+            ).collect(Collectors.toList()));
         }
         catch (Exception e){
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));

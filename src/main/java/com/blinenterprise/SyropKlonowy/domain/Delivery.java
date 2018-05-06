@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -21,9 +22,10 @@ public class Delivery {
     @Temporal(TemporalType.DATE)
     private Date deliveryDate = new Date();
 
-    private ArrayList<ProductWithQuantity> listOfProducts;
+    @OneToMany
+    private List<ProductWithQuantity> listOfProducts;
 
-    public Delivery(ArrayList<ProductWithQuantity> listOfProducts) {
+    public Delivery(List<ProductWithQuantity> listOfProducts) {
         this.listOfProducts = listOfProducts;
     }
 }
