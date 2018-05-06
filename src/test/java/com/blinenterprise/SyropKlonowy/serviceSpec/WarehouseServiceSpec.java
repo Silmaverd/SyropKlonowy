@@ -67,7 +67,7 @@ public class WarehouseServiceSpec {
     public void shouldAddNewProduct() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
 
-        warehouseService.addSuppliedProduct(productWithQuantity, WAREHOUSE_NAME);
+        warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
 
         Assert.assertEquals(1, warehouse.getAmountOfProducts().size());
     }
@@ -78,9 +78,9 @@ public class WarehouseServiceSpec {
         ProductWithQuantity poductWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product2, PRODUCT_QUANTITY);
 
-        warehouseService.addSuppliedProduct(productWithQuantity, WAREHOUSE_NAME);
-        warehouseService.addSuppliedProduct(poductWithQuantity2, WAREHOUSE_NAME);
-        warehouseService.addSuppliedProduct(productWithQuantity3, WAREHOUSE_NAME);
+        warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
+        warehouseService.addProductWithQuantity(poductWithQuantity2, WAREHOUSE_NAME);
+        warehouseService.addProductWithQuantity(productWithQuantity3, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 30;
@@ -95,8 +95,8 @@ public class WarehouseServiceSpec {
         ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         SaleOrderedProduct saleOrderedProduct = new SaleOrderedProduct(product.getId(), 30);
 
-        warehouseService.addSuppliedProduct(productWithQuantity, WAREHOUSE_NAME);
-        warehouseService.addSuppliedProduct(productWithQuantity2, WAREHOUSE_NAME);
+        warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
+        warehouseService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
         warehouseService.removeSaleOrderedProduct(saleOrderedProduct, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
