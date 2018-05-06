@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
 import com.blinenterprise.SyropKlonowy.domain.Product;
@@ -36,8 +37,9 @@ public class DeliveryService {
             productWithQuantityService.save(productWithQuantity);
         });
         Delivery delivery = deliveryTemplate.build();
+        Warehouse targetWarehouse = warehouseService.findByName(warehouseName).orElseThrow(IllegalArgumentException::new);
         delivery.getListOfProducts().forEach(productWithQuantity -> {
-
+            targetWarehouse.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
         });
         deliveryRepository.save(delivery);
         deliveryTemplate = new DeliveryBuilder();

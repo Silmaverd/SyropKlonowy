@@ -28,8 +28,8 @@ public class ProductService {
         return Lists.newArrayList(productRepository.findAllByName(name));
     }
 
-    public void save(Product product){
-        productRepository.save(product);
+    public Product save(Product product){
+        return productRepository.save(product);
     }
 
     public Optional<Product> findByCode(String code) {
