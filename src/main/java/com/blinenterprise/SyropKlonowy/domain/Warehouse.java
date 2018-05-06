@@ -17,6 +17,9 @@ public class Warehouse {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(unique = true)
+    private String name;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<Long, AmountOfProduct> amountOfProducts = new HashMap<>();
 
@@ -40,5 +43,9 @@ public class Warehouse {
         } else {
             throw new IllegalArgumentException();
         }
+    }
+
+    public Warehouse(String name) {
+        this.name = name;
     }
 }

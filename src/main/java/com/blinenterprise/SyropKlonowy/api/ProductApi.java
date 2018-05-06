@@ -58,7 +58,7 @@ class ProductApi {
         Response<ProductView> response;
         try {
             ArrayList<Product> result = new ArrayList<>();
-            result.add(productService.findById(id));
+            productService.findById(id).ifPresent(result::add);
             response = new Response<ProductView>(true, ProductView.from(result));
         } catch (Exception e) {
             response = new Response<ProductView>(false, Optional.of(e.getMessage()));

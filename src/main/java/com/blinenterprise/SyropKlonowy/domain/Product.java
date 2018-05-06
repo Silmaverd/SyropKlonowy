@@ -28,11 +28,25 @@ public class Product {
 
     private String description;
 
-    public Product(String name, BigDecimal price, Category category, Date productionDate, String description) {
+    @Column(unique = true)
+    private String code;
+
+    public Product(String name, BigDecimal price, Category category, Date productionDate, String description, String code) {
         this.name = name;
         this.price = price;
         this.category = category;
         this.productionDate = productionDate;
         this.description = description;
+        this.code = code;
+    }
+
+    public Product(Long id, String name, BigDecimal price, Category category, Date productionDate, String description, String code) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.productionDate = productionDate;
+        this.description = description;
+        this.code = code;
     }
 }
