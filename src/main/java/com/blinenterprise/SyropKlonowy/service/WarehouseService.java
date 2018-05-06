@@ -2,6 +2,7 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class WarehouseService {
 
@@ -37,8 +39,8 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
-    public Warehouse addSuppliedProduct(SuppliedProduct suppliedProduct, String warehouseName) {
-        Product product = suppliedProduct.getProduct();
+    public void addProductWithQuantity(ProductWithQuantity productWithQuantity, String warehouseName) {
+        Product product = productWithQuantity.getProduct();
         Optional<Product> productInStockOptional = productService.findByCode(product.getCode());
         Product productInStock = productInStockOptional.orElseGet(() -> productService.save(product));
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
@@ -46,21 +48,24 @@ public class WarehouseService {
             Warehouse warehouse = warehouseOptional.get();
             warehouse.addAmountOfProduct(new AmountOfProduct(
                     productInStock.getId(),
-                    suppliedProduct.getQuanity()));
-            return saveOrUpdate(warehouse);
+                    productWithQuantity.getQuantity()));
+            saveOrUpdate(warehouse);
+            log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public Warehouse removeSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct, String warehouseName) {
+    public void removeSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct, String warehouseName) {
         Optional<Product> productInStockOptional = productService.findById(saleOrderedProduct.getProductId());
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {
-            warehouseOptional.get().removeAmountOfProduct(new AmountOfProduct(
+            Warehouse warehouse = warehouseOptional.get();
+            warehouse.removeAmountOfProduct(new AmountOfProduct(
                     productInStockOptional.get().getId(),
                     saleOrderedProduct.getQuantity()));
-            return saveOrUpdate(warehouseOptional.get());
+            saveOrUpdate(warehouse);
+            log.info("Removed product: " + saleOrderedProduct.getProductId() + " quantity: " + saleOrderedProduct.getQuantity());
         } else {
             throw new IllegalArgumentException();
         }
