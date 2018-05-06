@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/delivery")
@@ -28,11 +26,11 @@ public class DeliveryApi {
 
     @RequestMapping(path = "/delivery/addDelivery", method = {RequestMethod.PUT})
     @ApiOperation(value = "Add a delivery", response = Response.class)
-    public Response<DeliveryView> addDelivery(@RequestParam(value = "date in dd/MM/yyyy", required = true)String date){
+    public Response<DeliveryView> addDelivery(){
         try{
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            deliveryService.create(new Delivery(formatter.parse(date)));
-            return new Response<DeliveryView>(true, Optional.empty());
+            Delivery delivery = new Delivery();
+            deliveryService.createDelivery(delivery);
+            return new Response<DeliveryView>(true, Optional.of("id of delivery: "+delivery.getId()));
         }
         catch (Exception e){
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
@@ -43,14 +41,18 @@ public class DeliveryApi {
     @RequestMapping(path = "/delivery/getDelivery", method = {RequestMethod.GET})
     public Response<DeliveryView> getDelivery(@RequestParam(value = "id", required = true) Long id){
         try {
-            List<Delivery> listOfDelivery = deliveryService.findAllById(id);
-            List<DeliveryView> returnList = new ArrayList<>();
+            return new Response<DeliveryView>(true, deliveryService.findAllById(id).stream().map( delivery -> DeliveryView.from(delivery) ).collect(Collectors.toList()));
+        }
+        catch (Exception e){
+            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+        }
+    }
 
-            for (Delivery d : listOfDelivery) {
-                returnList.add(DeliveryView.from(d));
-            }
 
-            return new Response<DeliveryView>(true, returnList);
+    @RequestMapping(path = "/delivery/getAllDelivery", method = {RequestMethod.GET})
+    public Response<DeliveryView> getAllDelivery(){
+        try {
+            return new Response<DeliveryView>(true, deliveryService.findAll().stream().map( delivery -> DeliveryView.from(delivery) ).collect(Collectors.toList()));
         }
         catch (Exception e){
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));

@@ -15,9 +15,13 @@ public class DeliveryService {
     private DeliveryRepository deliveryRepository;
 
     public List<Delivery> findAllById(Long id) {
-        return Lists.newArrayList(deliveryRepository.findById(id).orElse(null));
+        return Lists.newArrayList(deliveryRepository.findAllById(id));
     }
 
-    public void create(Delivery delivery){deliveryRepository.save(delivery);}
+    public List<Delivery> findAll() {
+        return Lists.newArrayList(deliveryRepository.findAll());
+    }
+
+    public void createDelivery(Delivery delivery){deliveryRepository.save(delivery);}
 
 }

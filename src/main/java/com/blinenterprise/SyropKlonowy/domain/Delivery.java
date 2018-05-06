@@ -19,17 +19,11 @@ public class Delivery {
     private Long id;
 
     @Temporal(TemporalType.DATE)
-    private Date deliveryDate;
+    private Date deliveryDate = new Date();
 
     private ArrayList<ProductWithQuantity> listOfProducts;
 
-    public Delivery(Date deliveryDate) {
-        this.deliveryDate = deliveryDate;
-    }
-
-    public Delivery(Long id, Date deliveryDate, ArrayList<ProductWithQuantity> listOfProducts) {
-        this.id = id;
-        this.deliveryDate = deliveryDate;
+    public Delivery(ArrayList<ProductWithQuantity> listOfProducts) {
         this.listOfProducts = listOfProducts;
     }
 }

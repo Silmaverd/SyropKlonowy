@@ -1,9 +1,7 @@
 package com.blinenterprise.SyropKlonowy;
 
-import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Warehouse;
+import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
 import com.blinenterprise.SyropKlonowy.repository.ProductRepository;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,8 @@ public class DataLoader {
     private ProductRepository productRepository;
     @Autowired
     private WarehouseRepository warehouseRepository;
+    @Autowired
+    private DeliveryRepository deliveryRepository;
 
     public void loadData() {
         Warehouse warehouse = new Warehouse();
@@ -44,5 +44,11 @@ public class DataLoader {
 
         amountOfProducts.forEach(warehouse::addAmountOfProduct);
         warehouseRepository.save(warehouse);
+
+        List<Delivery> deliveries = Arrays.asList(
+                new Delivery(),
+                new Delivery()
+        );
+        deliveryRepository.saveAll(deliveries);
     }
 }
