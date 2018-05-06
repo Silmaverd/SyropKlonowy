@@ -1,6 +1,8 @@
 package com.blinenterprise.SyropKlonowy;
 
 import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
 import com.blinenterprise.SyropKlonowy.repository.ProductRepository;
 import com.blinenterprise.SyropKlonowy.repository.ProductWithQuantityRepository;

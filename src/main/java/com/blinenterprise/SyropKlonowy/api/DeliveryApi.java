@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Category;
+import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.web.Response;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,16 +24,39 @@ import java.util.stream.Collectors;
 public class DeliveryApi {
 
     @Autowired
-    DeliveryService deliveryService;
+    private DeliveryService deliveryService;
+
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
 
-    @RequestMapping(path = "/delivery/addDelivery", method = {RequestMethod.PUT})
-    @ApiOperation(value = "Add a delivery", response = Response.class)
-    public Response<DeliveryView> addDelivery(){
+    @RequestMapping(path = "/delivery/addProductToTemplate", method = {RequestMethod.PUT})
+    @ApiOperation(value = "Add a product to currently prepared delivery", response = Response.class)
+    public Response<DeliveryView> addProductToDeliveryTemplate (
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "price") BigDecimal price,
+            @RequestParam(value = "category") String category,
+            @RequestParam(value = "date in DD/MM/YYYY") String date,
+            @RequestParam(value = "description") String description,
+            @RequestParam(value = "quantity") int quantity
+    ){
         try{
-            Delivery delivery = new Delivery();
-            deliveryService.createDelivery(delivery);
-            return new Response<DeliveryView>(true, Optional.of("id of delivery: "+delivery.getId()));
+            Product product = new Product(name, price, Category.valueOf(category), dateFormatter.parse(date), description);
+            deliveryService.addProductToDelivery(product, quantity);
+            return new Response<DeliveryView>(true, Optional.empty());
+        }
+        catch (Exception e){
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/delivery/performDelivery", method = {RequestMethod.PUT})
+    @ApiOperation(value = "Save current delivery template as a delivery", response = Response.class)
+    public Response<DeliveryView> performDelivery(
+            @RequestParam(value = "warehouse name") String warehouseName
+    ){
+        try{
+            deliveryService.performDeliveryFromCurrentTemplate(warehouseName);
+            return new Response<DeliveryView>(true, Optional.empty());
         }
         catch (Exception e){
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
@@ -41,7 +67,7 @@ public class DeliveryApi {
     @RequestMapping(path = "/delivery/getDelivery", method = {RequestMethod.GET})
     public Response<DeliveryView> getDelivery(@RequestParam(value = "id", required = true) Long id){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAllById(id).stream().map( delivery ->
+            return new Response<DeliveryView>(true, deliveryService.findAllById(id).stream().map(delivery ->
                     DeliveryView.from(delivery)
             ).collect(Collectors.toList()));
         }
@@ -51,8 +77,8 @@ public class DeliveryApi {
     }
 
 
-    @RequestMapping(path = "/delivery/getAllDelivery", method = {RequestMethod.GET})
-    public Response<DeliveryView> getAllDelivery(){
+    @RequestMapping(path = "/delivery/getAllDeliveries", method = {RequestMethod.GET})
+    public Response<DeliveryView> getAllDeliveries(){
         try {
             return new Response<DeliveryView>(true, deliveryService.findAll().stream().map( delivery ->
                     DeliveryView.from(delivery)
@@ -62,5 +88,4 @@ public class DeliveryApi {
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
-
 }

@@ -27,5 +27,9 @@ public class ProductService{
         return Lists.newArrayList(productRepository.findAllByName(name));
     }
 
+    public void save(Product product){
+        productRepository.save(product);
+    }
+
 
 }
