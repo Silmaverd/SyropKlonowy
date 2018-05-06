@@ -73,7 +73,7 @@ public class WarehouseServiceSpec {
     }
 
     @Test
-    public void shouldIncrementProductQuantity() {
+    public void shouldIncreaseProductQuantity() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity poductWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product2, PRODUCT_QUANTITY);
