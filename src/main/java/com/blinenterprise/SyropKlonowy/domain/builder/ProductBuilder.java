@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public final class ProductBuilder {
+    private Long id;
     private String name;
     private BigDecimal price;
     private Category category;
@@ -19,6 +20,11 @@ public final class ProductBuilder {
 
     public static ProductBuilder aProduct() {
         return new ProductBuilder();
+    }
+
+    public ProductBuilder withId(Long id) {
+        this.id = id;
+        return this;
     }
 
     public ProductBuilder withName(String name) {
@@ -53,5 +59,9 @@ public final class ProductBuilder {
 
     public Product build() {
         return new Product(name, price, category, productionDate, description, code);
+    }
+
+    public Product buildWithId() {
+        return new Product(id, name, price, category, productionDate, description, code);
     }
 }

@@ -40,7 +40,13 @@ public class Product {
         this.code = code;
     }
 
-    public void setId(Long id) {
+    public Product(Long id, String name, BigDecimal price, Category category, Date productionDate, String description, String code) {
         this.id = id;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.productionDate = productionDate;
+        this.description = description;
+        this.code = code;
     }
 }
