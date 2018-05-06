@@ -65,22 +65,22 @@ public class WarehouseServiceSpec {
 
     @Test
     public void shouldAddNewProduct() {
-        SuppliedProduct suppliedProduct = new SuppliedProduct(product, PRODUCT_QUANTITY);
+        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
 
-        warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(productWithQuantity, WAREHOUSE_NAME);
 
         Assert.assertEquals(1, warehouse.getAmountOfProducts().size());
     }
 
     @Test
     public void shouldIncrementProductQuantity() {
-        SuppliedProduct suppliedProduct = new SuppliedProduct(product, PRODUCT_QUANTITY);
-        SuppliedProduct suppliedProduct2 = new SuppliedProduct(product, PRODUCT_QUANTITY);
-        SuppliedProduct suppliedProduct3 = new SuppliedProduct(product2, PRODUCT_QUANTITY);
+        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
+        ProductWithQuantity poductWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
+        ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product2, PRODUCT_QUANTITY);
 
-        warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
-        warehouseService.addSuppliedProduct(suppliedProduct2, WAREHOUSE_NAME);
-        warehouseService.addSuppliedProduct(suppliedProduct3, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(productWithQuantity, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(poductWithQuantity2, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(productWithQuantity3, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 30;
@@ -91,12 +91,12 @@ public class WarehouseServiceSpec {
 
     @Test
     public void shouldDecreaseProductQuantity() {
-        SuppliedProduct suppliedProduct = new SuppliedProduct(product, PRODUCT_QUANTITY);
-        SuppliedProduct suppliedProduct2 = new SuppliedProduct(product, PRODUCT_QUANTITY);
+        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
+        ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         SaleOrderedProduct saleOrderedProduct = new SaleOrderedProduct(product.getId(), 30);
 
-        warehouseService.addSuppliedProduct(suppliedProduct, WAREHOUSE_NAME);
-        warehouseService.addSuppliedProduct(suppliedProduct2, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(productWithQuantity, WAREHOUSE_NAME);
+        warehouseService.addSuppliedProduct(productWithQuantity2, WAREHOUSE_NAME);
         warehouseService.removeSaleOrderedProduct(saleOrderedProduct, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();

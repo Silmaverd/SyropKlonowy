@@ -39,8 +39,8 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
-    public void addSuppliedProduct(SuppliedProduct suppliedProduct, String warehouseName) {
-        Product product = suppliedProduct.getProduct();
+    public void addSuppliedProduct(ProductWithQuantity productWithQuantity, String warehouseName) {
+        Product product = productWithQuantity.getProduct();
         Optional<Product> productInStockOptional = productService.findByCode(product.getCode());
         Product productInStock = productInStockOptional.orElseGet(() -> productService.save(product));
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
@@ -48,9 +48,9 @@ public class WarehouseService {
             Warehouse warehouse = warehouseOptional.get();
             warehouse.addAmountOfProduct(new AmountOfProduct(
                     productInStock.getId(),
-                    suppliedProduct.getQuanity()));
+                    productWithQuantity.getQuantity()));
             saveOrUpdate(warehouse);
-            log.info("Added new product: " + suppliedProduct.getProduct().getId() + " quantity: " + suppliedProduct.getQuanity());
+            log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
         } else {
             throw new IllegalArgumentException();
         }
