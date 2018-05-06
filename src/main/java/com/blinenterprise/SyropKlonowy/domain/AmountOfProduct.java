@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -10,9 +11,11 @@ import javax.persistence.*;
 public class AmountOfProduct {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    private Long productId;
+    private Long id;
 
+    private Long productId;
     private Integer quantity;
 
     public AmountOfProduct(Long productId, Integer quantity) {
@@ -27,8 +30,7 @@ public class AmountOfProduct {
     public void decreaseQuantityBy(Integer quantity) {
         if (this.quantity >= quantity) {
             this.quantity -= quantity;
-        }
-        else{
+        } else {
             throw new IllegalArgumentException();
         }
     }

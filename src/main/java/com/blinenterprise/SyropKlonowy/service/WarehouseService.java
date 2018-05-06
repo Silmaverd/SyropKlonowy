@@ -1,6 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.Warehouse;
+import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +12,57 @@ import java.util.Optional;
 @Service
 public class WarehouseService {
 
-    @Autowired
     private WarehouseRepository warehouseRepository;
+    private ProductService productService;
 
-    public Warehouse findById(Long id) {
-        Optional<Warehouse> warehouseById = warehouseRepository.findById(id);
-        return warehouseById.orElse(null);
+    @Autowired
+    public WarehouseService(WarehouseRepository warehouseRepository, ProductService productService) {
+        this.warehouseRepository = warehouseRepository;
+        this.productService = productService;
+    }
+
+    public Optional<Warehouse> findById(Long id) {
+        return warehouseRepository.findById(id);
     }
 
     public List<Warehouse> findAll() {
         return Lists.newArrayList(warehouseRepository.findAll());
+    }
+
+    public Optional<Warehouse> findByName(String name) {
+        return warehouseRepository.findByName(name);
+    }
+
+    public Warehouse saveOrUpdate(Warehouse warehouse) {
+        return warehouseRepository.save(warehouse);
+    }
+
+    public Warehouse addSuppliedProduct(SuppliedProduct suppliedProduct, String warehouseName) {
+        Product product = suppliedProduct.getProduct();
+        Optional<Product> productInStockOptional = productService.findByCode(product.getCode());
+        Product productInStock = productInStockOptional.orElseGet(() -> productService.save(product));
+        Optional<Warehouse> warehouseOptional = findByName(warehouseName);
+        if (warehouseOptional.isPresent()) {
+            Warehouse warehouse = warehouseOptional.get();
+            warehouse.addAmountOfProduct(new AmountOfProduct(
+                    productInStock.getId(),
+                    suppliedProduct.getQuanity()));
+            return saveOrUpdate(warehouse);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public Warehouse removeSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct, String warehouseName) {
+        Optional<Product> productInStockOptional = productService.findById(saleOrderedProduct.getProductId());
+        Optional<Warehouse> warehouseOptional = findByName(warehouseName);
+        if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {
+            warehouseOptional.get().removeAmountOfProduct(new AmountOfProduct(
+                    productInStockOptional.get().getId(),
+                    saleOrderedProduct.getQuantity()));
+            return saveOrUpdate(warehouseOptional.get());
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 }
