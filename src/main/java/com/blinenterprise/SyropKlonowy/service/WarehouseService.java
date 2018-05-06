@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
