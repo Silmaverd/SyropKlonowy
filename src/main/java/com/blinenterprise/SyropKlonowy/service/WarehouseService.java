@@ -47,9 +47,7 @@ public class WarehouseService {
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent()) {
             Warehouse warehouse = warehouseOptional.get();
-            warehouse.addAmountOfProduct(new AmountOfProduct(
-                    productInStock.getId(),
-                    productWithQuantity.getQuantity()));
+            warehouse.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
             saveOrUpdate(warehouse);
             log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
         } else {
