@@ -7,6 +7,7 @@ import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.web.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/delivery")
 @Api
@@ -46,6 +48,7 @@ public class DeliveryApi {
             return new Response<DeliveryView>(true, Optional.empty());
         }
         catch (Exception e){
+            log.error("Failed to add product to a delivery template "+e.toString());
             return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
@@ -60,6 +63,7 @@ public class DeliveryApi {
             return new Response<DeliveryView>(true, Optional.empty());
         }
         catch (Exception e){
+            log.error("Failed to perform a delivery "+e.toString());
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
@@ -73,6 +77,7 @@ public class DeliveryApi {
             ).collect(Collectors.toList()));
         }
         catch (Exception e){
+            log.error("Failed to fetch deliveries "+e.toString());
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
@@ -86,6 +91,7 @@ public class DeliveryApi {
             ).collect(Collectors.toList()));
         }
         catch (Exception e){
+            log.error("Failed to fetch deliveries "+e.toString());
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
@@ -98,6 +104,7 @@ public class DeliveryApi {
             ).collect(Collectors.toList()));
         }
         catch (Exception e){
+            log.error("Failed to fetch deliveries "+e.toString());
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
@@ -111,6 +118,7 @@ public class DeliveryApi {
             ).collect(Collectors.toList()));
         }
         catch (Exception e){
+            log.error("Failed to fetch deliveries "+e.toString());
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
