@@ -1,12 +1,11 @@
 package com.blinenterprise.SyropKlonowy.view;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery;
-import com.blinenterprise.SyropKlonowy.domain.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.web.View;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

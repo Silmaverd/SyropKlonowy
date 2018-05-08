@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,5 +34,9 @@ public class AmountOfProduct {
         } else {
             throw new IllegalArgumentException();
         }
+    }
+
+    public static AmountOfProduct fromProductWithQuantity(ProductWithQuantity productWithQuantity){
+        return new AmountOfProduct(productWithQuantity.getId(), productWithQuantity.getQuantity());
     }
 }

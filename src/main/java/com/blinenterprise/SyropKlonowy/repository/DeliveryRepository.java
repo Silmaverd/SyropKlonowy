@@ -1,6 +1,6 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
