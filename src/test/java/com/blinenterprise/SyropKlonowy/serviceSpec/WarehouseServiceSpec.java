@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.serviceSpec;
 
 import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.builder.ProductBuilder;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import com.blinenterprise.SyropKlonowy.service.ProductService;

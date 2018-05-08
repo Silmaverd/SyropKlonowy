@@ -28,11 +28,12 @@ public class ProductService {
         return Lists.newArrayList(productRepository.findAllByName(name));
     }
 
+    public Product save(Product product){
+        return productRepository.save(product);
+    }
+
     public Optional<Product> findByCode(String code) {
         return productRepository.findByCode(code);
     }
 
-    public Product save(Product product) {
-        return productRepository.save(product);
-    }
 }

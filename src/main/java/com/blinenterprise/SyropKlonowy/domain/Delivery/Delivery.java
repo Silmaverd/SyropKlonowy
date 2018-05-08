@@ -1,11 +1,10 @@
-package com.blinenterprise.SyropKlonowy.domain;
+package com.blinenterprise.SyropKlonowy.domain.Delivery;
 
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +24,10 @@ public class Delivery {
     @OneToMany
     private List<ProductWithQuantity> listOfProducts;
 
-    public Delivery(List<ProductWithQuantity> listOfProducts) {
+    private Long targetWarehouseId;
+
+    public Delivery(List<ProductWithQuantity> listOfProducts, Long targetWarehouseId) {
         this.listOfProducts = listOfProducts;
+        this.targetWarehouseId = targetWarehouseId;
     }
 }
