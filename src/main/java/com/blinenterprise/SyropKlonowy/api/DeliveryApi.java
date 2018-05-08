@@ -35,7 +35,7 @@ public class DeliveryApi {
             @RequestParam(value = "name") String name,
             @RequestParam(value = "price") BigDecimal price,
             @RequestParam(value = "category") String category,
-            @RequestParam(value = "date in DD/MM/YYYY") String date,
+            @RequestParam(value = "production date in DD/MM/YYYY") String date,
             @RequestParam(value = "description") String description,
             @RequestParam(value = "quantity") int quantity,
             @RequestParam(value = "code") String code
@@ -65,7 +65,7 @@ public class DeliveryApi {
     }
 
 
-    @RequestMapping(path = "/delivery/getDelivery", method = {RequestMethod.GET})
+    @RequestMapping(path = "/delivery/getDeliveryWithId", method = {RequestMethod.GET})
     public Response<DeliveryView> getDelivery(@RequestParam(value = "id", required = true) Long id){
         try {
             return new Response<DeliveryView>(true, deliveryService.findAllById(id).stream().map(delivery ->
@@ -78,10 +78,35 @@ public class DeliveryApi {
     }
 
 
-    @RequestMapping(path = "/delivery/getAllDeliveries", method = {RequestMethod.GET})
-    public Response<DeliveryView> getAllDeliveries(){
+    @RequestMapping(path = "/delivery/getAllDeliveriesForWarehouseWithId", method = {RequestMethod.GET})
+    public Response<DeliveryView> getAllDeliveriesForWarehouseWithId(@RequestParam(value = "warehouse id") Long warehouseId){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAll().stream().map( delivery ->
+            return new Response<DeliveryView>(true, deliveryService.findAllForWarehouse(warehouseId).stream().map(delivery ->
+                    DeliveryView.from(delivery)
+            ).collect(Collectors.toList()));
+        }
+        catch (Exception e){
+            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+        }
+    }
+
+    @RequestMapping(path = "/delivery/getAllDeliveriesForWarehouseWithName", method = {RequestMethod.GET})
+    public Response<DeliveryView> getAllDeliveriesForWarehouseWithName(@RequestParam(value = "warehouse name") String warehouseName){
+        try {
+            return new Response<DeliveryView>(true, deliveryService.findAllForWarehouse(warehouseName.toUpperCase()).stream().map(delivery ->
+                    DeliveryView.from(delivery)
+            ).collect(Collectors.toList()));
+        }
+        catch (Exception e){
+            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+        }
+    }
+
+    @RequestMapping(path = "/delivery/getAllDeliveriesForWarehouseAfter", method = {RequestMethod.GET})
+    public Response<DeliveryView> getAllDeliveriesForWarehouseWithId(@RequestParam(value = "warehouse id") Long warehouseId,
+                                                                     @RequestParam(value = "date in DD/MM/YYYY") String date){
+        try {
+            return new Response<DeliveryView>(true, deliveryService.findAllForWarehouseFrom(warehouseId, dateFormatter.parse(date)).stream().map(delivery ->
                     DeliveryView.from(delivery)
             ).collect(Collectors.toList()));
         }
