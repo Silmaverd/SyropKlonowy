@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder;
+import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.SaleOrderView;
 import com.blinenterprise.SyropKlonowy.web.Response;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,8 @@ public class SaleOrderApi {
 
     @Autowired
     SaleOrderService saleOrderService;
+    @Autowired
+    OrderClosureExecutor orderClosureExecutor;
 
     @RequestMapping(path = "addOrder", method = {RequestMethod.PUT})
     @ApiOperation(value = "Add an order", response = Response.class)
@@ -36,9 +40,9 @@ public class SaleOrderApi {
         }
     }
 
-    @RequestMapping(path = "getOrder", method = {RequestMethod.GET})
+    @RequestMapping(path = "getOrderById", method = {RequestMethod.GET})
     @ApiOperation(value = "Display order by id", response = Response.class)
-    public Response<SaleOrderView> getOrder(@RequestParam(value = "id", required = true) Long id) {
+    public Response<SaleOrderView> getOrderById(@RequestParam(value = "id", required = true) Long id) {
         try {
             return new Response<SaleOrderView>(true, Arrays.asList(SaleOrderView.from(saleOrderService.findById(id))));
         } catch (Exception e) {
@@ -58,11 +62,19 @@ public class SaleOrderApi {
         }
     }
 
-    @RequestMapping(path = "closeOrder", method = {RequestMethod.PUT})
+    @RequestMapping(path = "closeOrderById", method = {RequestMethod.PUT})
     @ApiOperation(value = "Close an order by id", response = Response.class)
-    public Response<SaleOrderView> closeOrder(@RequestParam(value = "id", required = true) Long id) {
-        //Run closure command here, return the order view after it is closed.
-        return new Response<SaleOrderView>(false, Optional.of("nah"));
+    public Response<SaleOrderView> closeOrderById(@RequestParam(value = "id", required = true) Long id) {
+        try {
+            if (saleOrderService.findById(id) == null) {
+                return new Response<SaleOrderView>(false, Optional.of("Incorrect id."));
+            } else {
+                orderClosureExecutor.addClosureCommand(id, new Date());
+                return new Response<SaleOrderView>(true, Optional.of("Closure command queued."));
+            }
+        } catch (Exception e) {
+            return new Response<SaleOrderView>(false, Optional.of(e.getMessage()));
+        }
     }
 
 

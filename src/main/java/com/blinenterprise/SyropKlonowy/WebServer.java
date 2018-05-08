@@ -3,7 +3,6 @@ package com.blinenterprise.SyropKlonowy;
 import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureWorker;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +19,8 @@ public class WebServer implements CommandLineRunner {
     private DataLoader dataLoader;
     @Autowired
     private ConfigContainer configContainer;
+    @Autowired
+    private OrderClosureExecutor orderClosureExecutor;
 
     public static void main(String[] args) {
         SpringApplication.run(WebServer.class, args);
@@ -32,7 +33,6 @@ public class WebServer implements CommandLineRunner {
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
-        OrderClosureExecutor orderClosureExecutor = OrderClosureExecutor.getInstance();
 
         OrderClosureWorker orderClosureWorker = new OrderClosureWorker(orderClosureExecutor,
                 configContainer.getOrderAutoClosure());

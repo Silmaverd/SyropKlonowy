@@ -31,4 +31,14 @@ public class SaleOrderService {
     public void deleteById(Long id) {
         saleOrderRepository.deleteById(id);
     }
+
+    public SaleOrder closeById(Long id) {
+        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
+        if (orderById.isPresent()) {
+            orderById.get().closeOrder();
+            return saleOrderRepository.save(orderById.get());
+        } else {
+            return null;
+        }
+    }
 }

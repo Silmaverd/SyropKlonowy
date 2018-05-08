@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -29,6 +31,10 @@ public class SaleOrder {
 
     @Enumerated(EnumType.STRING)
     private SaleOrderStatus saleOrderStatus;
+
+    public void closeOrder() {
+        saleOrderStatus = SaleOrderStatus.CLOSED;
+    }
 
     public SaleOrder(Long clientId, Date dateOfOrder, List<SaleOrderedProduct> saleOrderedProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
         this.clientId = clientId;

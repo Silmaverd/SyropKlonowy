@@ -1,16 +1,24 @@
 package com.blinenterprise.SyropKlonowy.order;
 
+import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
+@Component
+@Scope(value = "singleton")
 public class OrderClosureExecutor {
 
-    static private OrderClosureExecutor orderClosureExecutor;
     private List<OrderClosureCommand> commands;
+
+    @Autowired
+    SaleOrderService saleOrderService;
 
     private OrderClosureExecutor(){
         commands = new LinkedList<>();
@@ -20,14 +28,7 @@ public class OrderClosureExecutor {
         commands.add(new OrderClosureCommand(closureDate, orderId));
     }
 
-    static public OrderClosureExecutor getInstance() {
-        if (orderClosureExecutor == null){
-            orderClosureExecutor = new OrderClosureExecutor();
-            return orderClosureExecutor;
-        } else {
-            return orderClosureExecutor;
-        }
-    }
+
 
     public void executeClosures(){
         Date now = new Date();
@@ -35,8 +36,7 @@ public class OrderClosureExecutor {
 
         commands.forEach(command -> {
             if (command.dateEquals(now)) {
-                System.out.println("CLOSING ORDER NR " + command.getOrderId());
-                //TODO: close orders after implementing order model
+                saleOrderService.closeById(command.getOrderId());
                 commandsToBeClosed.add(command);
             }
         });
