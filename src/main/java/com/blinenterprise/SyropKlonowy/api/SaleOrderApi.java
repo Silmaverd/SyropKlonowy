@@ -36,21 +36,21 @@ public class SaleOrderApi {
     @ApiOperation(value = "Add an order", response = Response.class)
     public Response<SaleOrderView> addOrder(
             @RequestParam(value = "clientId") Long clientId,
-            @ApiParam(value = "Date should be formatted as DD/MM/YYYY.") @RequestParam(value = "dateOfOrder") Date dateOfOrder,
-            @ApiParam(value = "saleOrderedProducts should be provided pairs of productId and Quantity separated by a single space") @RequestParam(value = "saleOrderedProducts") String[] saleOrderedProducts,
-            @RequestParam(value = "totalPrice") BigDecimal totalPrice,
-            @RequestParam(value = "saleOrderStatus") SaleOrderStatus saleOrderStatus
+            @ApiParam(value = "Date should be formatted as DD/MM/YYYY.")
+            @RequestParam(value = "dateOfOrder") Date dateOfOrder,
+            @ApiParam(value = "saleOrderedProducts should be provided pairs of productId and Quantity separated by a single space")
+            @RequestParam(value = "saleOrderedProducts") String[] saleOrderedProducts,
+            @RequestParam(value = "totalPrice") BigDecimal totalPrice
     ) {
         try {
             List<SaleOrderedProduct> saleOrderedProductsList = new ArrayList<SaleOrderedProduct>();
             log.error("saleOrderedProducts size is " + saleOrderedProducts.length);
-            Arrays.asList(saleOrderedProducts).forEach(prod -> log.error("" + prod));
             Arrays.asList(saleOrderedProducts).forEach(
                     prod -> saleOrderedProductsList.add(
                             new SaleOrderedProduct(
                                     Long.parseLong(prod.split("\\s")[0]),
                                     Integer.parseInt(prod.split("\\s")[1]))));
-            SaleOrder saleOrder = new SaleOrder(clientId, dateOfOrder, saleOrderedProductsList, totalPrice, saleOrderStatus);
+            SaleOrder saleOrder = new SaleOrder(clientId, dateOfOrder, saleOrderedProductsList, totalPrice, SaleOrderStatus.NEW);
             saleOrderService.create(saleOrder);
             return new Response<SaleOrderView>(true, Optional.empty());
         } catch (Exception e) {
@@ -61,9 +61,9 @@ public class SaleOrderApi {
 
     @RequestMapping(path = "getOrderById", method = {RequestMethod.GET})
     @ApiOperation(value = "Display order by id", response = Response.class)
-    public Response<SaleOrderView> getOrderById(@RequestParam(value = "id", required = true) Long id) {
+    public Response<SaleOrderView> getOrderById(@RequestParam(value = "orderId", required = true) Long orderId) {
         try {
-            return new Response<SaleOrderView>(true, Arrays.asList(SaleOrderView.from(saleOrderService.findById(id))));
+            return new Response<SaleOrderView>(true, Arrays.asList(SaleOrderView.from(saleOrderService.findById(orderId))));
         } catch (Exception e) {
             log.error("Failed to retrieve order. Exception:" + e.toString());
             return new Response<SaleOrderView>(false, Optional.of(e.toString()));
@@ -85,9 +85,9 @@ public class SaleOrderApi {
 
     @RequestMapping(path = "closeOrderById", method = {RequestMethod.PUT})
     @ApiOperation(value = "Close an order by id", response = Response.class)
-    public Response<SaleOrderView> closeOrderById(@RequestParam(value = "id", required = true) Long id) {
+    public Response<SaleOrderView> closeOrderById(@RequestParam(value = "orderId", required = true) Long orderId) {
         try {
-            orderClosureExecutor.addClosureCommand(id, new Date());
+            orderClosureExecutor.addClosureCommand(orderId, new Date());
             return new Response<SaleOrderView>(true, Optional.empty());
         } catch (Exception e) {
             log.error("Failed to close order. Exception:" + e.toString());
