@@ -6,13 +6,16 @@ import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 public class DeliveryService {
 
@@ -36,7 +39,9 @@ public class DeliveryService {
         deliveryTemplate.getListOfProducts().forEach(productWithQuantity -> {
             productWithQuantityService.save(productWithQuantity);
         });
-        Delivery delivery = deliveryTemplate.build();
+        Long destinationId = warehouseService.findByName(warehouseName).orElseThrow(IllegalArgumentException::new).getId();
+        Delivery delivery = deliveryTemplate.build(destinationId);
+        log.info("Performing delivery to warehouse " + warehouseName + " with id " + destinationId);
         delivery.getListOfProducts().forEach(productWithQuantity -> {
             warehouseService.addProductWithQuantity(productWithQuantity, warehouseName);
         });
@@ -48,7 +53,15 @@ public class DeliveryService {
         return Lists.newArrayList(deliveryRepository.findAllById(id));
     }
 
-    public List<Delivery> findAll() {
-        return Lists.newArrayList(deliveryRepository.findAll());
+    public List<Delivery> findAllForWarehouse(Long warehouseId) {
+        return Lists.newArrayList(deliveryRepository.findAllByTargetWarehouseId(warehouseId));
+    }
+
+    public List<Delivery> findAllForWarehouse(String warehouseName) {
+        return Lists.newArrayList(deliveryRepository.findAllByTargetWarehouseName(warehouseName));
+    }
+
+    public List<Delivery> findAllForWarehouseFrom(Long warehouseId, Date date) {
+        return Lists.newArrayList(deliveryRepository.findAllByTargetWarehouseIdAndDeliveryDateAfter(warehouseId, date));
     }
 }

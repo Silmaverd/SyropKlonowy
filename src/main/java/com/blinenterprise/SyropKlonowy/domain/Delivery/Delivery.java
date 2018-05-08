@@ -24,7 +24,10 @@ public class Delivery {
     @OneToMany
     private List<ProductWithQuantity> listOfProducts;
 
-    public Delivery(List<ProductWithQuantity> listOfProducts) {
+    private Long targetWarehouseId;
+
+    public Delivery(List<ProductWithQuantity> listOfProducts, Long targetWarehouseId) {
         this.listOfProducts = listOfProducts;
+        this.targetWarehouseId = targetWarehouseId;
     }
 }

@@ -1,23 +1,17 @@
 package com.blinenterprise.SyropKlonowy;
 
-import com.blinenterprise.SyropKlonowy.domain.*;
-import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
-import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
-
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Category;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.Warehouse;
-import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
 import com.blinenterprise.SyropKlonowy.repository.ProductRepository;
 import com.blinenterprise.SyropKlonowy.repository.ProductWithQuantityRepository;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
-import com.blinenterprise.SyropKlonowy.service.WarehouseService;
-import org.assertj.core.util.Lists;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Deprecated
 @Component
 public class DataLoader {
@@ -86,9 +81,11 @@ public class DataLoader {
         );
         productWithQuantityRepository.saveAll(products2);
 
+        Long warehouseId = warehouseRepository.findByName("MAIN").get().getId();
+        log.debug("Main warehouse id: "+warehouseId);
         List<Delivery> deliveries = Arrays.asList(
-                new Delivery(products1),
-                new Delivery(products2)
+                new Delivery(products1, warehouseId),
+                new Delivery(products2, warehouseId)
         );
         deliveryRepository.saveAll(deliveries);
     }
