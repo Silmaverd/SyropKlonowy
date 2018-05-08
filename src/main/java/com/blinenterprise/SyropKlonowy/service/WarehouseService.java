@@ -33,7 +33,7 @@ public class WarehouseService {
     }
 
     public Optional<Warehouse> findByName(String name) {
-        return warehouseRepository.findByName(name);
+        return warehouseRepository.findByName(name.toUpperCase());
     }
 
     public Warehouse saveOrUpdate(Warehouse warehouse) {

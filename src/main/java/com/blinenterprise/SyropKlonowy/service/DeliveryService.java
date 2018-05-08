@@ -37,9 +37,8 @@ public class DeliveryService {
             productWithQuantityService.save(productWithQuantity);
         });
         Delivery delivery = deliveryTemplate.build();
-        Warehouse targetWarehouse = warehouseService.findByName(warehouseName).orElseThrow(IllegalArgumentException::new);
         delivery.getListOfProducts().forEach(productWithQuantity -> {
-            targetWarehouse.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
+            warehouseService.addProductWithQuantity(productWithQuantity, warehouseName);
         });
         deliveryRepository.save(delivery);
         deliveryTemplate = new DeliveryBuilder();

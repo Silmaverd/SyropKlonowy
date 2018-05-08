@@ -40,11 +40,9 @@ public class DataLoader {
     private DeliveryRepository deliveryRepository;
     @Autowired
     private ProductWithQuantityRepository productWithQuantityRepository;
-    @Autowired
-    private WarehouseService warehouseService;
 
     public void loadData() {
-        Warehouse warehouse = new Warehouse("Main");
+        Warehouse warehouse = new Warehouse("MAIN");
         warehouseRepository.save(warehouse);
 
         List<Product> products = Arrays.asList(
