@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -32,7 +33,7 @@ public class WarehouseService {
     }
 
     public Optional<Warehouse> findByName(String name) {
-        return warehouseRepository.findByName(name);
+        return warehouseRepository.findByName(name.toUpperCase());
     }
 
     public Warehouse saveOrUpdate(Warehouse warehouse) {
@@ -46,9 +47,7 @@ public class WarehouseService {
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent()) {
             Warehouse warehouse = warehouseOptional.get();
-            warehouse.addAmountOfProduct(new AmountOfProduct(
-                    productInStock.getId(),
-                    productWithQuantity.getQuantity()));
+            warehouse.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
             saveOrUpdate(warehouse);
             log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
         } else {
