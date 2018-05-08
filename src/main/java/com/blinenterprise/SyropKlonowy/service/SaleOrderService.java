@@ -32,13 +32,13 @@ public class SaleOrderService {
         saleOrderRepository.deleteById(id);
     }
 
-    public SaleOrder closeById(Long id) {
+    public void closeById(Long id) {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
             orderById.get().closeOrder();
-            return saleOrderRepository.save(orderById.get());
+            saleOrderRepository.save(orderById.get());
         } else {
-            return null;
+            throw new IllegalArgumentException();
         }
     }
 }

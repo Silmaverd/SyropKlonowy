@@ -36,7 +36,11 @@ public class OrderClosureExecutor {
 
         commands.forEach(command -> {
             if (command.dateEquals(now)) {
-                saleOrderService.closeById(command.getOrderId());
+                try {
+                    saleOrderService.closeById(command.getOrderId());
+                } catch (Exception e) {
+                    log.error("Could not close order, exception: " + e.toString());
+                }
                 commandsToBeClosed.add(command);
             }
         });

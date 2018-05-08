@@ -33,7 +33,8 @@ public class SaleOrder {
     private SaleOrderStatus saleOrderStatus;
 
     public void closeOrder() {
-        saleOrderStatus = SaleOrderStatus.CLOSED;
+        if (saleOrderStatus == SaleOrderStatus.NEW) saleOrderStatus = SaleOrderStatus.CLOSED;
+        else throw new IllegalStateException();
     }
 
     public SaleOrder(Long clientId, Date dateOfOrder, List<SaleOrderedProduct> saleOrderedProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
