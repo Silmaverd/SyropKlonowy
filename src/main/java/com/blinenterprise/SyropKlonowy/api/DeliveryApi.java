@@ -7,6 +7,7 @@ import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.web.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,8 @@ public class DeliveryApi {
             @RequestParam(value = "name") String name,
             @RequestParam(value = "price") BigDecimal price,
             @RequestParam(value = "category") String category,
-            @RequestParam(value = "production date in DD/MM/YYYY") String date,
+            @ApiParam(value = "Date in DD/MM/YYYY")
+            @RequestParam(value = "production date") String date,
             @RequestParam(value = "description") String description,
             @RequestParam(value = "quantity") int quantity,
             @RequestParam(value = "code") String code
@@ -111,7 +113,8 @@ public class DeliveryApi {
 
     @RequestMapping(path = "/delivery/getAllDeliveriesForWarehouseAfter", method = {RequestMethod.GET})
     public Response<DeliveryView> getAllDeliveriesForWarehouseWithId(@RequestParam(value = "warehouse id") Long warehouseId,
-                                                                     @RequestParam(value = "date in DD/MM/YYYY") String date){
+                                                                     @ApiParam(value = "Date in DD/MM/YYYY")
+                                                                     @RequestParam(value = "date") String date){
         try {
             return new Response<DeliveryView>(true, deliveryService.findAllForWarehouseFrom(warehouseId, dateFormatter.parse(date)).stream().map(delivery ->
                     DeliveryView.from(delivery)
