@@ -75,7 +75,7 @@ public class SaleOrderApi {
 
     @RequestMapping(path = "getOrderById", method = {RequestMethod.GET})
     @ApiOperation(value = "Display order by id", response = Response.class)
-    public Response<SaleOrderView> getOrderById(@RequestParam(value = "orderId", required = true) Long orderId) {
+    public Response<SaleOrderView> getOrderById(@RequestParam(value = "orderId") Long orderId) {
         try {
             return new Response<SaleOrderView>(true, Arrays.asList(SaleOrderView.from(saleOrderService.findById(orderId))));
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class SaleOrderApi {
 
     @RequestMapping(path = "closeOrderById", method = {RequestMethod.PUT})
     @ApiOperation(value = "Close an order by id", response = Response.class)
-    public Response<SaleOrderView> closeOrderById(@RequestParam(value = "orderId", required = true) Long orderId) {
+    public Response<SaleOrderView> closeOrderById(@RequestParam(value = "orderId") Long orderId) {
         try {
             orderClosureExecutor.addClosureCommand(orderId, new Date());
             return new Response<SaleOrderView>(true, Optional.empty());
@@ -109,5 +109,18 @@ public class SaleOrderApi {
         }
     }
 
+    @RequestMapping(path = "sendOrderByIdToWarehouse", method = {RequestMethod.PUT})
+    @ApiOperation(value = "Send an order of a given ID to the named warehouse", response = Response.class)
+    public Response<SaleOrderView> sendOrderByIdToWarehouse(
+            @RequestParam(value = "orderId") Long orderId,
+            @RequestParam(value = "warehouseName") String warehouseName) {
+        try {
+            saleOrderService.sendOrderByIdToWarehouse(orderId, warehouseName);
+            return new Response<SaleOrderView>(true, Optional.empty());
+        } catch (Exception e) {
+            log.error("Failed to send order. Exception:" + e.toString());
+            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
+        }
+    }
 
 }

@@ -42,6 +42,14 @@ public class SaleOrder {
         }
     }
 
+    public void sendOrder() {
+        if (saleOrderStatus == SaleOrderStatus.PAID) {
+            saleOrderStatus = SaleOrderStatus.SENT;
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
     public boolean addSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct) {
         return saleOrderedProducts.add(saleOrderedProduct);
     }

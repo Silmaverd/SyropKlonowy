@@ -32,6 +32,9 @@ public class SaleOrderService {
     @Autowired
     private SaleOrderedProductService saleOrderedProductService;
 
+    @Autowired
+    private DeliveryService deliveryService;
+
     private SaleOrder currentSaleOrder = null;
 
     public void startOrder(Long clientId, Date dateOfOrder) {
@@ -64,6 +67,18 @@ public class SaleOrderService {
         saleOrderRepository.save(currentSaleOrder);
         log.info("Successfully confirmed new order with id:" + currentSaleOrder.getId());
         currentSaleOrder = null;
+    }
+
+    public void sendOrderByIdToWarehouse(Long orderId, String warehouseName) {
+        SaleOrder tempOrder = saleOrderRepository.findById(orderId).orElseThrow(IllegalArgumentException::new);
+        tempOrder.sendOrder();
+        tempOrder.getSaleOrderedProducts().forEach(saleOrderedProduct ->
+                deliveryService.addProductToDelivery(
+                        productService.findById(saleOrderedProduct.getProductId()).get(),
+                        saleOrderedProduct.getQuantity()));
+        deliveryService.performDeliveryFromCurrentTemplate(warehouseName);
+        saleOrderRepository.save(tempOrder);
+        log.info("Sale order with id:" + tempOrder.getId() + " has been successfully sent out to warehouse " + warehouseName);
     }
 
     public SaleOrder create(SaleOrder saleOrder) {
