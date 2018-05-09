@@ -55,9 +55,8 @@ public class SaleOrderService {
             throw new IllegalArgumentException();
         }
 
-        BigDecimal saleOrderedProductPrice = productService.findById(productId).get().getPrice().multiply(BigDecimal.valueOf(quantity));
         currentSaleOrder.addProductWithQuantity(new ProductWithQuantity(productService.findById(productId).get(), quantity));
-        currentSaleOrder.setTotalPrice(currentSaleOrder.getTotalPrice().add(saleOrderedProductPrice));
+        currentSaleOrder.recalculateTotalPrice();
     }
 
     @Transactional

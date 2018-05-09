@@ -1,10 +1,12 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.service.ProductService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -31,7 +33,6 @@ public class SaleOrder {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     List<ProductWithQuantity> productsWithQuantities = new ArrayList<>(0);
 
-    @Setter
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
@@ -62,6 +63,13 @@ public class SaleOrder {
             log.error("Could not close order, current order status is " + saleOrderStatus + ", must be "
                     + SaleOrderStatus.PAID);
         }
+    }
+
+    public void recalculateTotalPrice() {
+        totalPrice = new BigDecimal(0);
+        productsWithQuantities.forEach(productWithQuantity ->
+                totalPrice.add(productWithQuantity.getProduct().getPrice().multiply(
+                        BigDecimal.valueOf(productWithQuantity.getQuantity()))));
     }
 
     public boolean addProductWithQuantity(ProductWithQuantity productWithQuantity) {
