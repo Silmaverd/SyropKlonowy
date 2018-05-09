@@ -1,12 +1,9 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
-import com.blinenterprise.SyropKlonowy.service.ProductService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -51,7 +48,7 @@ public class SaleOrder {
         if (saleOrderStatus == SaleOrderStatus.NEW) {
             saleOrderStatus = SaleOrderStatus.PAID;
         } else {
-            log.error("Could not close order, current order status is " + saleOrderStatus + ", must be "
+            log.error("Could not pay order, current order status is " + saleOrderStatus + ", must be "
                     + SaleOrderStatus.NEW);
         }
     }
@@ -60,7 +57,7 @@ public class SaleOrder {
         if (saleOrderStatus == SaleOrderStatus.PAID) {
             saleOrderStatus = SaleOrderStatus.SENT;
         } else {
-            log.error("Could not close order, current order status is " + saleOrderStatus + ", must be "
+            log.error("Could not send order, current order status is " + saleOrderStatus + ", must be "
                     + SaleOrderStatus.PAID);
         }
     }

@@ -12,12 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -30,48 +25,41 @@ public class SaleOrderService {
     private ProductService productService;
 
     @Autowired
-    private ClientService clientService;
-
-    @Autowired
     private ProductWithQuantityService productWithQuantityService;
 
     @Autowired
     private OrderClosureExecutor orderClosureExecutor;
 
-    private SaleOrder currentSaleOrder = null;
+    private Map<Long, SaleOrder> temporarySaleOrders = new HashMap<>();
 
-    public void startOrder(Long clientId, Date dateOfOrder) {
-        if (clientService.findById(clientId) == null) {
-            throw new IllegalArgumentException();
-        }
-        currentSaleOrder = new SaleOrder(clientId, dateOfOrder, new LinkedList<>(), new BigDecimal(0), SaleOrderStatus.NEW);
-    }
 
-    public void addProductToCurrentOrder(Long productId, Integer quantity) {
-        if (currentSaleOrder == null) {
+    public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
+        if (!temporarySaleOrders.containsKey(clientId)) {
             throw new IllegalStateException();
         }
         if (!productService.findById(productId).isPresent()) {
             throw new IllegalArgumentException();
         }
 
-        currentSaleOrder.addProductWithQuantity(new ProductWithQuantity(productService.findById(productId).get(), quantity));
-        currentSaleOrder.recalculateTotalPrice();
+        temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<ProductWithQuantity>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
+
+        temporarySaleOrders.get(clientId).addProductWithQuantity(new ProductWithQuantity(productService.findById(productId).get(), quantity));
+        temporarySaleOrders.get(clientId).recalculateTotalPrice();
     }
 
     @Transactional
-    public void confirmCurrentOrder() {
-        if (currentSaleOrder == null || currentSaleOrder.getProductsWithQuantities().isEmpty()) {
+    public void confirmTempClientOrder(Long clientId) {
+        if (!temporarySaleOrders.containsKey(clientId) || temporarySaleOrders.get(clientId).getProductsWithQuantities().isEmpty()) {
             throw new IllegalStateException();
         }
-        currentSaleOrder.getProductsWithQuantities().forEach(productWithQuantity -> {
+        temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity -> {
             productWithQuantityService.save(productWithQuantity);
         });
         Date now = new Date();
-        orderClosureExecutor.addClosureCommand(currentSaleOrder.getId(), new Date(now.getTime() + (1000 * 60 * 60 * 24 * 30)));
-        saleOrderRepository.save(currentSaleOrder);
-        log.info("Successfully confirmed new order with id:" + currentSaleOrder.getId());
-        currentSaleOrder = null;
+        orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), new Date(now.getTime() + (1000 * 60 * 60 * 24 * 30)));
+        saleOrderRepository.save(temporarySaleOrders.get(clientId));
+        log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
+        temporarySaleOrders.put(clientId, null);
     }
 
     public SaleOrder create(SaleOrder saleOrder) {

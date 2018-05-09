@@ -6,7 +6,6 @@ import com.blinenterprise.SyropKlonowy.view.SaleOrderView;
 import com.blinenterprise.SyropKlonowy.web.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,30 +28,15 @@ public class SaleOrderApi {
     @Autowired
     OrderClosureExecutor orderClosureExecutor;
 
-    @RequestMapping(path = "startOrder", method = {RequestMethod.PUT})
-    @ApiOperation(value = "Start an order template for a client.", response = Response.class)
-    public Response<SaleOrderView> createOrder(
-            @RequestParam(value = "clientId") Long clientId,
-            @ApiParam(value = "Date should be formatted as DD/MM/YYYY.")
-            @RequestParam(value = "dateOfOrder") Date dateOfOrder
-    ) {
-        try {
-            saleOrderService.startOrder(clientId, dateOfOrder);
-            return new Response<SaleOrderView>(true, Optional.empty());
-        } catch (Exception e) {
-            log.error("Failed to create order. Exception:" + e.toString());
-            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
-        }
-    }
-
     @RequestMapping(path = "addProductToOrder", method = {RequestMethod.PUT})
-    @ApiOperation(value = "Add a product to the current order", response = Response.class)
-    public Response<SaleOrderView> addProductToOrder(
+    @ApiOperation(value = "Add a product to the client's basket", response = Response.class)
+    public Response<SaleOrderView> addProductToClientOrder(
+            @RequestParam(value = "clientId") Long clientId,
             @RequestParam(value = "productId") Long productId,
             @RequestParam(value = "quantity") Integer quantity
     ) {
         try {
-            saleOrderService.addProductToCurrentOrder(productId, quantity);
+            saleOrderService.addProductToOrder(clientId, productId, quantity);
             return new Response<SaleOrderView>(true, Optional.empty());
         } catch (Exception e) {
             log.error("Failed to add product. Exception:" + e.toString());
@@ -61,11 +44,13 @@ public class SaleOrderApi {
         }
     }
 
-    @RequestMapping(path = "confirmOrder", method = {RequestMethod.PUT})
-    @ApiOperation(value = "Confirm and save the current order.", response = Response.class)
-    public Response<SaleOrderView> confirmOrder() {
+    @RequestMapping(path = "confirmClientOrder", method = {RequestMethod.PUT})
+    @ApiOperation(value = "Confirm and save the client's basket.", response = Response.class)
+    public Response<SaleOrderView> confirmClientOrder(
+            @RequestParam(value = "clientId") Long clientId
+    ) {
         try {
-            saleOrderService.confirmCurrentOrder();
+            saleOrderService.confirmTempClientOrder(clientId);
             return new Response<SaleOrderView>(true, Optional.empty());
         } catch (Exception e) {
             log.error("Failed to confirm order. Exception:" + e.toString());
