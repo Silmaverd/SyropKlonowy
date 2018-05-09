@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -27,6 +28,9 @@ public class SaleOrderService {
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private SaleOrderedProductService saleOrderedProductService;
 
     private SaleOrder currentSaleOrder = null;
 
@@ -49,12 +53,15 @@ public class SaleOrderService {
         currentSaleOrder.setTotalPrice(currentSaleOrder.getTotalPrice().add(saleOrderedProductPrice));
     }
 
+    @Transactional
     public void confirmCurrentOrder() {
         if (currentSaleOrder == null || currentSaleOrder.getSaleOrderedProducts().isEmpty()) {
             throw new IllegalStateException();
         }
+        currentSaleOrder.getSaleOrderedProducts().forEach(saleOrderedProduct -> {
+            saleOrderedProductService.save(saleOrderedProduct);
+        });
         saleOrderRepository.save(currentSaleOrder);
-        //TODO: Create repository and service for saleOrderedProduct, and save the products at this point too.
         log.info("Successfully confirmed new order with id:" + currentSaleOrder.getId());
         currentSaleOrder = null;
     }
