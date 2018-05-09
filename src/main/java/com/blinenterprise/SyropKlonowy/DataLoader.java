@@ -112,14 +112,15 @@ public class DataLoader {
         Long productId2 = productRepository.findByCode("AVE32").get().getId();
         Long productId3 = productRepository.findByCode("135DGG2").get().getId();
 
-        List<SaleOrderedProduct> saleOrderedProducts1 = Arrays.asList(
-                new SaleOrderedProduct(productId1, 5)
+        List<ProductWithQuantity> productsWithQuantities1 = Arrays.asList(
+                new ProductWithQuantity(productRepository.findById(productId1).get(), 5)
         );
 
-        List<SaleOrderedProduct> saleOrderedProducts2 = Arrays.asList(
-                new SaleOrderedProduct(productId2, 10),
-                new SaleOrderedProduct(productId3, 20)
+        List<ProductWithQuantity> productsWithQuantities2 = Arrays.asList(
+                new ProductWithQuantity(productRepository.findById(productId2).get(), 10),
+                new ProductWithQuantity(productRepository.findById(productId3).get(), 20)
         );
+
 
         List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
         Long clientId1 = clientsByName1.get(0).getId();
@@ -127,8 +128,8 @@ public class DataLoader {
         Long clientId2 = clientsByName2.get(0).getId();
 
         List<SaleOrder> saleOrders = Arrays.asList(
-                new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), saleOrderedProducts1, new BigDecimal(400), SaleOrderStatus.NEW),
-                new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), saleOrderedProducts2, new BigDecimal(500), SaleOrderStatus.PAID)
+                new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), productsWithQuantities1, new BigDecimal(400), SaleOrderStatus.NEW),
+                new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), productsWithQuantities2, new BigDecimal(500), SaleOrderStatus.PAID)
         );
         saleOrderRepository.saveAll(saleOrders);
     }

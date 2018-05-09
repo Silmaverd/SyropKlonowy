@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +27,7 @@ public class SaleOrder {
     private Date dateOfOrder;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<SaleOrderedProduct> saleOrderedProducts = new ArrayList<>(0);
+    List<ProductWithQuantity> productsWithQuantities = new ArrayList<>(0);
 
     @Setter
     private BigDecimal totalPrice;
@@ -42,14 +43,14 @@ public class SaleOrder {
         }
     }
 
-    public boolean addSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct) {
-        return saleOrderedProducts.add(saleOrderedProduct);
+    public boolean addProductWithQuantity(ProductWithQuantity productWithQuantity) {
+        return productsWithQuantities.add(productWithQuantity);
     }
 
-    public SaleOrder(Long clientId, Date dateOfOrder, List<SaleOrderedProduct> saleOrderedProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
+    public SaleOrder(Long clientId, Date dateOfOrder, List<ProductWithQuantity> productsWithQuantities, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
         this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;
-        this.saleOrderedProducts = saleOrderedProducts;
+        this.productsWithQuantities = productsWithQuantities;
         this.totalPrice = totalPrice;
         this.saleOrderStatus = saleOrderStatus;
     }

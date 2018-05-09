@@ -55,16 +55,16 @@ public class WarehouseService {
         }
     }
 
-    public void removeSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct, String warehouseName) {
-        Optional<Product> productInStockOptional = productService.findById(saleOrderedProduct.getProductId());
+    public void removeSaleOrderedProduct(ProductWithQuantity productWithQuantity, String warehouseName) {
+        Optional<Product> productInStockOptional = productService.findById(productWithQuantity.getProduct().getId());
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {
             Warehouse warehouse = warehouseOptional.get();
             warehouse.removeAmountOfProduct(new AmountOfProduct(
                     productInStockOptional.get().getId(),
-                    saleOrderedProduct.getQuantity()));
+                    productWithQuantity.getQuantity()));
             saveOrUpdate(warehouse);
-            log.info("Removed product: " + saleOrderedProduct.getProductId() + " quantity: " + saleOrderedProduct.getQuantity());
+            log.info("Removed product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
         } else {
             throw new IllegalArgumentException();
         }

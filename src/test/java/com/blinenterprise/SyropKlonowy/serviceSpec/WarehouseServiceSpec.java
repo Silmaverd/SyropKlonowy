@@ -94,11 +94,11 @@ public class WarehouseServiceSpec {
     public void shouldDecreaseProductQuantity() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
-        SaleOrderedProduct saleOrderedProduct = new SaleOrderedProduct(product.getId(), 30);
+        ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
 
         warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
         warehouseService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
-        warehouseService.removeSaleOrderedProduct(saleOrderedProduct, WAREHOUSE_NAME);
+        warehouseService.removeSaleOrderedProduct(productWithQuantity3, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 0;

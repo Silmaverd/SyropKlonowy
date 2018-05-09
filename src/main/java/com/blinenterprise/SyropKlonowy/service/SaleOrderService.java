@@ -1,8 +1,8 @@
 package com.blinenterprise.SyropKlonowy.service;
 
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrderStatus;
-import com.blinenterprise.SyropKlonowy.domain.SaleOrderedProduct;
 import com.blinenterprise.SyropKlonowy.repository.SaleOrderRepository;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class SaleOrderService {
     private ClientService clientService;
 
     @Autowired
-    private SaleOrderedProductService saleOrderedProductService;
+    private ProductWithQuantityService productWithQuantityService;
 
     private SaleOrder currentSaleOrder = null;
 
@@ -38,7 +38,7 @@ public class SaleOrderService {
         if (clientService.findById(clientId) == null) {
             throw new IllegalArgumentException();
         }
-        currentSaleOrder = new SaleOrder(clientId, dateOfOrder, new LinkedList<SaleOrderedProduct>(), new BigDecimal(0), SaleOrderStatus.NEW);
+        currentSaleOrder = new SaleOrder(clientId, dateOfOrder, new LinkedList<>(), new BigDecimal(0), SaleOrderStatus.NEW);
     }
 
     public void addProductToCurrentOrder(Long productId, Integer quantity) {
@@ -48,18 +48,19 @@ public class SaleOrderService {
         if (!productService.findById(productId).isPresent()) {
             throw new IllegalArgumentException();
         }
+
         BigDecimal saleOrderedProductPrice = productService.findById(productId).get().getPrice().multiply(BigDecimal.valueOf(quantity));
-        currentSaleOrder.addSaleOrderedProduct(new SaleOrderedProduct(productId, quantity));
+        currentSaleOrder.addProductWithQuantity(new ProductWithQuantity(productService.findById(productId).get(), quantity));
         currentSaleOrder.setTotalPrice(currentSaleOrder.getTotalPrice().add(saleOrderedProductPrice));
     }
 
     @Transactional
     public void confirmCurrentOrder() {
-        if (currentSaleOrder == null || currentSaleOrder.getSaleOrderedProducts().isEmpty()) {
+        if (currentSaleOrder == null || currentSaleOrder.getProductsWithQuantities().isEmpty()) {
             throw new IllegalStateException();
         }
-        currentSaleOrder.getSaleOrderedProducts().forEach(saleOrderedProduct -> {
-            saleOrderedProductService.save(saleOrderedProduct);
+        currentSaleOrder.getProductsWithQuantities().forEach(productWithQuantity -> {
+            productWithQuantityService.save(productWithQuantity);
         });
         saleOrderRepository.save(currentSaleOrder);
         log.info("Successfully confirmed new order with id:" + currentSaleOrder.getId());
