@@ -2,6 +2,7 @@ package com.blinenterprise.SyropKlonowy.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class SaleOrder {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     List<SaleOrderedProduct> saleOrderedProducts = new ArrayList<>(0);
 
+    @Setter
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
@@ -38,6 +40,10 @@ public class SaleOrder {
         } else {
             throw new IllegalStateException();
         }
+    }
+
+    public boolean addSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct) {
+        return saleOrderedProducts.add(saleOrderedProduct);
     }
 
     public SaleOrder(Long clientId, Date dateOfOrder, List<SaleOrderedProduct> saleOrderedProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {

@@ -1,19 +1,63 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrderStatus;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrderedProduct;
 import com.blinenterprise.SyropKlonowy.repository.SaleOrderRepository;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class SaleOrderService {
 
     @Autowired
     private SaleOrderRepository saleOrderRepository;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ClientService clientService;
+
+    private SaleOrder currentSaleOrder = null;
+
+    public void startOrder(Long clientId, Date dateOfOrder) {
+        if (clientService.findById(clientId) == null) {
+            throw new IllegalArgumentException();
+        }
+        currentSaleOrder = new SaleOrder(clientId, dateOfOrder, new LinkedList<SaleOrderedProduct>(), new BigDecimal(0), SaleOrderStatus.NEW);
+    }
+
+    public void addProductToCurrentOrder(Long productId, Integer quantity) {
+        if (currentSaleOrder == null) {
+            throw new IllegalStateException();
+        }
+        if (!productService.findById(productId).isPresent()) {
+            throw new IllegalArgumentException();
+        }
+        BigDecimal saleOrderedProductPrice = productService.findById(productId).get().getPrice().multiply(BigDecimal.valueOf(quantity));
+        currentSaleOrder.addSaleOrderedProduct(new SaleOrderedProduct(productId, quantity));
+        currentSaleOrder.setTotalPrice(currentSaleOrder.getTotalPrice().add(saleOrderedProductPrice));
+    }
+
+    public void confirmCurrentOrder() {
+        if (currentSaleOrder == null || currentSaleOrder.getSaleOrderedProducts().isEmpty()) {
+            throw new IllegalStateException();
+        }
+        saleOrderRepository.save(currentSaleOrder);
+        //TODO: Create repository and service for saleOrderedProduct, and save the products at this point too.
+        log.info("Successfully confirmed new order with id:" + currentSaleOrder.getId());
+        currentSaleOrder = null;
+    }
 
     public SaleOrder create(SaleOrder saleOrder) {
         return saleOrderRepository.save(saleOrder);
