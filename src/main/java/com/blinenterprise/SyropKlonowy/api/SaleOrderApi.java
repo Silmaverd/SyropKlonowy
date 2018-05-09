@@ -48,7 +48,7 @@ public class SaleOrderApi {
 
     @RequestMapping(path = "addProductToOrder", method = {RequestMethod.PUT})
     @ApiOperation(value = "Add a product to the current order", response = Response.class)
-    public Response<SaleOrderView> createOrder(
+    public Response<SaleOrderView> addProductToOrder(
             @RequestParam(value = "productId") Long productId,
             @RequestParam(value = "quantity") Integer quantity
     ) {
@@ -96,18 +96,4 @@ public class SaleOrderApi {
             return new Response<SaleOrderView>(false, Optional.of(e.toString()));
         }
     }
-
-    @RequestMapping(path = "closeOrderById", method = {RequestMethod.PUT})
-    @ApiOperation(value = "Close an order by id", response = Response.class)
-    public Response<SaleOrderView> closeOrderById(@RequestParam(value = "orderId", required = true) Long orderId) {
-        try {
-            orderClosureExecutor.addClosureCommand(orderId, new Date());
-            return new Response<SaleOrderView>(true, Optional.empty());
-        } catch (Exception e) {
-            log.error("Failed to close order. Exception:" + e.toString());
-            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
-        }
-    }
-
-
 }

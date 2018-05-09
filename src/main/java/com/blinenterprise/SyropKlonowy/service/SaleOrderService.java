@@ -3,6 +3,7 @@ package com.blinenterprise.SyropKlonowy.service;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrderStatus;
+import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.repository.SaleOrderRepository;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +34,9 @@ public class SaleOrderService {
 
     @Autowired
     private ProductWithQuantityService productWithQuantityService;
+
+    @Autowired
+    private OrderClosureExecutor orderClosureExecutor;
 
     private SaleOrder currentSaleOrder = null;
 
@@ -62,6 +68,8 @@ public class SaleOrderService {
         currentSaleOrder.getProductsWithQuantities().forEach(productWithQuantity -> {
             productWithQuantityService.save(productWithQuantity);
         });
+        Date now = new Date();
+        orderClosureExecutor.addClosureCommand(currentSaleOrder.getId(), new Date(now.getTime() + (1000 * 60 * 60 * 24 * 30)));
         saleOrderRepository.save(currentSaleOrder);
         log.info("Successfully confirmed new order with id:" + currentSaleOrder.getId());
         currentSaleOrder = null;
