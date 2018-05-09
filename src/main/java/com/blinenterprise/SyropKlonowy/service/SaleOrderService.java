@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrderedProduct;
@@ -35,6 +36,9 @@ public class SaleOrderService {
     @Autowired
     private DeliveryService deliveryService;
 
+    @Autowired
+    private WarehouseService warehouseService;
+
     private SaleOrder currentSaleOrder = null;
 
     public void startOrder(Long clientId, Date dateOfOrder) {
@@ -63,6 +67,8 @@ public class SaleOrderService {
         }
         currentSaleOrder.getSaleOrderedProducts().forEach(saleOrderedProduct -> {
             saleOrderedProductService.save(saleOrderedProduct);
+            //TODO: Where do I get the warehouse name from? It doesn't seem like it should be handled by the order API.
+            warehouseService.removeSaleOrderedProduct(saleOrderedProduct, "MAIN");
         });
         saleOrderRepository.save(currentSaleOrder);
         log.info("Successfully confirmed new order with id:" + currentSaleOrder.getId());
@@ -102,6 +108,12 @@ public class SaleOrderService {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
             orderById.get().closeOrder();
+            //TODO: Same here. Where do I get the warehouse from?
+            orderById.get().getSaleOrderedProducts().forEach(saleOrderedProduct ->
+                    warehouseService.addProductWithQuantity(new ProductWithQuantity(
+                                    productService.findById(saleOrderedProduct.getProductId()).get(),
+                                    saleOrderedProduct.getQuantity()),
+                            "MAIN"));
             saleOrderRepository.save(orderById.get());
         } else {
             throw new IllegalArgumentException();
