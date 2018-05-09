@@ -36,7 +36,7 @@ public class DataLoader {
     @Autowired
     private SaleOrderRepository saleOrderRepository;
 
-    private void loadData() {
+    private void loadProductsWithQuantity() {
         Warehouse warehouse = new Warehouse("MAIN");
         warehouseRepository.save(warehouse);
 
@@ -121,8 +121,10 @@ public class DataLoader {
                 new SaleOrderedProduct(productId3, 20)
         );
 
-        Long clientId1 = clientRepository.findByName("Klient1").get().getId();
-        Long clientId2 = clientRepository.findByName("Klient3").get().getId();
+        List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
+        Long clientId1 = clientsByName1.get(0).getId();
+        List<Client> clientsByName2 = Lists.newArrayList(clientRepository.findAllByName("Klient3"));
+        Long clientId2 = clientsByName2.get(0).getId();
 
         List<SaleOrder> saleOrders = Arrays.asList(
                 new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), saleOrderedProducts1, new BigDecimal(400), SaleOrderStatus.NEW),
@@ -132,7 +134,7 @@ public class DataLoader {
     }
 
     public void loadTestDataBase() {
-        loadData();
+        loadProductsWithQuantity();
         loadDeliveries();
         loadClientsAndAddresses();
         loadSaleOrders();
