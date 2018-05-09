@@ -7,7 +7,6 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Getter
-@ToString
 @NoArgsConstructor
 @Entity
 public class Address {
