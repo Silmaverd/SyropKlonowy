@@ -64,9 +64,10 @@ public class SaleOrder {
 
     public void recalculateTotalPrice() {
         totalPrice = new BigDecimal(0);
-        productsWithQuantities.forEach(productWithQuantity ->
+        productsWithQuantities.forEach(productWithQuantity -> {
                 totalPrice.add(productWithQuantity.getProduct().getPrice().multiply(
-                        BigDecimal.valueOf(productWithQuantity.getQuantity()))));
+                        BigDecimal.valueOf(productWithQuantity.getQuantity())));
+        });
     }
 
     public boolean addProductWithQuantity(ProductWithQuantity productWithQuantity) {

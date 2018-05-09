@@ -34,15 +34,10 @@ public class SaleOrderService {
 
 
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
-        if (!temporarySaleOrders.containsKey(clientId)) {
-            throw new IllegalStateException();
-        }
+        temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<ProductWithQuantity>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
         if (!productService.findById(productId).isPresent()) {
             throw new IllegalArgumentException();
         }
-
-        temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<ProductWithQuantity>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
-
         temporarySaleOrders.get(clientId).addProductWithQuantity(new ProductWithQuantity(productService.findById(productId).get(), quantity));
         temporarySaleOrders.get(clientId).recalculateTotalPrice();
     }
