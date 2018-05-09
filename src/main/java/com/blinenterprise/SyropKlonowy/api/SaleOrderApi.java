@@ -96,4 +96,32 @@ public class SaleOrderApi {
             return new Response<SaleOrderView>(false, Optional.of(e.toString()));
         }
     }
+
+    @RequestMapping(path = "payOrderById", method = {RequestMethod.PUT})
+    @ApiOperation(value = "Set the order with given ID as paid", response = Response.class)
+    public Response<SaleOrderView> payOrderById(
+            @RequestParam(value = "orderId") Long orderId
+    ) {
+        try {
+            saleOrderService.payById(orderId);
+            return new Response<SaleOrderView>(true, Optional.empty());
+        } catch (Exception e) {
+            log.error("Failed to set order as paid. Exception:" + e.toString());
+            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "sendOrderById", method = {RequestMethod.PUT})
+    @ApiOperation(value = "Set the order with given ID as sent", response = Response.class)
+    public Response<SaleOrderView> sendOrderById(
+            @RequestParam(value = "orderId") Long orderId
+    ) {
+        try {
+            saleOrderService.sendById(orderId);
+            return new Response<SaleOrderView>(true, Optional.empty());
+        } catch (Exception e) {
+            log.error("Failed to set order as sent. Exception:" + e.toString());
+            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
+        }
+    }
 }

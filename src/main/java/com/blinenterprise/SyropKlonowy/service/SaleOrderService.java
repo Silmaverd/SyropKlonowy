@@ -101,4 +101,24 @@ public class SaleOrderService {
             throw new IllegalArgumentException();
         }
     }
+
+    public void payById(Long id) {
+        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
+        if (orderById.isPresent()) {
+            orderById.get().payOrder();
+            saleOrderRepository.save(orderById.get());
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void sendById(Long id) {
+        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
+        if (orderById.isPresent()) {
+            orderById.get().sendOrder();
+            saleOrderRepository.save(orderById.get());
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
 }

@@ -4,6 +4,7 @@ import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Getter
 @NoArgsConstructor
 @Entity
@@ -39,7 +41,26 @@ public class SaleOrder {
         if (saleOrderStatus == SaleOrderStatus.NEW) {
             saleOrderStatus = SaleOrderStatus.CLOSED;
         } else {
-            throw new IllegalStateException();
+            log.error("Could not close order, current order status is " + saleOrderStatus + ", must be "
+                    + SaleOrderStatus.NEW);
+        }
+    }
+
+    public void payOrder() {
+        if (saleOrderStatus == SaleOrderStatus.NEW) {
+            saleOrderStatus = SaleOrderStatus.PAID;
+        } else {
+            log.error("Could not close order, current order status is " + saleOrderStatus + ", must be "
+                    + SaleOrderStatus.NEW);
+        }
+    }
+
+    public void sendOrder() {
+        if (saleOrderStatus == SaleOrderStatus.PAID) {
+            saleOrderStatus = SaleOrderStatus.SENT;
+        } else {
+            log.error("Could not close order, current order status is " + saleOrderStatus + ", must be "
+                    + SaleOrderStatus.PAID);
         }
     }
 
