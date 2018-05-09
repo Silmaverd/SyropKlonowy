@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
@@ -18,7 +17,7 @@ public class Product {
     private Long id;
 
     private String name;
-    private BigDecimal price;
+    private String price;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -31,7 +30,7 @@ public class Product {
     @Column(unique = true)
     private String code;
 
-    public Product(String name, BigDecimal price, Category category, Date productionDate, String description, String code) {
+    public Product(String name, String price, Category category, Date productionDate, String description, String code) {
         this.name = name;
         this.price = price;
         this.category = category;
@@ -40,7 +39,7 @@ public class Product {
         this.code = code;
     }
 
-    public Product(Long id, String name, BigDecimal price, Category category, Date productionDate, String description, String code) {
+    public Product(Long id, String name, String price, Category category, Date productionDate, String description, String code) {
         this.id = id;
         this.name = name;
         this.price = price;

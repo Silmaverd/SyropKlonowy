@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class DeliveryApi {
     @ApiOperation(value = "Add a product to currently prepared delivery", response = Response.class)
     public Response<DeliveryView> addProductToDeliveryTemplate (
             @RequestParam(value = "name") String name,
-            @RequestParam(value = "price") BigDecimal price,
+            @RequestParam(value = "price") String price,
             @RequestParam(value = "category") String category,
             @ApiParam(value = "Date in DD/MM/YYYY")
             @RequestParam(value = "production date") String date,

@@ -35,7 +35,7 @@ public class WarehouseServiceSpec {
             .withCode("XXX3")
             .withDescription("Opis produktu")
             .withName("produkt1")
-            .withPrice(new BigDecimal(20))
+            .withPrice("20")
             .withProductionDate(Date.valueOf(LocalDate.now().minusWeeks(5)))
             .buildWithId();
 
@@ -45,7 +45,7 @@ public class WarehouseServiceSpec {
             .withCode("XXX5")
             .withDescription("Opis produktu")
             .withName("produkt2")
-            .withPrice(new BigDecimal(20))
+            .withPrice("20")
             .withProductionDate(Date.valueOf(LocalDate.now().minusWeeks(7)))
             .buildWithId();
 

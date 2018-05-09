@@ -6,7 +6,6 @@ import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.web.View;
 import lombok.Getter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,13 +15,13 @@ public class ProductView implements View {
 
 
     private String name;
-    private BigDecimal price;
+    private String price;
     private Category category;
     private Date productionDate;
     private String description;
 
 
-    private ProductView(String name, BigDecimal price, Category category, Date productionDate, String description) {
+    private ProductView(String name, String price, Category category, Date productionDate, String description) {
         this.name = name;
         this.price = price;
         this.category = category;
