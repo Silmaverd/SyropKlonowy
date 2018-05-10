@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain;
+package com.blinenterprise.SyropKlonowy.domain.SaleOrder;
 
 public enum SaleOrderStatus {
     NEW,

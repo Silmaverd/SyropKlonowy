@@ -3,6 +3,8 @@ package com.blinenterprise.SyropKlonowy;
 import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;

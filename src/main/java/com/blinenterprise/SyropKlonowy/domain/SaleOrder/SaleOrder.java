@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain;
+package com.blinenterprise.SyropKlonowy.domain.SaleOrder;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import lombok.Getter;
@@ -65,8 +65,8 @@ public class SaleOrder {
     public void recalculateTotalPrice() {
         totalPrice = new BigDecimal(0);
         productsWithQuantities.forEach(productWithQuantity -> {
-                totalPrice.add(productWithQuantity.getProduct().getPrice().multiply(
-                        BigDecimal.valueOf(productWithQuantity.getQuantity())));
+            totalPrice = totalPrice.add(productWithQuantity.getProduct().getPrice().multiply(
+                    BigDecimal.valueOf(productWithQuantity.getQuantity())));
         });
     }
 

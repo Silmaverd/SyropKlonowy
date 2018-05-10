@@ -1,8 +1,8 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
-import com.blinenterprise.SyropKlonowy.domain.SaleOrder;
-import com.blinenterprise.SyropKlonowy.domain.SaleOrderStatus;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.repository.SaleOrderRepository;
 import com.google.common.collect.Lists;
