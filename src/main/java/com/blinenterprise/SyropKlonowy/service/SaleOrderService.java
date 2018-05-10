@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -54,11 +55,7 @@ public class SaleOrderService {
         temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity -> {
             productWithQuantityService.save(productWithQuantity);
         });
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, configContainer.getOrderClosureDelayInDays());
-        Date closureDate = cal.getTime();
-
+        Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(configContainer.getOrderClosureDelayInDays()));
         orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), closureDate);
         saleOrderRepository.save(temporarySaleOrders.get(clientId));
         log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
