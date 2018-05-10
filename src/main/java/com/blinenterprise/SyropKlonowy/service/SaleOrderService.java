@@ -43,9 +43,7 @@ public class SaleOrderService {
 
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
         temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<ProductWithQuantity>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
-        if (!productService.findById(productId).isPresent()) {
-            throw new IllegalArgumentException();
-        }
+        productService.findById(productId).orElseThrow(IllegalArgumentException::new);
         temporarySaleOrders.get(clientId).addProductWithQuantity(new ProductWithQuantity(productService.findById(productId).get(), quantity));
         temporarySaleOrders.get(clientId).recalculateTotalPrice();
     }
