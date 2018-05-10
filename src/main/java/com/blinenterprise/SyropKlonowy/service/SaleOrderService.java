@@ -30,6 +30,9 @@ public class SaleOrderService {
     private ProductWithQuantityService productWithQuantityService;
 
     @Autowired
+    private WarehouseService warehouseService;
+
+    @Autowired
     private OrderClosureExecutor orderClosureExecutor;
 
     @Autowired
@@ -55,10 +58,16 @@ public class SaleOrderService {
         temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity -> {
             productWithQuantityService.save(productWithQuantity);
         });
+
         Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(configContainer.getOrderClosureDelayInDays()));
         orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), closureDate);
+
         saleOrderRepository.save(temporarySaleOrders.get(clientId));
         log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
+
+        temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity ->
+                warehouseService.removeProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName()));
+
         temporarySaleOrders.put(clientId, null);
     }
 
@@ -83,6 +92,8 @@ public class SaleOrderService {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
             orderById.get().closeOrder();
+            orderById.get().getProductsWithQuantities().forEach(productWithQuantity ->
+                    warehouseService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName()));
             saleOrderRepository.save(orderById.get());
         } else {
             throw new IllegalArgumentException();

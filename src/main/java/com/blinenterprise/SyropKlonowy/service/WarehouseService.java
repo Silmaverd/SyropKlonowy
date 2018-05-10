@@ -1,7 +1,9 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -55,7 +57,7 @@ public class WarehouseService {
         }
     }
 
-    public void removeSaleOrderedProduct(ProductWithQuantity productWithQuantity, String warehouseName) {
+    public void removeProductWithQuantity(ProductWithQuantity productWithQuantity, String warehouseName) {
         Optional<Product> productInStockOptional = productService.findById(productWithQuantity.getProduct().getId());
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {

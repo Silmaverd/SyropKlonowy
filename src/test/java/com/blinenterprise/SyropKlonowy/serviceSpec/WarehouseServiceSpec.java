@@ -1,7 +1,9 @@
 package com.blinenterprise.SyropKlonowy.serviceSpec;
 
-import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.Category;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.domain.builder.ProductBuilder;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
@@ -98,7 +100,7 @@ public class WarehouseServiceSpec {
 
         warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
         warehouseService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
-        warehouseService.removeSaleOrderedProduct(productWithQuantity3, WAREHOUSE_NAME);
+        warehouseService.removeProductWithQuantity(productWithQuantity3, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 0;
