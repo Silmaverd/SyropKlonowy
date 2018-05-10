@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
+import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
@@ -30,6 +31,9 @@ public class SaleOrderService {
     @Autowired
     private OrderClosureExecutor orderClosureExecutor;
 
+    @Autowired
+    private ConfigContainer configContainer;
+
     private Map<Long, SaleOrder> temporarySaleOrders = new HashMap<>();
 
 
@@ -50,8 +54,12 @@ public class SaleOrderService {
         temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity -> {
             productWithQuantityService.save(productWithQuantity);
         });
-        Date now = new Date();
-        orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), new Date(now.getTime() + (1000 * 60 * 60 * 24 * 30)));
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, configContainer.getOrderClosureDelayInDays());
+        Date closureDate = cal.getTime();
+
+        orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), closureDate);
         saleOrderRepository.save(temporarySaleOrders.get(clientId));
         log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
         temporarySaleOrders.put(clientId, null);

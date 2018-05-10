@@ -12,4 +12,10 @@ public class ConfigContainer {
 
     @Value("${sk.orderAutoClosure.enabled}")
     private Boolean orderAutoClosure;
+
+    @Value("MAIN")
+    private String mainWarehouseName;
+
+    @Value("30")
+    private Integer orderClosureDelayInDays;
 }
