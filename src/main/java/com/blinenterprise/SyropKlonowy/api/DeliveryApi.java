@@ -2,6 +2,7 @@ package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.money.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.web.Response;
@@ -35,7 +36,8 @@ public class DeliveryApi {
     @ApiOperation(value = "Add a product to currently prepared delivery", response = Response.class)
     public Response<DeliveryView> addProductToDeliveryTemplate (
             @RequestParam(value = "name") String name,
-            @RequestParam(value = "price") String price,
+            @RequestParam(value = "zl") Integer zl,
+            @RequestParam(value = "gr") Integer gr,
             @RequestParam(value = "category") String category,
             @ApiParam(value = "Date in DD/MM/YYYY")
             @RequestParam(value = "production date") String date,
@@ -44,7 +46,7 @@ public class DeliveryApi {
             @RequestParam(value = "code") String code
     ){
         try{
-            Product product = new Product(name, price, Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description, code);
+            Product product = new Product(name, MoneyConverter.getBigDecimal(zl, gr), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description, code);
             deliveryService.addProductToDelivery(product, quantity);
             return new Response<DeliveryView>(true, Optional.empty());
         }

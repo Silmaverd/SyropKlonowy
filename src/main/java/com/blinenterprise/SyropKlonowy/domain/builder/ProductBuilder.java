@@ -9,7 +9,7 @@ import java.util.Date;
 public final class ProductBuilder {
     private Long id;
     private String name;
-    private String price;
+    private BigDecimal price;
     private Category category;
     private Date productionDate;
     private String description;
@@ -32,7 +32,7 @@ public final class ProductBuilder {
         return this;
     }
 
-    public ProductBuilder withPrice(String price) {
+    public ProductBuilder withPrice(BigDecimal price) {
         this.price = price;
         return this;
     }

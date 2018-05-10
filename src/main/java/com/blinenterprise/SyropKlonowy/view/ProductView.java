@@ -3,6 +3,7 @@ package com.blinenterprise.SyropKlonowy.view;
 
 import com.blinenterprise.SyropKlonowy.domain.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.money.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.web.View;
 import lombok.Getter;
 
@@ -32,7 +33,7 @@ public class ProductView implements View {
     public static ProductView from(Product product) {
         return new ProductView(
                 product.getName(),
-                product.getPrice(),
+                MoneyConverter.getString(product.getPrice()),
                 product.getCategory(),
                 product.getProductionDate(),
                 product.getDescription());
@@ -41,11 +42,7 @@ public class ProductView implements View {
     public static List<ProductView> from(List<Product> products) {
         ArrayList<ProductView> productViewList = new ArrayList<ProductView>();
         for (Product product : products) {
-            ProductView pv = new ProductView(product.getName(),
-                    product.getPrice(),
-                    product.getCategory(),
-                    product.getProductionDate(),
-                    product.getDescription());
+            ProductView pv = from(product);
             productViewList.add(pv);
         }
         return productViewList;
