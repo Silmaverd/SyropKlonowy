@@ -88,8 +88,12 @@ public class SaleOrderApi {
             @RequestParam(value = "orderId") Long orderId
     ) {
         try {
-            saleOrderService.payById(orderId);
-            return new Response<SaleOrderView>(true, Optional.empty());
+            if (saleOrderService.payById(orderId)) {
+                return new Response<SaleOrderView>(true, Optional.empty());
+            } else {
+                return new Response<SaleOrderView>(false, Optional.of("Failed to set order as paid. Wrong state."));
+            }
+
         } catch (Exception e) {
             log.error("Failed to set order as paid. Exception:" + e.toString());
             return new Response<SaleOrderView>(false, Optional.of(e.toString()));
@@ -102,8 +106,11 @@ public class SaleOrderApi {
             @RequestParam(value = "orderId") Long orderId
     ) {
         try {
-            saleOrderService.sendById(orderId);
-            return new Response<SaleOrderView>(true, Optional.empty());
+            if (saleOrderService.sendById(orderId)) {
+                return new Response<SaleOrderView>(true, Optional.empty());
+            } else {
+                return new Response<SaleOrderView>(false, Optional.of("Failed to set order as sent. Wrong state."));
+            }
         } catch (Exception e) {
             log.error("Failed to set order as sent. Exception:" + e.toString());
             return new Response<SaleOrderView>(false, Optional.of(e.toString()));

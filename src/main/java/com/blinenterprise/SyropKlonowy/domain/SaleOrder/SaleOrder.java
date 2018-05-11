@@ -35,30 +35,36 @@ public class SaleOrder {
     @Enumerated(EnumType.STRING)
     private SaleOrderStatus saleOrderStatus;
 
-    public void closeOrder() {
+    public boolean closeOrder() {
         if (saleOrderStatus == SaleOrderStatus.NEW) {
             saleOrderStatus = SaleOrderStatus.CLOSED;
+            return true;
         } else {
             log.error("Could not close order, current order status is " + saleOrderStatus + ", must be "
                     + SaleOrderStatus.NEW);
+            return false;
         }
     }
 
-    public void payOrder() {
+    public boolean payOrder() {
         if (saleOrderStatus == SaleOrderStatus.NEW) {
             saleOrderStatus = SaleOrderStatus.PAID;
+            return true;
         } else {
             log.error("Could not pay order, current order status is " + saleOrderStatus + ", must be "
                     + SaleOrderStatus.NEW);
+            return false;
         }
     }
 
-    public void sendOrder() {
+    public boolean sendOrder() {
         if (saleOrderStatus == SaleOrderStatus.PAID) {
             saleOrderStatus = SaleOrderStatus.SENT;
+            return true;
         } else {
             log.error("Could not send order, current order status is " + saleOrderStatus + ", must be "
                     + SaleOrderStatus.PAID);
+            return false;
         }
     }
 

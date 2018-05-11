@@ -86,33 +86,46 @@ public class SaleOrderService {
         saleOrderRepository.deleteById(id);
     }
 
-    public void closeById(Long id) {
+    public boolean closeById(Long id) {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
-            orderById.get().closeOrder();
-            orderById.get().getProductsWithQuantities().forEach(productWithQuantity ->
-                    warehouseService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName()));
-            saleOrderRepository.save(orderById.get());
+            if (orderById.get().closeOrder()) {
+                orderById.get().getProductsWithQuantities().forEach(productWithQuantity ->
+                        warehouseService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName()));
+                saleOrderRepository.save(orderById.get());
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public void payById(Long id) {
+    public boolean payById(Long id) {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
-            orderById.get().payOrder();
-            saleOrderRepository.save(orderById.get());
+            if (orderById.get().payOrder()) {
+                saleOrderRepository.save(orderById.get());
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public void sendById(Long id) {
+    public boolean sendById(Long id) {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
-            orderById.get().sendOrder();
-            saleOrderRepository.save(orderById.get());
+            if (orderById.get().sendOrder()) {
+                saleOrderRepository.save(orderById.get());
+                return true;
+            } else {
+                return false;
+            }
+
         } else {
             throw new IllegalArgumentException();
         }
