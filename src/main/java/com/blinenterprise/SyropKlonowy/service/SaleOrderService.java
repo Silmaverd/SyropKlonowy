@@ -66,7 +66,7 @@ public class SaleOrderService {
         temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity ->
                 warehouseService.removeProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName()));
 
-        temporarySaleOrders.put(clientId, null);
+        temporarySaleOrders.remove(clientId);
     }
 
     public SaleOrder create(SaleOrder saleOrder) {
