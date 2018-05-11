@@ -36,8 +36,7 @@ public class DeliveryApi {
     @ApiOperation(value = "Add a product to currently prepared delivery", response = Response.class)
     public Response<DeliveryView> addProductToDeliveryTemplate (
             @RequestParam(value = "name") String name,
-            @RequestParam(value = "zl") Integer zl,
-            @RequestParam(value = "gr") Integer gr,
+            @RequestParam(value = "price") String price,
             @RequestParam(value = "category") String category,
             @ApiParam(value = "Date in DD/MM/YYYY")
             @RequestParam(value = "production date") String date,
@@ -46,7 +45,7 @@ public class DeliveryApi {
             @RequestParam(value = "code") String code
     ){
         try{
-            Product product = new Product(name, MoneyConverter.getBigDecimal(zl, gr), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description, code);
+            Product product = new Product(name, MoneyConverter.getBigDecimal(price), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description, code);
             deliveryService.addProductToDelivery(product, quantity);
             return new Response<DeliveryView>(true, Optional.empty());
         }

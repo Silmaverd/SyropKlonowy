@@ -5,8 +5,11 @@ import java.math.BigDecimal;
 
 public class MoneyConverter {
 
-    public static BigDecimal getBigDecimal(Integer price1, Integer price2){
-        return new BigDecimal(price1*100+price2);
+    public static BigDecimal getBigDecimal(String price){
+        price = price.replace("PLN", "");
+        String[] prices = price.split(",|\\.");
+
+        return new BigDecimal(Integer.valueOf(prices[0])*100+Integer.valueOf(prices[1]));
     }
 
     public static String getString(BigDecimal price){
