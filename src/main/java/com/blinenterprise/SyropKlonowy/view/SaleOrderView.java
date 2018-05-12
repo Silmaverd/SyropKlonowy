@@ -1,6 +1,6 @@
 package com.blinenterprise.SyropKlonowy.view;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.web.View;
@@ -17,15 +17,15 @@ public class SaleOrderView implements View {
     private Long id;
     private Long clientId;
     private Date dateOfOrder;
-    List<ProductWithQuantity> productsWithQuantities;
+    List<AmountOfProduct> amountsOfProducts;
     private BigDecimal totalPrice;
     private SaleOrderStatus saleOrderStatus;
 
-    private SaleOrderView(Long id, Long clientId, Date dateOfOrder, List<ProductWithQuantity> productsWithQuantities, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
+    private SaleOrderView(Long id, Long clientId, Date dateOfOrder, List<AmountOfProduct> amountsOfProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
         this.id = id;
         this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;
-        this.productsWithQuantities = productsWithQuantities;
+        this.amountsOfProducts = amountsOfProducts;
         this.totalPrice = totalPrice;
         this.saleOrderStatus = saleOrderStatus;
     }
@@ -35,7 +35,7 @@ public class SaleOrderView implements View {
                 saleOrder.getId(),
                 saleOrder.getClientId(),
                 saleOrder.getDateOfOrder(),
-                saleOrder.getProductsWithQuantities(),
+                saleOrder.getAmountsOfProducts(),
                 saleOrder.getTotalPrice(),
                 saleOrder.getSaleOrderStatus());
     }

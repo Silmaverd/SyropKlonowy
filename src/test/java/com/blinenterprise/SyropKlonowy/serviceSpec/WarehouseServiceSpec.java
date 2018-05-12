@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.serviceSpec;
 
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Category;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
@@ -96,11 +97,11 @@ public class WarehouseServiceSpec {
     public void shouldDecreaseProductQuantity() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
-        ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
+        AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 30);
 
         warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
         warehouseService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
-        warehouseService.removeProductWithQuantity(productWithQuantity3, WAREHOUSE_NAME);
+        warehouseService.removeAmountOfProduct(amountOfProduct, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 0;

@@ -1,7 +1,9 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
@@ -27,9 +29,6 @@ public class SaleOrderService {
     private ProductService productService;
 
     @Autowired
-    private ProductWithQuantityService productWithQuantityService;
-
-    @Autowired
     private WarehouseService warehouseService;
 
     @Autowired
@@ -38,24 +37,26 @@ public class SaleOrderService {
     @Autowired
     private ConfigContainer configContainer;
 
+    @Autowired
+    private AmountOfProductService amountOfProductService;
+
     private Map<Long, SaleOrder> temporarySaleOrders = new HashMap<>();
 
 
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
-        temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<ProductWithQuantity>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
-        productService.findById(productId).orElseThrow(IllegalArgumentException::new);
-        temporarySaleOrders.get(clientId).addProductWithQuantity(new ProductWithQuantity(productService.findById(productId).get(), quantity));
-        temporarySaleOrders.get(clientId).recalculateTotalPrice();
+        temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
+        Product productToAdd = productService.findById(productId).orElseThrow(IllegalArgumentException::new);
+        temporarySaleOrders.get(clientId).addAmountOfProduct(new AmountOfProduct(productToAdd.getId(), quantity));
+        temporarySaleOrders.get(clientId).recalculateTotalPrice(productService);
     }
 
     @Transactional
     public void confirmTempClientOrder(Long clientId) {
-        if (!temporarySaleOrders.containsKey(clientId) || temporarySaleOrders.get(clientId).getProductsWithQuantities().isEmpty()) {
+        if (!temporarySaleOrders.containsKey(clientId) || temporarySaleOrders.get(clientId).getAmountsOfProducts().isEmpty()) {
             throw new IllegalStateException();
         }
-        temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity -> {
-            productWithQuantityService.save(productWithQuantity);
-        });
+        temporarySaleOrders.get(clientId).getAmountsOfProducts().forEach(amountOfProduct ->
+                amountOfProductService.save(amountOfProduct));
 
         Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(configContainer.getOrderClosureDelayInDays()));
         orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), closureDate);
@@ -63,8 +64,8 @@ public class SaleOrderService {
         saleOrderRepository.save(temporarySaleOrders.get(clientId));
         log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
 
-        temporarySaleOrders.get(clientId).getProductsWithQuantities().forEach(productWithQuantity ->
-                warehouseService.removeProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName()));
+        temporarySaleOrders.get(clientId).getAmountsOfProducts().forEach(amountOfProduct ->
+                warehouseService.removeAmountOfProduct(amountOfProduct, configContainer.getMainWarehouseName()));
 
         temporarySaleOrders.remove(clientId);
     }
@@ -90,8 +91,12 @@ public class SaleOrderService {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
             if (orderById.get().closeOrder()) {
-                orderById.get().getProductsWithQuantities().forEach(productWithQuantity ->
-                        warehouseService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName()));
+                orderById.get().getAmountsOfProducts().forEach(amountOfProduct -> {
+                    ProductWithQuantity productWithQuantity = new ProductWithQuantity(
+                            productService.findById(amountOfProduct.getProductId()).orElseThrow(IllegalArgumentException::new),
+                            amountOfProduct.getQuantity());
+                    warehouseService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName());
+                });
                 saleOrderRepository.save(orderById.get());
                 return true;
             } else {

@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.domain.SaleOrder;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.service.ProductService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class SaleOrder {
     private Date dateOfOrder;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ProductWithQuantity> productsWithQuantities = new ArrayList<>(0);
+    List<AmountOfProduct> amountsOfProducts = new ArrayList<>(0);
 
     private BigDecimal totalPrice;
 
@@ -68,22 +69,24 @@ public class SaleOrder {
         }
     }
 
-    public void recalculateTotalPrice() {
+    public void recalculateTotalPrice(ProductService productService) {
         totalPrice = new BigDecimal(0);
-        productsWithQuantities.forEach(productWithQuantity -> {
-            totalPrice = totalPrice.add(productWithQuantity.getProduct().getPrice().multiply(
-                    BigDecimal.valueOf(productWithQuantity.getQuantity())));
-        });
+        log.debug("Successfully retrieved productPriceProvider instance.");
+        amountsOfProducts.forEach(amountOfProduct ->
+                totalPrice = totalPrice.add(productService.findById(
+                        amountOfProduct.getProductId()).get().getPrice().multiply(BigDecimal.valueOf(amountOfProduct.getQuantity()))));
+        log.debug("Successfully recalculated the price");
     }
 
-    public boolean addProductWithQuantity(ProductWithQuantity productWithQuantity) {
-        return productsWithQuantities.add(productWithQuantity);
+    public boolean addAmountOfProduct(AmountOfProduct amountOfProduct) {
+        log.debug("Successfully entered the addAmountOfProduct() method");
+        return amountsOfProducts.add(amountOfProduct);
     }
 
-    public SaleOrder(Long clientId, Date dateOfOrder, List<ProductWithQuantity> productsWithQuantities, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
+    public SaleOrder(Long clientId, Date dateOfOrder, List<AmountOfProduct> amountsOfProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
         this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;
-        this.productsWithQuantities = productsWithQuantities;
+        this.amountsOfProducts = amountsOfProducts;
         this.totalPrice = totalPrice;
         this.saleOrderStatus = saleOrderStatus;
     }
