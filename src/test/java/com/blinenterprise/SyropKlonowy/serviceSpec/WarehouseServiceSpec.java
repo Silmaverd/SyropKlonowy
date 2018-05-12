@@ -1,7 +1,10 @@
 package com.blinenterprise.SyropKlonowy.serviceSpec;
 
-import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.Category;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.domain.builder.ProductBuilder;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
@@ -94,11 +97,11 @@ public class WarehouseServiceSpec {
     public void shouldDecreaseProductQuantity() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
-        SaleOrderedProduct saleOrderedProduct = new SaleOrderedProduct(product.getId(), 30);
+        AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 30);
 
         warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
         warehouseService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
-        warehouseService.removeSaleOrderedProduct(saleOrderedProduct, WAREHOUSE_NAME);
+        warehouseService.removeAmountOfProduct(amountOfProduct, WAREHOUSE_NAME);
 
         Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 0;

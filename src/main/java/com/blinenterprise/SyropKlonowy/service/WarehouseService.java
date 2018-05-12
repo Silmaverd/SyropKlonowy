@@ -1,7 +1,9 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -55,16 +57,14 @@ public class WarehouseService {
         }
     }
 
-    public void removeSaleOrderedProduct(SaleOrderedProduct saleOrderedProduct, String warehouseName) {
-        Optional<Product> productInStockOptional = productService.findById(saleOrderedProduct.getProductId());
+    public void removeAmountOfProduct(AmountOfProduct amountOfProduct, String warehouseName) {
+        Optional<Product> productInStockOptional = productService.findById(amountOfProduct.getProductId());
         Optional<Warehouse> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {
             Warehouse warehouse = warehouseOptional.get();
-            warehouse.removeAmountOfProduct(new AmountOfProduct(
-                    productInStockOptional.get().getId(),
-                    saleOrderedProduct.getQuantity()));
+            warehouse.removeAmountOfProduct(amountOfProduct);
             saveOrUpdate(warehouse);
-            log.info("Removed product: " + saleOrderedProduct.getProductId() + " quantity: " + saleOrderedProduct.getQuantity());
+            log.info("Removed product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
         } else {
             throw new IllegalArgumentException();
         }

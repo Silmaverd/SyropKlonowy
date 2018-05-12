@@ -3,6 +3,8 @@ package com.blinenterprise.SyropKlonowy;
 import com.blinenterprise.SyropKlonowy.domain.*;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -112,14 +114,15 @@ public class DataLoader {
         Long productId2 = productRepository.findByCode("AVE32").get().getId();
         Long productId3 = productRepository.findByCode("135DGG2").get().getId();
 
-        List<SaleOrderedProduct> saleOrderedProducts1 = Arrays.asList(
-                new SaleOrderedProduct(productId1, 5)
+        List<AmountOfProduct> amountsOfProducts1 = Arrays.asList(
+                new AmountOfProduct(productId1, 5)
         );
 
-        List<SaleOrderedProduct> saleOrderedProducts2 = Arrays.asList(
-                new SaleOrderedProduct(productId2, 10),
-                new SaleOrderedProduct(productId3, 20)
+        List<AmountOfProduct> amountsOfProducts2 = Arrays.asList(
+                new AmountOfProduct(productId2, 10),
+                new AmountOfProduct(productId3, 20)
         );
+
 
         List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
         Long clientId1 = clientsByName1.get(0).getId();
@@ -127,8 +130,8 @@ public class DataLoader {
         Long clientId2 = clientsByName2.get(0).getId();
 
         List<SaleOrder> saleOrders = Arrays.asList(
-                new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), saleOrderedProducts1, new BigDecimal(400), SaleOrderStatus.NEW),
-                new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), saleOrderedProducts2, new BigDecimal(500), SaleOrderStatus.PAID)
+                new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), amountsOfProducts1, new BigDecimal(400), SaleOrderStatus.NEW),
+                new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), amountsOfProducts2, new BigDecimal(500), SaleOrderStatus.PAID)
         );
         saleOrderRepository.saveAll(saleOrders);
     }
