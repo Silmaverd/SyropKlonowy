@@ -18,13 +18,12 @@ public class DeliveryView implements View {
     private Date deliveryDate;
     private List<ProductWithQuantity> listOfProducts;
     private DeliveryStatus deliveryStatus;
-
     public static DeliveryView from(Delivery delivery){
         return new DeliveryView(
                 delivery.getId(),
                 delivery.getDeliveryDate(),
                 delivery.getListOfProducts(),
-                delivery.deliveryStatus);
+                delivery.getDeliveryStatus());
     }
 
     public DeliveryView(Long id, Date deliveryDate, List<ProductWithQuantity> listOfProducts, DeliveryStatus deliveryStatus) {

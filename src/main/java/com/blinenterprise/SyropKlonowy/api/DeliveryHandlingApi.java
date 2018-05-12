@@ -1,7 +1,7 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.processing.DeliveryProcessed;
-import com.blinenterprise.SyropKlonowy.domain.Delivery.processing.DeliveryProcessedView;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.processing.DeliveryInProcessView;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.web.Response;
 import io.swagger.annotations.Api;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -57,10 +56,9 @@ public class DeliveryHandlingApi {
     @ApiOperation(value = "Get delivery in progres with ID", response = Response.class)
     private Response getDeliveryInProgressWithId(@RequestParam("delivery id") Long id){
         try{
-            DeliveryProcessed deliveryProcessed = deliveryService.findDeliveryInProgressForId(id).get();
-            return new Response(true, Arrays.asList(
-                    DeliveryProcessedView.from(deliveryProcessed.getListOfProductsToDeliver(), deliveryProcessed.getDeliveryId()))
-            );
+            Delivery deliveryInProgress = deliveryService.findById(id).get();
+            DeliveryInProcessView deliveryInProcessView = DeliveryInProcessView.from(deliveryInProgress);
+            return new Response(true, Arrays.asList(deliveryInProcessView));
         } catch (Exception e){
             log.error("Could not retrive delivery in progress with given id " + e.toString());
             return new Response(false, Optional.of(e.toString()));
