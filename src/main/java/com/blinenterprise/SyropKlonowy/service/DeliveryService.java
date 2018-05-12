@@ -1,10 +1,12 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.processing.CurrentlyProccessedDeliveriesRepo;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.processing.DeliveryProcessed;
 import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.Warehouse;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -12,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -23,45 +24,67 @@ public class DeliveryService {
     private DeliveryRepository deliveryRepository;
 
     @Autowired
+    private CurrentlyProccessedDeliveriesRepo currentlyProccessedDeliveriesRepo;
+
+    @Autowired
     private ProductWithQuantityService productWithQuantityService;
 
     @Autowired
     private WarehouseService warehouseService;
 
-    private DeliveryBuilder deliveryTemplate = new DeliveryBuilder();
+    private DeliveryBuilder deliveryTemplate = DeliveryBuilder.aDelivery();
 
-    public void addProductToDelivery(Product product, int quantity){
+    public void addProductToDelivery(Product product, int quantity) {
         deliveryTemplate.addProduct(product, quantity);
     }
 
     @Transactional
-    public void performDeliveryFromCurrentTemplate(String warehouseName){
+    public void createDeliveryFromCurrentTemplate() {
         deliveryTemplate.getListOfProducts().forEach(productWithQuantity -> {
             productWithQuantityService.save(productWithQuantity);
         });
-        Long destinationId = warehouseService.findByName(warehouseName).orElseThrow(IllegalArgumentException::new).getId();
-        Delivery delivery = deliveryTemplate.build(destinationId);
-        log.info("Performing delivery to warehouse " + warehouseName + " with id " + destinationId);
-        delivery.getListOfProducts().forEach(productWithQuantity -> {
-            warehouseService.addProductWithQuantity(productWithQuantity, warehouseName);
-        });
+        Delivery delivery = deliveryTemplate.build();
         deliveryRepository.save(delivery);
         deliveryTemplate = new DeliveryBuilder();
     }
 
-    public List<Delivery> findAllById(Long id) {
-        return Lists.newArrayList(deliveryRepository.findAllById(id));
+    public Optional<Delivery> findById(Long id) {
+        return deliveryRepository.findById(id);
     }
 
-    public List<Delivery> findAllForWarehouse(Long warehouseId) {
-        return Lists.newArrayList(deliveryRepository.findAllByTargetWarehouseId(warehouseId));
+    public List<Delivery> findAllFrom(Date date) {
+        return Lists.newArrayList(deliveryRepository.findAllByDeliveryDateAfter(date));
     }
 
-    public List<Delivery> findAllForWarehouse(String warehouseName) {
-        return Lists.newArrayList(deliveryRepository.findAllByTargetWarehouseName(warehouseName));
+    public Optional<DeliveryProcessed> findDeliveryInProgressForId(Long id){
+        return currentlyProccessedDeliveriesRepo.findByDeliveryId(id);
     }
 
-    public List<Delivery> findAllForWarehouseFrom(Long warehouseId, Date date) {
-        return Lists.newArrayList(deliveryRepository.findAllByTargetWarehouseIdAndDeliveryDateAfter(warehouseId, date));
+    public void startHandlingADelivery(Long deliveryId) {
+        Delivery delivery = findById(deliveryId).get();
+        currentlyProccessedDeliveriesRepo.save(new DeliveryProcessed(getProductsCopy(delivery.getListOfProducts()), deliveryId));
+        delivery.deliveryStatus = DeliveryStatus.IN_PROCESS;
+        deliveryRepository.save(delivery);
+    }
+
+    public void placeProduct(Long deliveryId, Long productId, int amountPlaced, Long sectorId) {
+        DeliveryProcessed deliveryProcessed = currentlyProccessedDeliveriesRepo.findByDeliveryId(deliveryId).get();
+        Delivery delivery = findById(deliveryId).get();
+        /* TODO: PLACE PRODUCT AT RIGHT SECTOR */
+        deliveryProcessed.decreaseQuantityOfProduct(productId, amountPlaced);
+        if (deliveryProcessed.isDeliveryFinished()) {
+            currentlyProccessedDeliveriesRepo.delete(deliveryProcessed);
+            delivery.deliveryStatus = DeliveryStatus.DONE;
+            deliveryRepository.save(delivery);
+            log.info("Delivery completed!");
+        }
+    }
+
+    private List<ProductWithQuantity> getProductsCopy(List<ProductWithQuantity> productWithQuantities){
+        ArrayList<ProductWithQuantity> copy = new ArrayList<>();
+        Collections.copy(productWithQuantities, copy);
+        System.out.println(productWithQuantities);
+        System.out.println(copy);
+        return copy;
     }
 }

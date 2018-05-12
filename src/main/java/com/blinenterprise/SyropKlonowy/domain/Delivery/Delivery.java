@@ -3,6 +3,7 @@ package com.blinenterprise.SyropKlonowy.domain.Delivery;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,13 +22,14 @@ public class Delivery {
     @Temporal(TemporalType.DATE)
     private Date deliveryDate = new Date();
 
+    @Enumerated(EnumType.STRING)
+    public DeliveryStatus deliveryStatus;
+
     @OneToMany
     private List<ProductWithQuantity> listOfProducts;
 
-    private Long targetWarehouseId;
-
-    public Delivery(List<ProductWithQuantity> listOfProducts, Long targetWarehouseId) {
+    public Delivery(List<ProductWithQuantity> listOfProducts) {
+        this.deliveryStatus = DeliveryStatus.NEW;
         this.listOfProducts = listOfProducts;
-        this.targetWarehouseId = targetWarehouseId;
     }
 }

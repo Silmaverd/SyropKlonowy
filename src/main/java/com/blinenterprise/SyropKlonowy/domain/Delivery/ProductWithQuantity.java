@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
@@ -25,5 +26,27 @@ public class ProductWithQuantity {
     public ProductWithQuantity(Product product, int quantity) {
         this.product = product;
         this.quantity = quantity;
+    }
+
+    public boolean decreaseAmountBy(int amount){
+        if (this.quantity >= amount) {
+            this.quantity -= amount;
+            return true;
+        }
+        else return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductWithQuantity that = (ProductWithQuantity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }

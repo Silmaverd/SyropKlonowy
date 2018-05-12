@@ -24,7 +24,7 @@ public final class DeliveryBuilder {
         return this;
     }
 
-    public Delivery build(Long destinationWarehouseId){
-        return new Delivery(this.listOfProducts, destinationWarehouseId);
+    public Delivery build(){
+        return new Delivery(this.listOfProducts);
     }
 }
