@@ -40,12 +40,18 @@ public class SaleOrderService {
     @Autowired
     private AmountOfProductService amountOfProductService;
 
+    @Autowired
+    private ClientService clientService;
+
     private Map<Long, SaleOrder> temporarySaleOrders = new HashMap<>();
 
 
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
-        temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
+        if (clientService.findById(clientId) == null) {
+            throw new IllegalArgumentException();
+        }
         Product productToAdd = productService.findById(productId).orElseThrow(IllegalArgumentException::new);
+        temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
         temporarySaleOrders.get(clientId).addAmountOfProduct(new AmountOfProduct(productToAdd.getId(), quantity));
         temporarySaleOrders.get(clientId).recalculateTotalPrice(productService);
     }

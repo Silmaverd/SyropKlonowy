@@ -71,15 +71,12 @@ public class SaleOrder {
 
     public void recalculateTotalPrice(ProductService productService) {
         totalPrice = new BigDecimal(0);
-        log.debug("Successfully retrieved productPriceProvider instance.");
         amountsOfProducts.forEach(amountOfProduct ->
                 totalPrice = totalPrice.add(productService.findById(
                         amountOfProduct.getProductId()).get().getPrice().multiply(BigDecimal.valueOf(amountOfProduct.getQuantity()))));
-        log.debug("Successfully recalculated the price");
     }
 
     public boolean addAmountOfProduct(AmountOfProduct amountOfProduct) {
-        log.debug("Successfully entered the addAmountOfProduct() method");
         return amountsOfProducts.add(amountOfProduct);
     }
 
