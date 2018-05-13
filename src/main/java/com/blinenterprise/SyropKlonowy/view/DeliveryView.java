@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.view;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.web.View;
 import lombok.Getter;
@@ -14,22 +15,21 @@ import java.util.List;
 public class DeliveryView implements View {
 
     private Long id;
-    private Long destinationWarehouseId;
     private Date deliveryDate;
     private List<ProductWithQuantity> listOfProducts;
-
+    private DeliveryStatus deliveryStatus;
     public static DeliveryView from(Delivery delivery){
         return new DeliveryView(
                 delivery.getId(),
-                delivery.getTargetWarehouseId(),
                 delivery.getDeliveryDate(),
-                delivery.getListOfProducts());
+                delivery.getListOfProducts(),
+                delivery.getDeliveryStatus());
     }
 
-    public DeliveryView(Long id, Long destinationWarehouseId, Date deliveryDate, List<ProductWithQuantity> listOfProducts) {
+    public DeliveryView(Long id, Date deliveryDate, List<ProductWithQuantity> listOfProducts, DeliveryStatus deliveryStatus) {
         this.id = id;
-        this.destinationWarehouseId = destinationWarehouseId;
         this.deliveryDate = deliveryDate;
         this.listOfProducts = listOfProducts;
+        this.deliveryStatus = deliveryStatus;
     }
 }

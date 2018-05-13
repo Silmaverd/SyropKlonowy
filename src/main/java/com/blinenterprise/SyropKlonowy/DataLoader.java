@@ -85,8 +85,8 @@ public class DataLoader {
         Long warehouseId = warehouseRepository.findByName("MAIN").get().getId();
         log.debug("Main warehouse id: " + warehouseId);
         List<Delivery> deliveries = Arrays.asList(
-                new Delivery(products1, warehouseId),
-                new Delivery(products2, warehouseId)
+                new Delivery(products1),
+                new Delivery(products2)
         );
         deliveryRepository.saveAll(deliveries);
     }

@@ -7,19 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DeliveryRepository extends CrudRepository<Delivery, Long> {
-    List<Delivery> findAllById(Long id);
 
-    List<Delivery> findAllByTargetWarehouseId(Long id);
+    Optional<Delivery> findById(Long id);
 
-    @Query("SELECT delivery" +
-           " FROM Delivery delivery " +
-           " INNER JOIN Warehouse warehouse ON (delivery.targetWarehouseId = warehouse.id)" +
-           " WHERE 1=1" +
-           " AND warehouse.name = ?1")
-    List<Delivery> findAllByTargetWarehouseName(String name);
-
-    List<Delivery> findAllByTargetWarehouseIdAndDeliveryDateAfter(Long warehouseId, Date date);
+    List<Delivery> findAllByDeliveryDateAfter(Date date);
 }
