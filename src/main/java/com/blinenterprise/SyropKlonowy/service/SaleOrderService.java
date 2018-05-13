@@ -141,4 +141,15 @@ public class SaleOrderService {
             throw new IllegalArgumentException();
         }
     }
+
+    public List<SaleOrder> findAllByClientId(Long clientId){ return saleOrderRepository.findAllByClientId(clientId); }
+
+    public BigDecimal findMaxPriceInClientOrders(Long clienId){ return saleOrderRepository.findMaxPriceInClientOrders(clienId); }
+
+    public BigDecimal findMinPriceInClientOrders(Long clienId){ return saleOrderRepository.findMinPriceInClientOrders(clienId); }
+
+    public BigDecimal findMaxPriceOfProductInClientOrders(Long clienId){ return saleOrderRepository.findMaxPriceOfProductInClientOrders(clienId); }
+
+    public BigDecimal findAveragePriceOfProductInClientOrders(Long clientId){ return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId); }
+
 }
