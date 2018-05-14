@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class WarehouseSectorServiceSpec {
+public class WarehouseSectorServiceTest {
 
     private WarehouseSectorRepository warehouseSectorRepositoryMock = Mockito.mock(WarehouseSectorRepository.class);
     private ProductService productServiceMock = Mockito.mock(ProductService.class);
