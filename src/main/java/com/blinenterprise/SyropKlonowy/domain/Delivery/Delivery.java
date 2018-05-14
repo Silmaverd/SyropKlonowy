@@ -60,13 +60,13 @@ public class Delivery {
         }
     }
 
-    public void notifyProductPlacement(Long productId, int amount) {
-        ProductWithQuantity productWithQuantity = getProductWithQuantityForId(productId);
-        Integer givenProductAmount = productsPlacedInDeliveryProcess.get(productId);
+    public void notifyProductPlacement(Long productWithQuantityId, int amount) {
+        ProductWithQuantity productWithQuantity = getProductWithQuantityForId(productWithQuantityId);
+        Integer givenProductAmount = productsPlacedInDeliveryProcess.get(productWithQuantityId);
         if ((amount + givenProductAmount > productWithQuantity.getQuantity())
                 || (productsPlacedInDeliveryProcess == null))
             throw new IllegalArgumentException();
-        productsPlacedInDeliveryProcess.replace(productId, givenProductAmount + amount);
+        productsPlacedInDeliveryProcess.replace(productWithQuantityId, givenProductAmount + amount);
         if (isDeliveryFinished())
             deliveryStatus = DeliveryStatus.DONE;
 

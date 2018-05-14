@@ -1,7 +1,6 @@
 package com.blinenterprise.SyropKlonowy.view;
 
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.web.View;
 import lombok.Getter;

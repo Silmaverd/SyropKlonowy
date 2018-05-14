@@ -40,11 +40,11 @@ public class DeliveryHandlingApi {
     @RequestMapping(path = "/deliveryHandling/placeProduct", method = {RequestMethod.PUT})
     @ApiOperation(value = "Place product from a delivery", response = Response.class)
     private Response placeProduct(@RequestParam(value = "delivery id") Long deliveryId,
-                                  @RequestParam(value = "product id") Long productId,
+                                  @RequestParam(value = "productWithQuantity id") Long productWithQuantityId,
                                   @RequestParam(value = "amount placed") int amount,
                                   @RequestParam(value = "sector id") Long sectorId) {
         try{
-            deliveryService.placeProduct(deliveryId, productId, amount, sectorId);
+            deliveryService.placeProduct(deliveryId, productWithQuantityId, amount, sectorId);
             return new Response(true, Optional.empty());
         } catch (Exception e){
             log.error("Failed to place given amount of product in given sector " + e.toString());

@@ -2,6 +2,7 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +34,9 @@ public class DeliveryService {
 
     @Transactional
     public void createDeliveryFromCurrentTemplate() {
-        deliveryTemplate.getListOfProducts().forEach(productWithQuantity -> {
-            productWithQuantityService.save(productWithQuantity);
-        });
+        deliveryTemplate.getListOfProducts().forEach(productWithQuantity ->
+                productWithQuantityService.save(productWithQuantity)
+        );
         Delivery delivery = deliveryTemplate.build();
         deliveryRepository.save(delivery);
         deliveryTemplate = new DeliveryBuilder();
@@ -50,15 +51,21 @@ public class DeliveryService {
     }
 
     public void startHandlingADelivery(Long deliveryId) {
-        Delivery delivery = findById(deliveryId).get();
+        Delivery delivery = findById(deliveryId).orElseThrow(IllegalArgumentException::new);
         delivery.beginDelivering();
         deliveryRepository.save(delivery);
     }
 
-    public void placeProduct(Long deliveryId, Long productId, int amountPlaced, Long sectorId) {
-        Delivery delivery = findById(deliveryId).get();
-        /* TODO: PLACE PRODUCT AT RIGHT SECTOR */
-        delivery.notifyProductPlacement(productId, amountPlaced);
-        deliveryRepository.save(delivery);
+    @Transactional
+    public void placeProduct(Long deliveryId, Long productWithQuantityId, int amountPlaced, Long sectorId) {
+        Delivery delivery = findById(deliveryId).orElseThrow(IllegalArgumentException::new);
+        ProductWithQuantity productWithQuantityToPlace = delivery.getListOfProducts().stream()
+                .filter(productWithQuantity -> productWithQuantity.getId().equals(productWithQuantityId))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
+        if(warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace, amountPlaced, sectorId)) {
+            delivery.notifyProductPlacement(productWithQuantityId, amountPlaced);
+            deliveryRepository.save(delivery);
+        }
     }
 }

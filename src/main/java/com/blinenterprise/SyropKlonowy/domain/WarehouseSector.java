@@ -20,6 +20,8 @@ public class WarehouseSector {
     @Column(unique = true)
     private String name;
 
+    private final Integer maxAmountOfProducts = 50;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<Long, AmountOfProduct> amountOfProducts = new HashMap<>();
 
@@ -43,5 +45,9 @@ public class WarehouseSector {
 
     public WarehouseSector(String name) {
         this.name = name;
+    }
+
+    public boolean isPossibleToAddNewProducts(Integer amountOfNewProduct){
+        return amountOfNewProduct <= maxAmountOfProducts;
     }
 }

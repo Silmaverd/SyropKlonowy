@@ -54,24 +54,23 @@ public class WarehouseSectorServiceSpec {
 
     private final Integer PRODUCT_QUANTITY = 15;
 
-    private final String WAREHOUSE_NAME = "Main";
-    private WarehouseSector warehouseSector = new WarehouseSector(WAREHOUSE_NAME);
+    private final Long WAREHOUSE_SECTOR_ID = 1L;
+    private WarehouseSector warehouseSector = new WarehouseSector("MAIN");
 
     @Before
     public void setUp() {
-        Mockito.when(warehouseSectorRepositoryMock.findByName(any(String.class))).thenReturn(Optional.of(warehouseSector));
+        Mockito.when(warehouseSectorRepositoryMock.findById(any(Long.class))).thenReturn(Optional.of(warehouseSector));
         Mockito.when(productServiceMock.findByCode(product.getCode())).thenReturn(Optional.of(product));
         Mockito.when(productServiceMock.findByCode(product2.getCode())).thenReturn(Optional.of(product2));
         Mockito.when(warehouseSectorRepositoryMock.save(any(WarehouseSector.class))).thenReturn(warehouseSector);
         Mockito.when(productServiceMock.findById(any(Long.class))).thenReturn(Optional.of(product));
     }
 
-
     @Test
     public void shouldAddNewProduct() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
 
-        warehouseSectorService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
 
         Assert.assertEquals(1, warehouseSector.getAmountOfProducts().size());
     }
@@ -82,9 +81,9 @@ public class WarehouseSectorServiceSpec {
         ProductWithQuantity poductWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product2, PRODUCT_QUANTITY);
 
-        warehouseSectorService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
-        warehouseSectorService.addProductWithQuantity(poductWithQuantity2, WAREHOUSE_NAME);
-        warehouseSectorService.addProductWithQuantity(productWithQuantity3, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity,PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(poductWithQuantity2, PRODUCT_QUANTITY,WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity3, PRODUCT_QUANTITY,WAREHOUSE_SECTOR_ID);
 
         Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 30;
@@ -93,15 +92,27 @@ public class WarehouseSectorServiceSpec {
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
     }
 
+
+    @Test
+    public void shouldReturnFalseWhenIncreaseProductQuantityOverMaxAmountOfWarehouseSector() {
+        Integer overMaxAmountOfWarehouseSector = 100;
+        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, overMaxAmountOfWarehouseSector);
+
+        boolean result = warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, overMaxAmountOfWarehouseSector, WAREHOUSE_SECTOR_ID);
+
+        Assert.assertFalse(result);
+    }
+
+
     @Test
     public void shouldDecreaseProductQuantity() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 30);
 
-        warehouseSectorService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
-        warehouseSectorService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
-        warehouseSectorService.removeAmountOfProduct(amountOfProduct, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, PRODUCT_QUANTITY,WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity2, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.removeAmountOfProduct(amountOfProduct, WAREHOUSE_SECTOR_ID);
 
         Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 0;

@@ -42,26 +42,30 @@ public class WarehouseSectorService {
         return warehouseSectorRepository.save(warehouseSector);
     }
 
-    public void addProductWithQuantityBySectorId(ProductWithQuantity productWithQuantity, Long sectorId) {
+    public boolean addProductWithQuantityBySectorId(ProductWithQuantity productWithQuantity, Integer amountPlaced, Long sectorId) {
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        if (!warehouseSector.isPossibleToAddNewProducts(amountPlaced)) {
+            log.info("Couldn't add new product, sector has no place for that amount");
+            return false;
+        }
         Product product = productWithQuantity.getProduct();
         Product productInStock = productService.findByCode(product.getCode())
                 .orElseGet(() -> productService.save(product));
-        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        warehouseSector.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
-        saveOrUpdate(warehouseSector);
-        log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
+        if (productWithQuantity.decreaseAmountBy(amountPlaced)) {
+            warehouseSector.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), amountPlaced));
+            saveOrUpdate(warehouseSector);
+            log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
+            return true;
+        } else {
+            log.info("Couldn't add new product, wrong amount to place");
+            return false;
+        }
     }
 
-    public void removeAmountOfProduct(AmountOfProduct amountOfProduct, String warehouseName) {
-        Optional<Product> productInStockOptional = productService.findById(amountOfProduct.getProductId());
-        Optional<WarehouseSector> warehouseOptional = findByName(warehouseName);
-        if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {
-            WarehouseSector warehouseSector = warehouseOptional.get();
-            warehouseSector.removeAmountOfProduct(amountOfProduct);
-            saveOrUpdate(warehouseSector);
-            log.info("Removed product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
-        } else {
-            throw new IllegalArgumentException();
-        }
+    public void removeAmountOfProduct(AmountOfProduct amountOfProduct, Long sectorId) {
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        warehouseSector.removeAmountOfProduct(amountOfProduct);
+        saveOrUpdate(warehouseSector);
+        log.info("Removed product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
     }
 }

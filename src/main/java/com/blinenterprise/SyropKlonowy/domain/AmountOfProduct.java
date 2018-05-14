@@ -35,8 +35,4 @@ public class AmountOfProduct {
             throw new IllegalArgumentException();
         }
     }
-
-    public static AmountOfProduct fromProductWithQuantity(ProductWithQuantity productWithQuantity){
-        return new AmountOfProduct(productWithQuantity.getProduct().getId(), productWithQuantity.getQuantity());
-    }
 }
