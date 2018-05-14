@@ -23,10 +23,6 @@ public class WarehouseSector {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<Long, AmountOfProduct> amountOfProducts = new HashMap<>();
 
-    public WarehouseSector(Map<Long, AmountOfProduct> amountOfProducts) {
-        this.amountOfProducts = amountOfProducts;
-    }
-
     public void addAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         if (amountOfProducts.containsKey(productId)) {

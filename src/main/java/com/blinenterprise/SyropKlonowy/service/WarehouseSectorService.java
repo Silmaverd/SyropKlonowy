@@ -42,19 +42,14 @@ public class WarehouseSectorService {
         return warehouseSectorRepository.save(warehouseSector);
     }
 
-    public void addProductWithQuantity(ProductWithQuantity productWithQuantity, String warehouseName) {
+    public void addProductWithQuantityBySectorId(ProductWithQuantity productWithQuantity, Long sectorId) {
         Product product = productWithQuantity.getProduct();
-        Optional<Product> productInStockOptional = productService.findByCode(product.getCode());
-        Product productInStock = productInStockOptional.orElseGet(() -> productService.save(product));
-        Optional<WarehouseSector> warehouseOptional = findByName(warehouseName);
-        if (warehouseOptional.isPresent()) {
-            WarehouseSector warehouseSector = warehouseOptional.get();
-            warehouseSector.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
-            saveOrUpdate(warehouseSector);
-            log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
-        } else {
-            throw new IllegalArgumentException();
-        }
+        Product productInStock = productService.findByCode(product.getCode())
+                .orElseGet(() -> productService.save(product));
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        warehouseSector.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
+        saveOrUpdate(warehouseSector);
+        log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
     }
 
     public void removeAmountOfProduct(AmountOfProduct amountOfProduct, String warehouseName) {
