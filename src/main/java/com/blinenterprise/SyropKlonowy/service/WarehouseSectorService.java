@@ -3,8 +3,8 @@ package com.blinenterprise.SyropKlonowy.service;
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.Warehouse;
-import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
+import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,42 +15,42 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class WarehouseService {
+public class WarehouseSectorService {
 
-    private WarehouseRepository warehouseRepository;
+    private WarehouseSectorRepository warehouseSectorRepository;
     private ProductService productService;
 
     @Autowired
-    public WarehouseService(WarehouseRepository warehouseRepository, ProductService productService) {
-        this.warehouseRepository = warehouseRepository;
+    public WarehouseSectorService(WarehouseSectorRepository warehouseSectorRepository, ProductService productService) {
+        this.warehouseSectorRepository = warehouseSectorRepository;
         this.productService = productService;
     }
 
-    public Optional<Warehouse> findById(Long id) {
-        return warehouseRepository.findById(id);
+    public Optional<WarehouseSector> findById(Long id) {
+        return warehouseSectorRepository.findById(id);
     }
 
-    public List<Warehouse> findAll() {
-        return Lists.newArrayList(warehouseRepository.findAll());
+    public List<WarehouseSector> findAll() {
+        return Lists.newArrayList(warehouseSectorRepository.findAll());
     }
 
-    public Optional<Warehouse> findByName(String name) {
-        return warehouseRepository.findByName(name.toUpperCase());
+    public Optional<WarehouseSector> findByName(String name) {
+        return warehouseSectorRepository.findByName(name.toUpperCase());
     }
 
-    public Warehouse saveOrUpdate(Warehouse warehouse) {
-        return warehouseRepository.save(warehouse);
+    public WarehouseSector saveOrUpdate(WarehouseSector warehouseSector) {
+        return warehouseSectorRepository.save(warehouseSector);
     }
 
     public void addProductWithQuantity(ProductWithQuantity productWithQuantity, String warehouseName) {
         Product product = productWithQuantity.getProduct();
         Optional<Product> productInStockOptional = productService.findByCode(product.getCode());
         Product productInStock = productInStockOptional.orElseGet(() -> productService.save(product));
-        Optional<Warehouse> warehouseOptional = findByName(warehouseName);
+        Optional<WarehouseSector> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent()) {
-            Warehouse warehouse = warehouseOptional.get();
-            warehouse.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
-            saveOrUpdate(warehouse);
+            WarehouseSector warehouseSector = warehouseOptional.get();
+            warehouseSector.addAmountOfProduct(AmountOfProduct.fromProductWithQuantity(productWithQuantity));
+            saveOrUpdate(warehouseSector);
             log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
         } else {
             throw new IllegalArgumentException();
@@ -59,11 +59,11 @@ public class WarehouseService {
 
     public void removeAmountOfProduct(AmountOfProduct amountOfProduct, String warehouseName) {
         Optional<Product> productInStockOptional = productService.findById(amountOfProduct.getProductId());
-        Optional<Warehouse> warehouseOptional = findByName(warehouseName);
+        Optional<WarehouseSector> warehouseOptional = findByName(warehouseName);
         if (warehouseOptional.isPresent() && productInStockOptional.isPresent()) {
-            Warehouse warehouse = warehouseOptional.get();
-            warehouse.removeAmountOfProduct(amountOfProduct);
-            saveOrUpdate(warehouse);
+            WarehouseSector warehouseSector = warehouseOptional.get();
+            warehouseSector.removeAmountOfProduct(amountOfProduct);
+            saveOrUpdate(warehouseSector);
             log.info("Removed product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
         } else {
             throw new IllegalArgumentException();

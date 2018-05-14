@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Warehouse {
+public class WarehouseSector {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,7 +23,7 @@ public class Warehouse {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<Long, AmountOfProduct> amountOfProducts = new HashMap<>();
 
-    public Warehouse(Map<Long, AmountOfProduct> amountOfProducts) {
+    public WarehouseSector(Map<Long, AmountOfProduct> amountOfProducts) {
         this.amountOfProducts = amountOfProducts;
     }
 
@@ -45,7 +45,7 @@ public class Warehouse {
         }
     }
 
-    public Warehouse(String name) {
+    public WarehouseSector(String name) {
         this.name = name;
     }
 }

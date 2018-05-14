@@ -29,7 +29,7 @@ public class SaleOrderService {
     private ProductService productService;
 
     @Autowired
-    private WarehouseService warehouseService;
+    private WarehouseSectorService warehouseSectorService;
 
     @Autowired
     private OrderClosureExecutor orderClosureExecutor;
@@ -71,7 +71,7 @@ public class SaleOrderService {
         log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
 
         temporarySaleOrders.get(clientId).getAmountsOfProducts().forEach(amountOfProduct ->
-                warehouseService.removeAmountOfProduct(amountOfProduct, configContainer.getMainWarehouseName()));
+                warehouseSectorService.removeAmountOfProduct(amountOfProduct, configContainer.getMainWarehouseName()));
 
         temporarySaleOrders.remove(clientId);
     }
@@ -101,7 +101,7 @@ public class SaleOrderService {
                     ProductWithQuantity productWithQuantity = new ProductWithQuantity(
                             productService.findById(amountOfProduct.getProductId()).orElseThrow(IllegalArgumentException::new),
                             amountOfProduct.getQuantity());
-                    warehouseService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName());
+                    warehouseSectorService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName());
                 });
                 saleOrderRepository.save(orderById.get());
                 return true;

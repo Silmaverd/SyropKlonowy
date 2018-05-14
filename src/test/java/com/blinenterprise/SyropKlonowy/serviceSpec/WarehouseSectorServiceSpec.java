@@ -4,11 +4,11 @@ import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Category;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.Warehouse;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.domain.builder.ProductBuilder;
-import com.blinenterprise.SyropKlonowy.repository.WarehouseRepository;
+import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
-import com.blinenterprise.SyropKlonowy.service.WarehouseService;
+import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,11 +26,11 @@ import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class WarehouseServiceSpec {
+public class WarehouseSectorServiceSpec {
 
-    private WarehouseRepository warehouseRepositoryMock = Mockito.mock(WarehouseRepository.class);
+    private WarehouseSectorRepository warehouseSectorRepositoryMock = Mockito.mock(WarehouseSectorRepository.class);
     private ProductService productServiceMock = Mockito.mock(ProductService.class);
-    private WarehouseService warehouseService = new WarehouseService(warehouseRepositoryMock, productServiceMock);
+    private WarehouseSectorService warehouseSectorService = new WarehouseSectorService(warehouseSectorRepositoryMock, productServiceMock);
 
     private Product product = ProductBuilder.aProduct()
             .withId(1L)
@@ -55,14 +55,14 @@ public class WarehouseServiceSpec {
     private final Integer PRODUCT_QUANTITY = 15;
 
     private final String WAREHOUSE_NAME = "Main";
-    private Warehouse warehouse = new Warehouse(WAREHOUSE_NAME);
+    private WarehouseSector warehouseSector = new WarehouseSector(WAREHOUSE_NAME);
 
     @Before
     public void setUp() {
-        Mockito.when(warehouseRepositoryMock.findByName(any(String.class))).thenReturn(Optional.of(warehouse));
+        Mockito.when(warehouseSectorRepositoryMock.findByName(any(String.class))).thenReturn(Optional.of(warehouseSector));
         Mockito.when(productServiceMock.findByCode(product.getCode())).thenReturn(Optional.of(product));
         Mockito.when(productServiceMock.findByCode(product2.getCode())).thenReturn(Optional.of(product2));
-        Mockito.when(warehouseRepositoryMock.save(any(Warehouse.class))).thenReturn(warehouse);
+        Mockito.when(warehouseSectorRepositoryMock.save(any(WarehouseSector.class))).thenReturn(warehouseSector);
         Mockito.when(productServiceMock.findById(any(Long.class))).thenReturn(Optional.of(product));
     }
 
@@ -71,9 +71,9 @@ public class WarehouseServiceSpec {
     public void shouldAddNewProduct() {
         ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
 
-        warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
 
-        Assert.assertEquals(1, warehouse.getAmountOfProducts().size());
+        Assert.assertEquals(1, warehouseSector.getAmountOfProducts().size());
     }
 
     @Test
@@ -82,14 +82,14 @@ public class WarehouseServiceSpec {
         ProductWithQuantity poductWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product2, PRODUCT_QUANTITY);
 
-        warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
-        warehouseService.addProductWithQuantity(poductWithQuantity2, WAREHOUSE_NAME);
-        warehouseService.addProductWithQuantity(productWithQuantity3, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantity(poductWithQuantity2, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantity(productWithQuantity3, WAREHOUSE_NAME);
 
-        Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
+        Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 30;
 
-        Assert.assertEquals(2, warehouse.getAmountOfProducts().size());
+        Assert.assertEquals(2, warehouseSector.getAmountOfProducts().size());
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
     }
 
@@ -99,11 +99,11 @@ public class WarehouseServiceSpec {
         ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 30);
 
-        warehouseService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
-        warehouseService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
-        warehouseService.removeAmountOfProduct(amountOfProduct, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantity(productWithQuantity, WAREHOUSE_NAME);
+        warehouseSectorService.addProductWithQuantity(productWithQuantity2, WAREHOUSE_NAME);
+        warehouseSectorService.removeAmountOfProduct(amountOfProduct, WAREHOUSE_NAME);
 
-        Integer actualProductQuantity = warehouse.getAmountOfProducts().get(product.getId()).getQuantity();
+        Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 0;
 
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
