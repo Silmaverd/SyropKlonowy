@@ -41,9 +41,10 @@ public class WarehouseSectorApi {
 
     @RequestMapping(path = "/warehouseSector/addWarehouseSector", method = {RequestMethod.PUT})
     @ApiOperation(value = "Add a warehouseSector", response = Response.class)
-    public Response<WarehouseSectorView> addWarehouseSector(@RequestParam(value = "name", required = true) String name) {
+    public Response<WarehouseSectorView> addWarehouseSector(@RequestParam(value = "name", required = true) String name,
+                                                            @RequestParam(value = "maxAmount") Integer maxAmount) {
         try {
-            WarehouseSector warehouseSector = new WarehouseSector(name);
+            WarehouseSector warehouseSector = new WarehouseSector(name, maxAmount);
             warehouseSectorService.saveOrUpdate(warehouseSector);
             return new Response<WarehouseSectorView>(true, Optional.empty());
         } catch (Exception e) {

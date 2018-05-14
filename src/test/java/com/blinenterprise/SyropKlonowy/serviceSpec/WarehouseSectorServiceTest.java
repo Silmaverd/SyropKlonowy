@@ -55,7 +55,7 @@ public class WarehouseSectorServiceTest {
     private final Integer PRODUCT_QUANTITY = 15;
 
     private final Long WAREHOUSE_SECTOR_ID = 1L;
-    private WarehouseSector warehouseSector = new WarehouseSector("MAIN");
+    private WarehouseSector warehouseSector = new WarehouseSector("MAIN", 50);
 
     @Before
     public void setUp() {

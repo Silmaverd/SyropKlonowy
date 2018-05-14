@@ -39,9 +39,9 @@ public class DataLoader {
     private SaleOrderRepository saleOrderRepository;
 
     private void loadProductsWithQuantity() {
-        WarehouseSector warehouseSector1 = new WarehouseSector("MAIN1");
-        WarehouseSector warehouseSector2 = new WarehouseSector("MAIN2");
-        WarehouseSector warehouseSector3 = new WarehouseSector("MAIN3");
+        WarehouseSector warehouseSector1 = new WarehouseSector("MAIN1", 50);
+        WarehouseSector warehouseSector2 = new WarehouseSector("MAIN2", 50);
+        WarehouseSector warehouseSector3 = new WarehouseSector("MAIN3", 50);
         warehouseSectorRepository.save(warehouseSector1);
         warehouseSectorRepository.save(warehouseSector2);
         warehouseSectorRepository.save(warehouseSector3);
