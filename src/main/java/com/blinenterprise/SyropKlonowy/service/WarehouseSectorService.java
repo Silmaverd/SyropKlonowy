@@ -58,8 +58,8 @@ public class WarehouseSectorService {
             return true;
         } else {
             log.info("Couldn't add new product, wrong amount to place");
-            return false;
         }
+        return false;
     }
 
     public void removeAmountOfProduct(AmountOfProduct amountOfProduct, Long sectorId) {

@@ -63,7 +63,7 @@ public class DeliveryService {
                 .filter(productWithQuantity -> productWithQuantity.getId().equals(productWithQuantityId))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        if(warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace, amountPlaced, sectorId)) {
+        if(warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace, amountPlaced, sectorId)){
             delivery.notifyProductPlacement(productWithQuantityId, amountPlaced);
             deliveryRepository.save(delivery);
         }
