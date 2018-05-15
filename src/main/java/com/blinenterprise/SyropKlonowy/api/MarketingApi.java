@@ -26,7 +26,7 @@ public class MarketingApi {
     @Autowired
     SaleOrderService saleOrderService;
 
-    @RequestMapping(path = "/client/showPriceRange", method = {RequestMethod.PUT})
+    @RequestMapping(path = "/client/showPriceRange", method = {RequestMethod.GET})
     @ApiOperation(value = "show client's orders price range", response = Response.class)
     public Response<MarketingDataView> showPriceRange(
             @RequestParam(value = "clientId") Long clientId
@@ -35,7 +35,7 @@ public class MarketingApi {
             MarketingDataView marketingDataView = new MarketingDataView(new HashMap<>());
             marketingDataView.addToMap("minimum price", MoneyConverter.getString(saleOrderService.findMinPriceInClientOrders(clientId)));
             marketingDataView.addToMap("maximum price", MoneyConverter.getString(saleOrderService.findMaxPriceInClientOrders(clientId)));
-            return new Response<MarketingDataView>(false, Lists.newArrayList(marketingDataView));
+            return new Response<MarketingDataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show price range. Exception:" + e.getMessage());
@@ -43,7 +43,7 @@ public class MarketingApi {
         }
     }
 
-    @RequestMapping(path = "/client/showMaxPrice", method = {RequestMethod.PUT})
+    @RequestMapping(path = "/client/showMaxPrice", method = {RequestMethod.GET})
     @ApiOperation(value = "show client's orders max price of product", response = Response.class)
     public Response<MarketingDataView> showMaxPrice(
             @RequestParam(value = "clientId") Long clientId
@@ -51,7 +51,7 @@ public class MarketingApi {
         try {
             MarketingDataView marketingDataView = new MarketingDataView(new HashMap<>());
             marketingDataView.addToMap("maximum price", MoneyConverter.getString(saleOrderService.findMaxPriceOfProductInClientOrders(clientId)));
-            return new Response<MarketingDataView>(false, Lists.newArrayList(marketingDataView));
+            return new Response<MarketingDataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show price range. Exception:" + e.getMessage());
@@ -60,7 +60,7 @@ public class MarketingApi {
     }
 
 
-    @RequestMapping(path = "/client/showAveragePrice", method = {RequestMethod.PUT})
+    @RequestMapping(path = "/client/showAveragePrice", method = {RequestMethod.GET})
     @ApiOperation(value = "show client's orders average price of product", response = Response.class)
     public Response<MarketingDataView> showAveragePrice(
             @RequestParam(value = "clientId") Long clientId
@@ -68,7 +68,7 @@ public class MarketingApi {
         try {
             MarketingDataView marketingDataView = new MarketingDataView(new HashMap<>());
             marketingDataView.addToMap("average price", MoneyConverter.getString(saleOrderService.findAveragePriceOfProductInClientOrders(clientId)));
-            return new Response<MarketingDataView>(false, Lists.newArrayList(marketingDataView));
+            return new Response<MarketingDataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show average price. Exception:" + e.getMessage());

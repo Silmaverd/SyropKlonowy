@@ -142,14 +142,48 @@ public class SaleOrderService {
         }
     }
 
-    public List<SaleOrder> findAllByClientId(Long clientId){ return saleOrderRepository.findAllByClientId(clientId); }
+    public List<SaleOrder> findAllByClientId(Long clientId){
+        if(clientService.existById(clientId)) {
+            return saleOrderRepository.findAllByClientId(clientId);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
 
-    public BigDecimal findMaxPriceInClientOrders(Long clienId){ return saleOrderRepository.findMaxPriceInClientOrders(clienId); }
+    public BigDecimal findMaxPriceInClientOrders(Long clientId){
+        if(clientService.existById(clientId)) {
+            return saleOrderRepository.findMaxPriceInClientOrders(clientId);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
 
-    public BigDecimal findMinPriceInClientOrders(Long clienId){ return saleOrderRepository.findMinPriceInClientOrders(clienId); }
+    public BigDecimal findMinPriceInClientOrders(Long clientId) {
+        if (clientService.existById(clientId)) {
+            return saleOrderRepository.findMinPriceInClientOrders(clientId);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
 
-    public BigDecimal findMaxPriceOfProductInClientOrders(Long clienId){ return saleOrderRepository.findMaxPriceOfProductInClientOrders(clienId); }
+    public BigDecimal findMaxPriceOfProductInClientOrders(Long clientId){
+        if(clientService.existById(clientId)) {
+            return saleOrderRepository.findMaxPriceOfProductInClientOrders(clientId);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
 
-    public BigDecimal findAveragePriceOfProductInClientOrders(Long clientId){ return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId); }
+    public BigDecimal findAveragePriceOfProductInClientOrders(Long clientId){
+        if(clientService.existById(clientId)) {
+            return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
 
 }

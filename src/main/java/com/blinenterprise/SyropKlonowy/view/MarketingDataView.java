@@ -7,11 +7,11 @@ import java.util.Map;
 
 @Getter
 public class MarketingDataView implements View {
-    private Map<String, Object> map;
+    private Map<String, Object> data;
 
-    public void addToMap(String key, Object value){ map.put(key, value); }
+    public void addToMap(String key, Object value){ data.put(key, value); }
 
-    public MarketingDataView(Map<String, Object> map) {
-        this.map = map;
+    public MarketingDataView(Map<String, Object> data) {
+        this.data = data;
     }
 }

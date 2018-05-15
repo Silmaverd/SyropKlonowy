@@ -21,10 +21,10 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
     @Query("select min(s.totalPrice) from SaleOrder s where s.clientId=:clientId")
     BigDecimal findMinPriceInClientOrders(@Param("clientId") Long clientId);
 
-    @Query("select max(p.price) from SaleOrder s, Product p where s.clientId=:clientId")
+    @Query("select max(p.price) from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId")
     BigDecimal findMaxPriceOfProductInClientOrders(@Param("clientId") Long clientId);
 
-    @Query("select avg(p.price) from SaleOrder s, Product p where s.clientId=:clientId")
+    @Query("select avg(p.price) from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId")
     BigDecimal findAveragePriceOfProductInClientOrders(@Param("clientId") Long clientId);
 
 }
