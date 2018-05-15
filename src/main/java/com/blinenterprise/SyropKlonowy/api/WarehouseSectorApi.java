@@ -6,19 +6,21 @@ import com.blinenterprise.SyropKlonowy.view.WarehouseSectorView;
 import com.blinenterprise.SyropKlonowy.web.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/warehouseSector")
-@Api(value = "WarehouseSector Viewing API")
+@Api
 public class WarehouseSectorApi {
 
     @Autowired
@@ -27,16 +29,12 @@ public class WarehouseSectorApi {
     @RequestMapping(path = "/warehouseSector/getById", method = {RequestMethod.GET})
     @ApiOperation(value = "Display warehouseSector by id", response = Response.class)
     public Response<WarehouseSectorView> getWarehouseSectorById(@RequestParam(value = "id", required = true) Long id) {
-        Response<WarehouseSectorView> response;
         try {
-            ArrayList<WarehouseSector> result = new ArrayList<>();
-            warehouseSectorService.findById(id).ifPresent(result::add);
-            response = new Response<WarehouseSectorView>(true, WarehouseSectorView.from(result));
+            return new Response<WarehouseSectorView>(true, Arrays.asList(WarehouseSectorView.from(warehouseSectorService.findById(id).orElseThrow(IllegalArgumentException::new))));
         } catch (Exception e) {
-            response = new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
+            log.error("Failed to fetch warehouseSectors "+e.toString());
+            return new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
         }
-        return response;
-
     }
 
     @RequestMapping(path = "/warehouseSector/addWarehouseSector", method = {RequestMethod.PUT})
@@ -69,14 +67,10 @@ public class WarehouseSectorApi {
     @RequestMapping(path = "/warehouseSector/getByName", method = {RequestMethod.GET})
     @ApiOperation(value = "Display warehouseSectors by name", response = Response.class)
     public Response<WarehouseSectorView> getWarehouseSectorByName(@RequestParam(value = "name", required = true) String name) {
-        Response<WarehouseSectorView> response;
         try {
-            ArrayList<WarehouseSector> result = new ArrayList<>();
-            warehouseSectorService.findByName(name).ifPresent(result::add);
-            response = new Response<WarehouseSectorView>(true, WarehouseSectorView.from(result));
+            return new Response<WarehouseSectorView>(true, Arrays.asList(WarehouseSectorView.from(warehouseSectorService.findByName(name).orElseThrow(IllegalArgumentException::new))));
         } catch (Exception e) {
-            response = new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
+            return new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
         }
-        return response;
     }
 }

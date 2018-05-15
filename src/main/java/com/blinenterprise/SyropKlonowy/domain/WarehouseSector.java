@@ -34,10 +34,10 @@ public class WarehouseSector {
         }
         if (amountOfProducts.containsKey(productId)) {
             amountOfProducts.get(productId).increaseQuantityBy(quantityOfProduct);
-            currentAmountOfProducts += quantityOfProduct;
         } else {
             amountOfProducts.put(productId, amountOfProduct);
         }
+        currentAmountOfProducts += quantityOfProduct;
         return true;
     }
 
