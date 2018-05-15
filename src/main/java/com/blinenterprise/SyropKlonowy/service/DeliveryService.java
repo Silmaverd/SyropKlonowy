@@ -57,14 +57,14 @@ public class DeliveryService {
     }
 
     @Transactional
-    public void placeProduct(Long deliveryId, Long productWithQuantityId, int amountPlaced, Long sectorId) {
+    public void placeProduct(Long deliveryId, Long productId, int amountPlaced, Long sectorId) {
         Delivery delivery = findById(deliveryId).orElseThrow(IllegalArgumentException::new);
         ProductWithQuantity productWithQuantityToPlace = delivery.getListOfProducts().stream()
-                .filter(productWithQuantity -> productWithQuantity.getId().equals(productWithQuantityId))
+                .filter(productWithQuantity -> productWithQuantity.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
         if(warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace, amountPlaced, sectorId)){
-            delivery.notifyProductPlacement(productWithQuantityId, amountPlaced);
+            delivery.notifyProductPlacement(productId, amountPlaced);
             deliveryRepository.save(delivery);
         }
     }
