@@ -28,11 +28,11 @@ public class AmountOfProduct {
         this.quantity += quantity;
     }
 
-    public void decreaseQuantityBy(Integer quantity) {
+    public boolean decreaseQuantityBy(Integer quantity) {
         if (this.quantity >= quantity) {
             this.quantity -= quantity;
-        } else {
-            throw new IllegalArgumentException();
+            return true;
         }
+        return false;
     }
 }

@@ -20,24 +20,39 @@ public class WarehouseSector {
     @Column(unique = true)
     private String name;
 
+    private Integer currentAmountOfProducts;
     private Integer maxAmountOfProducts;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Map<Long, AmountOfProduct> amountOfProducts = new HashMap<>();
 
-    public void addAmountOfProduct(AmountOfProduct amountOfProduct) {
+    public boolean addAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
+        Integer quantityOfProduct = amountOfProduct.getQuantity();
+        if (!isPossibleToAddNewProducts(quantityOfProduct)) {
+            return false;
+        }
         if (amountOfProducts.containsKey(productId)) {
-            amountOfProducts.get(productId).increaseQuantityBy(amountOfProduct.getQuantity());
+            amountOfProducts.get(productId).increaseQuantityBy(quantityOfProduct);
+            currentAmountOfProducts += quantityOfProduct;
         } else {
             amountOfProducts.put(productId, amountOfProduct);
         }
+        return true;
     }
 
-    public void removeAmountOfProduct(AmountOfProduct amountOfProduct) {
+    public boolean removeAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
+        Integer quantityOfProduct = amountOfProduct.getQuantity();
+        if (!isPossibleToRemoveProducts(quantityOfProduct)) {
+            return false;
+        }
         if (amountOfProducts.containsKey(productId)) {
-            amountOfProducts.get(productId).decreaseQuantityBy(amountOfProduct.getQuantity());
+            if (amountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct)) {
+                currentAmountOfProducts -= quantityOfProduct;
+                return true;
+            }
+            return false;
         } else {
             throw new IllegalArgumentException();
         }
@@ -46,9 +61,14 @@ public class WarehouseSector {
     public WarehouseSector(String name, Integer maxAmountOfProducts) {
         this.name = name;
         this.maxAmountOfProducts = maxAmountOfProducts;
+        this.currentAmountOfProducts = 0;
     }
 
-    public boolean isPossibleToAddNewProducts(Integer amountOfNewProduct){
-        return amountOfNewProduct <= maxAmountOfProducts;
+    public boolean isPossibleToAddNewProducts(Integer amountOfNewProduct) {
+        return amountOfNewProduct + currentAmountOfProducts <= maxAmountOfProducts;
+    }
+
+    public boolean isPossibleToRemoveProducts(Integer amountOfProducts) {
+        return currentAmountOfProducts - amountOfProducts >= 0;
     }
 }

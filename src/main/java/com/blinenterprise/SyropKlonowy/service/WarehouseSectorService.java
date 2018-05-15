@@ -52,20 +52,29 @@ public class WarehouseSectorService {
         Product productInStock = productService.findByCode(product.getCode())
                 .orElseGet(() -> productService.save(product));
         if (productWithQuantity.decreaseAmountBy(amountPlaced)) {
-            warehouseSector.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), amountPlaced));
-            saveOrUpdate(warehouseSector);
-            log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
-            return true;
-        } else {
-            log.info("Couldn't add new product, wrong amount to place");
+            if (warehouseSector.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), amountPlaced))) {
+                saveOrUpdate(warehouseSector);
+                log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
+                return true;
+            }
+            productWithQuantity.increaseAmountBy(amountPlaced);
         }
+        log.info("Couldn't add new product, wrong amount to place");
         return false;
     }
 
-    public void removeAmountOfProduct(AmountOfProduct amountOfProduct, Long sectorId) {
+    public boolean removeAmountOfProduct(AmountOfProduct amountOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        warehouseSector.removeAmountOfProduct(amountOfProduct);
-        saveOrUpdate(warehouseSector);
-        log.info("Removed product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
+        if (!warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity())) {
+            log.info("Couldn't remove product, sector has no enough amount");
+            return false;
+        }
+        if (warehouseSector.removeAmountOfProduct(amountOfProduct)) {
+            saveOrUpdate(warehouseSector);
+            log.info("Removed product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
+            return true;
+        }
+        log.info("Couldn't remove product, sector has no enough amount of product");
+        return false;
     }
 }
