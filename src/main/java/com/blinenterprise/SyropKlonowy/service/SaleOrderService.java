@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
@@ -67,12 +66,11 @@ public class SaleOrderService {
         Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(configContainer.getOrderClosureDelayInDays()));
         orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), closureDate);
 
-        saleOrderRepository.save(temporarySaleOrders.get(clientId));
-        log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
+        SaleOrder saleOrderByClient = temporarySaleOrders.get(clientId);
+        saleOrderRepository.save(saleOrderByClient);
+        log.info("Successfully confirmed new order with id:" + saleOrderByClient.getId());
 
-        /*TODO: MAKE IT TO WORK*/
-        //temporarySaleOrders.get(clientId).getAmountsOfProducts().forEach(amountOfProduct ->
-                //warehouseSectorService.removeAmountOfProduct(amountOfProduct, configContainer.getMainWarehouseName()));
+        saleOrderByClient.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct));
 
         temporarySaleOrders.remove(clientId);
     }
@@ -95,23 +93,14 @@ public class SaleOrderService {
     }
 
     public boolean closeById(Long id) {
-        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
-        if (orderById.isPresent()) {
-            if (orderById.get().closeOrder()) {
-                orderById.get().getAmountsOfProducts().forEach(amountOfProduct -> {
-                    ProductWithQuantity productWithQuantity = new ProductWithQuantity(
-                            productService.findById(amountOfProduct.getProductId()).orElseThrow(IllegalArgumentException::new),
-                            amountOfProduct.getQuantity());
-                    /*TODO: MAKE IT TO WORK*/
-                    //warehouseSectorService.addAmountOfProductOnSectorById(productWithQuantity, configContainer.getMainWarehouseName());
-                });
-                saleOrderRepository.save(orderById.get());
-                return true;
-            } else {
-                return false;
-            }
+        SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if (orderById.closeOrder()) {
+            orderById.getAmountsOfProducts().forEach(amountOfProduct ->
+                    warehouseSectorService.unReserveAmountOfProduct(amountOfProduct));
+            saleOrderRepository.save(orderById);
+            return true;
         } else {
-            throw new IllegalArgumentException();
+            return false;
         }
     }
 
