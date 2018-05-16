@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -73,6 +75,40 @@ public class MarketingApi {
         } catch (Exception e) {
             log.error("Failed to show average price. Exception:" + e.getMessage());
             return new Response<MarketingDataView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/client/showMostCommonlyPurchasedProducts", method = {RequestMethod.GET})
+    @ApiOperation(value = "show client's most commonly purchased products", response = Response.class)
+    public Response<MarketingDataView> showMostCommonlyPurchasedProducts(
+            @RequestParam(value = "clientId") Long clientId
+    ) {
+        try {
+            List<Object[]> listOfProductIdWithQuantity = saleOrderService.findMostCommonlyPurchasedProducts(clientId);
+            MarketingDataView marketingDataView = new MarketingDataView(listOfProductIdWithQuantity
+                    .stream().collect(Collectors.toMap(o -> ((Long)o[0]).toString(), o -> o[1])));
+            return new Response<>(true, Lists.newArrayList(marketingDataView));
+
+        } catch (Exception e) {
+            log.error("Failed to show average price. Exception:" + e.getMessage());
+            return new Response<>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/product/showFrequentlyBoughtTogether", method = {RequestMethod.GET})
+    @ApiOperation(value = "show most frequently bought together products (id: frequency)", response = Response.class)
+    public Response<MarketingDataView> showFrequentlyBoughtTogether(
+            @RequestParam(value = "productId") Long productId
+    ) {
+        try {
+            List<Object[]> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
+            MarketingDataView marketingDataView = new MarketingDataView(listOfFrequentlyProduct
+                    .stream().collect(Collectors.toMap(o -> ((Long)o[0]).toString(), o -> o[1])));
+            return new Response<>(true, Lists.newArrayList(marketingDataView));
+
+        } catch (Exception e) {
+            log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
+            return new Response<>(false, Optional.of(e.toString()));
         }
     }
 

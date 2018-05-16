@@ -6,6 +6,7 @@ import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.repository.*;
+import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class DataLoader {
     private ClientRepository clientRepository;
     @Autowired
     private SaleOrderRepository saleOrderRepository;
+
+    @Autowired
+    SaleOrderService saleOrderService;
 
     private void loadProductsWithQuantity() {
         Warehouse warehouse = new Warehouse("MAIN");
@@ -113,14 +117,24 @@ public class DataLoader {
         Long productId1 = productRepository.findByCode("X324").get().getId();
         Long productId2 = productRepository.findByCode("AVE32").get().getId();
         Long productId3 = productRepository.findByCode("135DGG2").get().getId();
+        Long productId4 = productRepository.findByCode("2325425").get().getId();
 
         List<AmountOfProduct> amountsOfProducts1 = Arrays.asList(
-                new AmountOfProduct(productId1, 5)
+                new AmountOfProduct(productId1, 6),
+                new AmountOfProduct(productId2, 5),
+                new AmountOfProduct(productId3, 20)
         );
 
         List<AmountOfProduct> amountsOfProducts2 = Arrays.asList(
                 new AmountOfProduct(productId2, 10),
-                new AmountOfProduct(productId3, 20)
+                new AmountOfProduct(productId3, 20),
+                new AmountOfProduct(productId4, 2)
+        );
+
+        List<AmountOfProduct> amountsOfProducts3 = Arrays.asList(
+                new AmountOfProduct(productId1, 2),
+                new AmountOfProduct(productId3, 20),
+                new AmountOfProduct(productId4, 8)
         );
 
 
@@ -130,7 +144,8 @@ public class DataLoader {
         Long clientId2 = clientsByName2.get(0).getId();
 
         List<SaleOrder> saleOrders = Arrays.asList(
-                new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), amountsOfProducts1, new BigDecimal(400), SaleOrderStatus.NEW),
+                new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), amountsOfProducts3, new BigDecimal(300), SaleOrderStatus.NEW),
+                new SaleOrder(clientId2, Date.valueOf(LocalDate.now()), amountsOfProducts1, new BigDecimal(400), SaleOrderStatus.PAID),
                 new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), amountsOfProducts2, new BigDecimal(500), SaleOrderStatus.PAID)
         );
         saleOrderRepository.saveAll(saleOrders);

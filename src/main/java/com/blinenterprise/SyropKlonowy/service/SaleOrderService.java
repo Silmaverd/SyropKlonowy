@@ -186,4 +186,32 @@ public class SaleOrderService {
         }
     }
 
+    public List<Object[]> findMostCommonlyPurchasedProducts(Long clientId){
+        if(clientService.existById(clientId)) {
+            List<Object[]> listOfProductIdWithQuantity = saleOrderRepository.findProductIdFromAllOrdersWithSumOfQuantity(clientId);
+            listOfProductIdWithQuantity.sort((object1, object2) -> (Long) object1[1]<(Long) object2[1]?1:
+                    ((Long)object1[1]==(Long)object2[1]?0:
+                            -1));
+            return listOfProductIdWithQuantity;
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public List<Object[]> findFrequentlyBoughtTogether(Long productId){
+        if(productService.existsById(productId)) {
+            List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtTogether(productId);
+            listOfFrequentlyProduct.sort((object1, object2) -> (Long) object1[1]<(Long) object2[1]?1:
+                    ((Long)object1[1]==(Long)object2[1]?0:
+                            -1));
+            return listOfFrequentlyProduct;
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
+
+
+
 }
