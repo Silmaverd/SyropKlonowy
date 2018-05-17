@@ -36,8 +36,5 @@ public class ProductService {
         return productRepository.findByCode(code);
     }
 
-    public boolean existsById(Long productId){
-        return productRepository.existsById(productId);
-    }
 
 }

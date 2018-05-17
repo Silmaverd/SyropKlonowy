@@ -48,9 +48,7 @@ public class SaleOrderService {
 
 
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
-        if (clientService.findById(clientId) == null) {
-            throw new IllegalArgumentException();
-        }
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
         Product productToAdd = productService.findById(productId).orElseThrow(IllegalArgumentException::new);
         temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
         temporarySaleOrders.get(clientId).addAmountOfProduct(new AmountOfProduct(productToAdd.getId(), quantity));
@@ -144,47 +142,28 @@ public class SaleOrderService {
     }
 
     public List<SaleOrder> findAllByClientId(Long clientId){
-        if(clientService.existById(clientId)) {
-            return saleOrderRepository.findAllByClientId(clientId);
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findAllByClientId(clientId);
     }
 
     public BigDecimal findMaxPriceInClientOrders(Long clientId){
-        if(clientService.existById(clientId)) {
-            return saleOrderRepository.findMaxPriceInClientOrders(clientId);
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findMaxPriceInClientOrders(clientId);
     }
 
     public BigDecimal findMinPriceInClientOrders(Long clientId) {
-        if (clientService.existById(clientId)) {
-            return saleOrderRepository.findMinPriceInClientOrders(clientId);
-        } else {
-            throw new IllegalArgumentException();
-        }
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findMinPriceInClientOrders(clientId);
     }
 
-    public BigDecimal findMaxPriceOfProductInClientOrders(Long clientId){
-        if(clientService.existById(clientId)) {
-            return saleOrderRepository.findMaxPriceOfProductInClientOrders(clientId);
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
+    public BigDecimal findMaxPriceOfProductInClientOrders(Long clientId) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findMaxPriceOfProductInClientOrders(clientId);
     }
 
-    public BigDecimal findAveragePriceOfProductInClientOrders(Long clientId){
-        if(clientService.existById(clientId)) {
-            return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId);
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
+    public BigDecimal findAveragePriceOfProductInClientOrders(Long clientId) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId);
     }
 
     public AmountOfProduct getAmountOfProduct(Object[] object){
@@ -196,24 +175,16 @@ public class SaleOrderService {
     }
 
 
-    public List<AmountOfProduct> findMostCommonlyPurchasedProducts(Long clientId){
-        if(clientService.existById(clientId)) {
-            List<Object[]> listOfProductIdWithQuantity = saleOrderRepository.findProductIdFromAllOrdersWithSumOfQuantity(clientId);
-            return getListOfAmountOfProduct(listOfProductIdWithQuantity);
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
+    public List<AmountOfProduct> findMostCommonlyPurchasedProducts(Long clientId) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        List<Object[]> listOfProductIdWithQuantity = saleOrderRepository.findProductIdFromAllOrdersWithSumOfQuantity(clientId);
+        return getListOfAmountOfProduct(listOfProductIdWithQuantity);
     }
 
-    public List<AmountOfProduct> findFrequentlyBoughtTogether(Long productId){
-        if(productService.existsById(productId)) {
-            List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtTogether(productId);
-            return getListOfAmountOfProduct(listOfFrequentlyProduct);
-        }
-        else{
-            throw new IllegalArgumentException();
-        }
+    public List<AmountOfProduct> findFrequentlyBoughtTogether(Long productId) {
+        productService.findById(productId).orElseThrow(IllegalArgumentException::new);
+        List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtTogether(productId);
+        return getListOfAmountOfProduct(listOfFrequentlyProduct);
     }
 
 
