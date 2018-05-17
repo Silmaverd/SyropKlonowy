@@ -18,9 +18,8 @@ public class ClientService {
 
     public void create(Client client){clientRepository.save(client);}
 
-    public Client findById(long id){
-        Optional<Client> mayBeClient= clientRepository.findById(id);
-        return mayBeClient.orElse(null);
+    public Optional<Client> findById(long id){
+        return clientRepository.findById(id);
     }
 
     public List<Client> findByName(String name){

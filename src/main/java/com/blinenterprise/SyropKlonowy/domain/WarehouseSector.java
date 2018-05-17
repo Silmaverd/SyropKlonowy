@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.*;
@@ -23,34 +22,34 @@ public class WarehouseSector {
     private Integer maxAmountOfProducts;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Map<Long, AmountOfProduct> amountOfProducts = new HashMap<>();
+    private Map<Long, AmountOfProduct> notReservedAmountOfProducts = new HashMap<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Map<Long, AmountOfProduct> saleOrderedAmountOfProducts = new HashMap<>();
+    private Map<Long, AmountOfProduct> reservedAmountOfProducts = new HashMap<>();
 
     public boolean addAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         Integer quantityOfProduct = amountOfProduct.getQuantity();
         if (isPossibleToAddNewProducts(quantityOfProduct)) {
-            if (amountOfProducts.containsKey(productId)) {
-                amountOfProducts.get(productId).increaseQuantityBy(quantityOfProduct);
+            if (notReservedAmountOfProducts.containsKey(productId)) {
+                notReservedAmountOfProducts.get(productId).increaseQuantityBy(quantityOfProduct);
             } else {
-                amountOfProducts.put(productId, amountOfProduct);
+                notReservedAmountOfProducts.put(productId, amountOfProduct);
             }
             return true;
         }
         return false;
     }
 
-    public boolean removeSaleOrderedAmountOfProduct(AmountOfProduct amountOfProduct) {
+    public boolean removeReservedAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         Integer quantityOfProduct = amountOfProduct.getQuantity();
-        if (saleOrderedAmountOfProducts.containsKey(productId) &&
+        if (reservedAmountOfProducts.containsKey(productId) &&
                 isPossibleToRemoveProducts(quantityOfProduct) &&
-                saleOrderedAmountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct)) {
+                reservedAmountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct)) {
 
-            if (saleOrderedAmountOfProducts.get(productId).getQuantity() == 0) {
-                saleOrderedAmountOfProducts.remove(productId);
+            if (reservedAmountOfProducts.get(productId).getQuantity() == 0) {
+                reservedAmountOfProducts.remove(productId);
             }
             return true;
         }
@@ -60,33 +59,33 @@ public class WarehouseSector {
     public boolean removeAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         Integer quantityOfProduct = amountOfProduct.getQuantity();
-        if (amountOfProducts.containsKey(productId) &&
+        if (notReservedAmountOfProducts.containsKey(productId) &&
                 isPossibleToRemoveProducts(quantityOfProduct) &&
-                amountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct)) {
+                notReservedAmountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct)) {
 
-            if (amountOfProducts.get(productId).getQuantity() == 0) {
-                amountOfProducts.remove(productId);
+            if (notReservedAmountOfProducts.get(productId).getQuantity() == 0) {
+                notReservedAmountOfProducts.remove(productId);
             }
             return true;
         }
         return false;
     }
 
-    public boolean reserveSaleOrderedAmountOfProduct(AmountOfProduct amountOfProduct) {
+    public boolean reserveAmountOfProduct(AmountOfProduct amountOfProduct) {
         if (removeAmountOfProduct(amountOfProduct)) {
-            addSaleOrderedProduct(amountOfProduct);
+            addReservedAmountOfProduct(amountOfProduct);
             return true;
         }
         return false;
     }
 
-    private void addSaleOrderedProduct(AmountOfProduct orderedAmountOfProduct) {
-        Long productId = orderedAmountOfProduct.getProductId();
-        Integer quantityOfProduct = orderedAmountOfProduct.getQuantity();
-        if (saleOrderedAmountOfProducts.containsKey(productId)) {
-            saleOrderedAmountOfProducts.get(productId).increaseQuantityBy(quantityOfProduct);
+    private void addReservedAmountOfProduct(AmountOfProduct amountOfProduct) {
+        Long productId = amountOfProduct.getProductId();
+        Integer quantityOfProduct = amountOfProduct.getQuantity();
+        if (reservedAmountOfProducts.containsKey(productId)) {
+            reservedAmountOfProducts.get(productId).increaseQuantityBy(quantityOfProduct);
         } else {
-            saleOrderedAmountOfProducts.put(productId, orderedAmountOfProduct);
+            reservedAmountOfProducts.put(productId, amountOfProduct);
         }
     }
 
@@ -102,11 +101,11 @@ public class WarehouseSector {
     }
 
     public Integer getCurrentAmountOfProducts() {
-        Integer currentAmountOfProducts = amountOfProducts.values()
+        Integer currentAmountOfProducts = notReservedAmountOfProducts.values()
                 .stream()
                 .mapToInt(AmountOfProduct::getQuantity)
                 .sum();
-        Integer currentSaleOrderedAmountOfProducts = saleOrderedAmountOfProducts.values()
+        Integer currentSaleOrderedAmountOfProducts = reservedAmountOfProducts.values()
                 .stream()
                 .mapToInt(AmountOfProduct::getQuantity)
                 .sum();
@@ -121,22 +120,22 @@ public class WarehouseSector {
         return getCurrentAmountOfProducts() - amountOfProducts >= 0;
     }
 
-    public Integer getQuantityOfProductByIdIfExist(Long productId) {
-        if (amountOfProducts.containsKey(productId)) {
-            return amountOfProducts.get(productId).getQuantity();
+    public Integer getQuantityOfNotReservedProductByIdIfExist(Long productId) {
+        if (notReservedAmountOfProducts.containsKey(productId)) {
+            return notReservedAmountOfProducts.get(productId).getQuantity();
         }
         return 0;
     }
 
-    public Integer getSaleOrderQuantityOfProductByIdIfExist(Long productId) {
-        if (saleOrderedAmountOfProducts.containsKey(productId)) {
-            return saleOrderedAmountOfProducts.get(productId).getQuantity();
+    public Integer getQuantityOfReservedProductByIdIfExist(Long productId) {
+        if (reservedAmountOfProducts.containsKey(productId)) {
+            return reservedAmountOfProducts.get(productId).getQuantity();
         }
         return 0;
     }
 
-    public boolean unReserveAmountOfProductsFromSaleOrder(AmountOfProduct amountOfProduct) {
-        if (removeSaleOrderedAmountOfProduct(amountOfProduct)) {
+    public boolean unReserveAmountOfProduct(AmountOfProduct amountOfProduct) {
+        if (removeReservedAmountOfProduct(amountOfProduct)) {
             addAmountOfProduct(amountOfProduct);
             return true;
         }

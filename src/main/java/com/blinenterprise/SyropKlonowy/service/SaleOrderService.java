@@ -44,11 +44,8 @@ public class SaleOrderService {
 
     private Map<Long, SaleOrder> temporarySaleOrders = new HashMap<>();
 
-
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
-        if (clientService.findById(clientId) == null) {
-            throw new IllegalArgumentException();
-        }
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
         Product productToAdd = productService.findById(productId).orElseThrow(IllegalArgumentException::new);
         temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
         temporarySaleOrders.get(clientId).addAmountOfProduct(new AmountOfProduct(productToAdd.getId(), quantity));
@@ -70,7 +67,7 @@ public class SaleOrderService {
         saleOrderRepository.save(saleOrderByClient);
         log.info("Successfully confirmed new order with id:" + saleOrderByClient.getId());
 
-        saleOrderByClient.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct));
+        saleOrderByClient.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.reserveAmountOfProduct(amountOfProduct));
 
         temporarySaleOrders.remove(clientId);
     }
@@ -97,7 +94,7 @@ public class SaleOrderService {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.closeOrder()) {
             orderById.getAmountsOfProducts().forEach(amountOfProduct ->
-                    warehouseSectorService.unReserveSaleOrderedAmountOfProduct(amountOfProduct));
+                    warehouseSectorService.unReserveAmountOfProduct(amountOfProduct));
             saleOrderRepository.save(orderById);
             return true;
         }
@@ -118,7 +115,7 @@ public class SaleOrderService {
     public boolean sendById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.sendOrder()) {
-            orderById.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.removeSaleOrderedAmountOfProduct(amountOfProduct));
+            orderById.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.removeReservedAmountOfProduct(amountOfProduct));
             saleOrderRepository.save(orderById);
             return true;
         }

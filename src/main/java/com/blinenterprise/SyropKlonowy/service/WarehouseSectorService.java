@@ -1,7 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
@@ -35,23 +34,23 @@ public class WarehouseSectorService {
     }
 
     public Optional<WarehouseSector> findByName(String name) {
-        return warehouseSectorRepository.findByName(name.toUpperCase());
+        return warehouseSectorRepository.findByName(name);
     }
 
     public WarehouseSector saveOrUpdate(WarehouseSector warehouseSector) {
         return warehouseSectorRepository.save(warehouseSector);
     }
 
-    private List<WarehouseSector> findAllContainingProductOrderedASCByProductId(Long productId) {
-        return warehouseSectorRepository.findAllContainingProductOrderedASCByProductId(productId);
+    private List<WarehouseSector> findAllContainingNotReservedProductOrderedASCByProductId(Long productId) {
+        return warehouseSectorRepository.findAllContainingNotReservedProductOrderedASCByProductId(productId);
     }
 
-    private List<WarehouseSector> findAllContainingSaleOrderedProductOrderedASCByProductId(Long productId) {
-        return warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedASCByProductId(productId);
+    private List<WarehouseSector> findAllContainingReservedProductOrderedASCByProductId(Long productId) {
+        return warehouseSectorRepository.findAllContainingReservedProductOrderedASCByProductId(productId);
     }
 
-    private List<WarehouseSector> findAllContainingSaleOrderedProductOrderedDESCByProductId(Long productId) {
-        return warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedDESCByProductId(productId);
+    private List<WarehouseSector> findAllContainingReservedProductOrderedDESCByProductId(Long productId) {
+        return warehouseSectorRepository.findAllContainingReservedProductOrderedDESCByProductId(productId);
     }
 
     public boolean addProductWithQuantityBySectorId(Product deliveredProduct, Integer quantityOfProduct, Long sectorId) {
@@ -69,10 +68,10 @@ public class WarehouseSectorService {
         return false;
     }
 
-    private boolean reserveSaleOrderedAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
+    private boolean reserveAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
         if (warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity()) &&
-                warehouseSector.reserveSaleOrderedAmountOfProduct(amountOfProduct)) {
+                warehouseSector.reserveAmountOfProduct(amountOfProduct)) {
 
             saveOrUpdate(warehouseSector);
             log.info("Reserved product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
@@ -95,10 +94,10 @@ public class WarehouseSectorService {
         return false;
     }
 
-    private boolean removeSaleOrderAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
+    private boolean removeReservedAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
         if (warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity()) &&
-                warehouseSector.removeSaleOrderedAmountOfProduct(amountOfProduct)) {
+                warehouseSector.removeReservedAmountOfProduct(amountOfProduct)) {
 
             saveOrUpdate(warehouseSector);
             log.info("Removed ordered product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
@@ -108,51 +107,51 @@ public class WarehouseSectorService {
         return false;
     }
 
-    public void removeSaleOrderedAmountOfProduct(AmountOfProduct orderedProduct) {
-        List<WarehouseSector> warehouseSectors = findAllContainingSaleOrderedProductOrderedASCByProductId(orderedProduct.getProductId());
-        Integer restOfProductQuantity = orderedProduct.getQuantity();
-        for (WarehouseSector warehouseSector : warehouseSectors) {
-            Integer productQuantity = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(orderedProduct.getProductId());
-            if (restOfProductQuantity <= productQuantity) {
-                if (removeSaleOrderAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), restOfProductQuantity), warehouseSector.getId())) {
-                    break;
-                }
-            } else if (productQuantity > 0) {
-                if (removeSaleOrderAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), productQuantity), warehouseSector.getId())) {
-                    restOfProductQuantity -= productQuantity;
-                }
-            }
-        }
-    }
-
-    public void reserveSaleOrderedAmountOfProduct(AmountOfProduct orderedProduct) {
-        List<WarehouseSector> warehouseSectors = findAllContainingProductOrderedASCByProductId(orderedProduct.getProductId());
-        Integer restOfProductQuantity = orderedProduct.getQuantity();
-        for (WarehouseSector warehouseSector : warehouseSectors) {
-            Integer productQuantity = warehouseSector.getQuantityOfProductByIdIfExist(orderedProduct.getProductId());
-            if (restOfProductQuantity <= productQuantity) {
-                if (reserveSaleOrderedAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), restOfProductQuantity), warehouseSector.getId())) {
-                    break;
-                }
-            } else if (productQuantity > 0) {
-                if (reserveSaleOrderedAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), productQuantity), warehouseSector.getId())) {
-                    restOfProductQuantity -= productQuantity;
-                }
-            }
-        }
-    }
-
-    public void unReserveSaleOrderedAmountOfProduct(AmountOfProduct amountOfProduct) {
-        List<WarehouseSector> warehouseSectors = findAllContainingSaleOrderedProductOrderedDESCByProductId(amountOfProduct.getProductId());
+    public void removeReservedAmountOfProduct(AmountOfProduct amountOfProduct) {
+        List<WarehouseSector> warehouseSectors = findAllContainingReservedProductOrderedASCByProductId(amountOfProduct.getProductId());
         Integer restOfProductQuantity = amountOfProduct.getQuantity();
         for (WarehouseSector warehouseSector : warehouseSectors) {
-            Integer productQuantity = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(amountOfProduct.getProductId());
+            Integer productQuantity = warehouseSector.getQuantityOfReservedProductByIdIfExist(amountOfProduct.getProductId());
             if (restOfProductQuantity <= productQuantity) {
-                if (warehouseSector.unReserveAmountOfProductsFromSaleOrder(new AmountOfProduct(amountOfProduct.getProductId(), restOfProductQuantity))) {
+                if (removeReservedAmountOfProductBySectorId(new AmountOfProduct(amountOfProduct.getProductId(), restOfProductQuantity), warehouseSector.getId())) {
                     break;
                 }
             } else if (productQuantity > 0) {
-                if (warehouseSector.unReserveAmountOfProductsFromSaleOrder(new AmountOfProduct(amountOfProduct.getProductId(), productQuantity))) {
+                if (removeReservedAmountOfProductBySectorId(new AmountOfProduct(amountOfProduct.getProductId(), productQuantity), warehouseSector.getId())) {
+                    restOfProductQuantity -= productQuantity;
+                }
+            }
+        }
+    }
+
+    public void reserveAmountOfProduct(AmountOfProduct amountOfProduct) {
+        List<WarehouseSector> warehouseSectors = findAllContainingNotReservedProductOrderedASCByProductId(amountOfProduct.getProductId());
+        Integer restOfProductQuantity = amountOfProduct.getQuantity();
+        for (WarehouseSector warehouseSector : warehouseSectors) {
+            Integer productQuantity = warehouseSector.getQuantityOfNotReservedProductByIdIfExist(amountOfProduct.getProductId());
+            if (restOfProductQuantity <= productQuantity) {
+                if (reserveAmountOfProductBySectorId(new AmountOfProduct(amountOfProduct.getProductId(), restOfProductQuantity), warehouseSector.getId())) {
+                    break;
+                }
+            } else if (productQuantity > 0) {
+                if (reserveAmountOfProductBySectorId(new AmountOfProduct(amountOfProduct.getProductId(), productQuantity), warehouseSector.getId())) {
+                    restOfProductQuantity -= productQuantity;
+                }
+            }
+        }
+    }
+
+    public void unReserveAmountOfProduct(AmountOfProduct amountOfProduct) {
+        List<WarehouseSector> warehouseSectors = findAllContainingReservedProductOrderedDESCByProductId(amountOfProduct.getProductId());
+        Integer restOfProductQuantity = amountOfProduct.getQuantity();
+        for (WarehouseSector warehouseSector : warehouseSectors) {
+            Integer productQuantity = warehouseSector.getQuantityOfReservedProductByIdIfExist(amountOfProduct.getProductId());
+            if (restOfProductQuantity <= productQuantity) {
+                if (warehouseSector.unReserveAmountOfProduct(new AmountOfProduct(amountOfProduct.getProductId(), restOfProductQuantity))) {
+                    break;
+                }
+            } else if (productQuantity > 0) {
+                if (warehouseSector.unReserveAmountOfProduct(new AmountOfProduct(amountOfProduct.getProductId(), productQuantity))) {
                     restOfProductQuantity -= productQuantity;
                 }
             }

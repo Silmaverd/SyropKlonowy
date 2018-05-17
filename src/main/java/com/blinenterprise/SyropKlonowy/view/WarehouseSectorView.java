@@ -13,19 +13,25 @@ import java.util.Map;
 public class WarehouseSectorView implements View {
     private Long id;
     private String name;
-    private Map<Long, AmountOfProduct> amountOfProducts;
+    private Integer maxAmountOfProducts;
+    private Map<Long, AmountOfProduct> notReservedAmountOfProducts;
+    private Map<Long, AmountOfProduct> reservedAmountOfProducts;
 
     public static WarehouseSectorView from(WarehouseSector warehouseSector) {
         return new WarehouseSectorView(
                 warehouseSector.getId(),
                 warehouseSector.getName(),
-                warehouseSector.getAmountOfProducts());
+                warehouseSector.getMaxAmountOfProducts(),
+                warehouseSector.getNotReservedAmountOfProducts(),
+                warehouseSector.getReservedAmountOfProducts());
     }
 
-    public WarehouseSectorView(Long id, String name, Map<Long, AmountOfProduct> amountOfProducts) {
+    public WarehouseSectorView(Long id, String name, Integer maxAmountOfProducts, Map<Long, AmountOfProduct> notReservedAmountOfProducts, Map<Long, AmountOfProduct> reservedAmountOfProducts) {
         this.id = id;
         this.name = name;
-        this.amountOfProducts = amountOfProducts;
+        this.maxAmountOfProducts = maxAmountOfProducts;
+        this.notReservedAmountOfProducts = notReservedAmountOfProducts;
+        this.reservedAmountOfProducts = reservedAmountOfProducts;
     }
 
     public static List<WarehouseSectorView> from(List<WarehouseSector> warehouseSectors) {

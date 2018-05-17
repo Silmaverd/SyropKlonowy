@@ -64,15 +64,9 @@ public class DeliveryService {
                 .filter(productWithQuantity -> productWithQuantity.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        if (productWithQuantityToPlace.decreaseAmountBy(amountPlaced)) {
-            if (warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace.getProduct(), amountPlaced, sectorId)) {
-                delivery.notifyProductPlacement(productId, amountPlaced);
-                deliveryRepository.save(delivery);
-                return;
-            }
-            productWithQuantityToPlace.increaseAmountBy(amountPlaced);
-            return;
+        if (warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace.getProduct(), amountPlaced, sectorId)) {
+            delivery.notifyProductPlacement(productId, amountPlaced);
+            deliveryRepository.save(delivery);
         }
-        log.info("Couldn't get products, wrong amount to get");
     }
 }

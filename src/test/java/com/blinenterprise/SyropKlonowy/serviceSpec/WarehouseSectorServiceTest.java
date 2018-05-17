@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.serviceSpec;
 
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.domain.builder.ProductBuilder;
@@ -71,16 +70,16 @@ public class WarehouseSectorServiceTest {
         Mockito.when(warehouseSectorRepositoryMock.save(any(WarehouseSector.class))).thenReturn(warehouseSector);
         Mockito.when(productServiceMock.findById(any(Long.class))).thenReturn(Optional.of(product));
         Mockito.when(warehouseSectorRepositoryMock.findAll()).thenReturn(Lists.newArrayList(warehouseSector));
-        Mockito.when(warehouseSectorRepositoryMock.findAllContainingProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
-        Mockito.when(warehouseSectorRepositoryMock.findAllContainingSaleOrderedProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
-        Mockito.when(warehouseSectorRepositoryMock.findAllContainingSaleOrderedProductOrderedDESCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
+        Mockito.when(warehouseSectorRepositoryMock.findAllContainingNotReservedProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
+        Mockito.when(warehouseSectorRepositoryMock.findAllContainingReservedProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
+        Mockito.when(warehouseSectorRepositoryMock.findAllContainingReservedProductOrderedDESCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
     }
 
     @Test
     public void shouldAddNewProduct() {
         warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
 
-        Assert.assertEquals(1, warehouseSector.getAmountOfProducts().size());
+        Assert.assertEquals(1, warehouseSector.getNotReservedAmountOfProducts().size());
     }
 
     @Test
@@ -89,10 +88,10 @@ public class WarehouseSectorServiceTest {
         warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
         warehouseSectorService.addProductWithQuantityBySectorId(product2, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
 
-        Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
+        Integer actualProductQuantity = warehouseSector.getNotReservedAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 30;
 
-        Assert.assertEquals(2, warehouseSector.getAmountOfProducts().size());
+        Assert.assertEquals(2, warehouseSector.getNotReservedAmountOfProducts().size());
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
     }
 
@@ -113,7 +112,7 @@ public class WarehouseSectorServiceTest {
         warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
         warehouseSectorService.removeAmountOfProductBySectorId(amountOfProduct, WAREHOUSE_SECTOR_ID);
 
-        Integer actualProductQuantity = warehouseSector.getQuantityOfProductByIdIfExist(product.getId());
+        Integer actualProductQuantity = warehouseSector.getQuantityOfNotReservedProductByIdIfExist(product.getId());
         Integer expectedProductQuantity = 0;
 
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
@@ -127,12 +126,12 @@ public class WarehouseSectorServiceTest {
         warehouseSectorService.addProductWithQuantityBySectorId(product, 20, WAREHOUSE_SECTOR_ID);
         warehouseSectorService.addProductWithQuantityBySectorId(product2, 20, WAREHOUSE_SECTOR_ID);
 
-        warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct);
-        warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct2);
+        warehouseSectorService.reserveAmountOfProduct(amountOfProduct);
+        warehouseSectorService.reserveAmountOfProduct(amountOfProduct2);
 
         Integer actualProductQuantity = warehouseSector.getCurrentAmountOfProducts();
-        Integer actualProductQuantity1 = warehouseSector.getSaleOrderedAmountOfProducts().get(product.getId()).getQuantity();
-        Integer actualProductQuantity2 = warehouseSector.getSaleOrderedAmountOfProducts().get(product2.getId()).getQuantity();
+        Integer actualProductQuantity1 = warehouseSector.getReservedAmountOfProducts().get(product.getId()).getQuantity();
+        Integer actualProductQuantity2 = warehouseSector.getReservedAmountOfProducts().get(product2.getId()).getQuantity();
         Integer expectedProductQuantity = 40;
         Integer expectedProductQuantity1 = 15;
         Integer expectedProductQuantity2 = 20;
@@ -148,11 +147,11 @@ public class WarehouseSectorServiceTest {
         AmountOfProduct amountOfProduct2 = new AmountOfProduct(product.getId(), 10);
 
         warehouseSectorService.addProductWithQuantityBySectorId(product, 20, WAREHOUSE_SECTOR_ID);
-        warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct);
-        warehouseSectorService.unReserveSaleOrderedAmountOfProduct(amountOfProduct2);
+        warehouseSectorService.reserveAmountOfProduct(amountOfProduct);
+        warehouseSectorService.unReserveAmountOfProduct(amountOfProduct2);
 
-        Integer actualProductQuantity = warehouseSector.getQuantityOfProductByIdIfExist(product.getId());
-        Integer actualProductQuantity1 = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(product.getId());
+        Integer actualProductQuantity = warehouseSector.getQuantityOfNotReservedProductByIdIfExist(product.getId());
+        Integer actualProductQuantity1 = warehouseSector.getQuantityOfReservedProductByIdIfExist(product.getId());
         Integer expectedProductQuantity = 15;
         Integer expectedProductQuantity1 = 5;
 
@@ -166,11 +165,11 @@ public class WarehouseSectorServiceTest {
         AmountOfProduct removeReservedAmountOfProduct = new AmountOfProduct(product.getId(), 15);
 
         warehouseSectorService.addProductWithQuantityBySectorId(product, 20, WAREHOUSE_SECTOR_ID);
-        warehouseSectorService.reserveSaleOrderedAmountOfProduct(reserveAmountOfProduct);
-        warehouseSectorService.removeSaleOrderedAmountOfProduct(removeReservedAmountOfProduct);
+        warehouseSectorService.reserveAmountOfProduct(reserveAmountOfProduct);
+        warehouseSectorService.removeReservedAmountOfProduct(removeReservedAmountOfProduct);
 
-        Integer actualProductQuantityInAmountOfProducts = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
-        Boolean isContaining = warehouseSector.getSaleOrderedAmountOfProducts().containsKey(product.getId());
+        Integer actualProductQuantityInAmountOfProducts = warehouseSector.getNotReservedAmountOfProducts().get(product.getId()).getQuantity();
+        Boolean isContaining = warehouseSector.getReservedAmountOfProducts().containsKey(product.getId());
         Integer currentAmount = warehouseSector.getCurrentAmountOfProducts();
 
         Integer expectedProductQuantity = 5;
