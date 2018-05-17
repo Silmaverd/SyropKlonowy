@@ -2,10 +2,10 @@ package com.blinenterprise.SyropKlonowy.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.*;
-
 
 @Getter
 @NoArgsConstructor
@@ -60,9 +60,16 @@ public class WarehouseSector {
     public boolean removeAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         Integer quantityOfProduct = amountOfProduct.getQuantity();
-        return amountOfProducts.containsKey(productId) &&
+        if (amountOfProducts.containsKey(productId) &&
                 isPossibleToRemoveProducts(quantityOfProduct) &&
-                amountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct);
+                amountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct)) {
+
+            if (amountOfProducts.get(productId).getQuantity() == 0) {
+                amountOfProducts.remove(productId);
+            }
+            return true;
+        }
+        return false;
     }
 
     public boolean reserveSaleOrderedAmountOfProduct(AmountOfProduct amountOfProduct) {

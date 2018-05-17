@@ -113,7 +113,7 @@ public class WarehouseSectorServiceTest {
         warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
         warehouseSectorService.removeAmountOfProductBySectorId(amountOfProduct, WAREHOUSE_SECTOR_ID);
 
-        Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
+        Integer actualProductQuantity = warehouseSector.getQuantityOfProductByIdIfExist(product.getId());
         Integer expectedProductQuantity = 0;
 
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
