@@ -50,26 +50,20 @@ public class WarehouseSectorService {
         return warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedASCByProductId(productId);
     }
 
-    private List<WarehouseSector> findAllContainingSaleOrderedProductOrderedDESCByProductId(Long productId){
+    private List<WarehouseSector> findAllContainingSaleOrderedProductOrderedDESCByProductId(Long productId) {
         return warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedDESCByProductId(productId);
     }
 
-    public boolean addProductWithQuantityBySectorId(ProductWithQuantity productWithQuantity, Integer amountPlaced, Long sectorId) {
+    public boolean addProductWithQuantityBySectorId(Product deliveredProduct, Integer quantityOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        if (!warehouseSector.isPossibleToAddNewProducts(amountPlaced)) {
-            log.info("Couldn't add new product, sector has no place for that amount");
-            return false;
-        }
-        Product product = productWithQuantity.getProduct();
-        Product productInStock = productService.findByCode(product.getCode())
-                .orElseGet(() -> productService.save(product));
-        if (productWithQuantity.decreaseAmountBy(amountPlaced)) {
-            if (warehouseSector.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), amountPlaced))) {
+        if (warehouseSector.isPossibleToAddNewProducts(quantityOfProduct)) {
+            Product productInStock = productService.findByCode(deliveredProduct.getCode())
+                    .orElseGet(() -> productService.save(deliveredProduct));
+            if (warehouseSector.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), quantityOfProduct))) {
                 saveOrUpdate(warehouseSector);
-                log.info("Added new product: " + productWithQuantity.getProduct().getId() + " quantity: " + productWithQuantity.getQuantity());
+                log.info("Added new product: " + deliveredProduct.getId() + " quantity: " + quantityOfProduct);
                 return true;
             }
-            productWithQuantity.increaseAmountBy(amountPlaced);
         }
         log.info("Couldn't add new product, wrong amount to place");
         return false;
@@ -77,11 +71,9 @@ public class WarehouseSectorService {
 
     private boolean reserveSaleOrderedAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        if (!warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity())) {
-            log.info("Couldn't reserve product, sector has no enough amount");
-            return false;
-        }
-        if (warehouseSector.reserveSaleOrderedAmountOfProduct(amountOfProduct)) {
+        if (warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity()) &&
+                warehouseSector.reserveSaleOrderedAmountOfProduct(amountOfProduct)) {
+
             saveOrUpdate(warehouseSector);
             log.info("Reserved product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
             return true;
@@ -92,11 +84,9 @@ public class WarehouseSectorService {
 
     public boolean removeAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        if (!warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity())) {
-            log.info("Couldn't remove product, sector has no enough amount");
-            return false;
-        }
-        if (warehouseSector.removeAmountOfProduct(amountOfProduct)) {
+        if (warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity()) &&
+                warehouseSector.removeAmountOfProduct(amountOfProduct)) {
+
             saveOrUpdate(warehouseSector);
             log.info("Removed product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
             return true;
@@ -107,16 +97,14 @@ public class WarehouseSectorService {
 
     private boolean removeSaleOrderAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        if (!warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity())) {
-            log.info("Couldn't remove product, sector has no enough ordered amount");
-            return false;
-        }
-        if (warehouseSector.removeSaleOrderedAmountOfProduct(amountOfProduct)) {
+        if (warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity()) &&
+                warehouseSector.removeSaleOrderedAmountOfProduct(amountOfProduct)) {
+
             saveOrUpdate(warehouseSector);
             log.info("Removed ordered product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
             return true;
         }
-        log.info("Couldn't remove product, sector has no enough ordered amount of product");
+        log.info("Couldn't remove product, sector has no enough sale ordered amount of product");
         return false;
     }
 

@@ -73,26 +73,21 @@ public class WarehouseSectorServiceTest {
         Mockito.when(warehouseSectorRepositoryMock.findAll()).thenReturn(Lists.newArrayList(warehouseSector));
         Mockito.when(warehouseSectorRepositoryMock.findAllContainingProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
         Mockito.when(warehouseSectorRepositoryMock.findAllContainingSaleOrderedProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
+        Mockito.when(warehouseSectorRepositoryMock.findAllContainingSaleOrderedProductOrderedDESCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
     }
 
     @Test
     public void shouldAddNewProduct() {
-        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
-
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
 
         Assert.assertEquals(1, warehouseSector.getAmountOfProducts().size());
     }
 
     @Test
     public void shouldIncreaseProductQuantity() {
-        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
-        ProductWithQuantity poductWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
-        ProductWithQuantity productWithQuantity3 = new ProductWithQuantity(product2, PRODUCT_QUANTITY);
-
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
-        warehouseSectorService.addProductWithQuantityBySectorId(poductWithQuantity2, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity3, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product2, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
 
         Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
         Integer expectedProductQuantity = 30;
@@ -104,21 +99,18 @@ public class WarehouseSectorServiceTest {
     @Test
     public void shouldReturnFalseWhenIncreaseProductQuantityOverMaxAmountOfWarehouseSector() {
         Integer overMaxAmountOfWarehouseSector = 100;
-        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, overMaxAmountOfWarehouseSector);
 
-        boolean result = warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, overMaxAmountOfWarehouseSector, WAREHOUSE_SECTOR_ID);
+        boolean result = warehouseSectorService.addProductWithQuantityBySectorId(product, overMaxAmountOfWarehouseSector, WAREHOUSE_SECTOR_ID);
 
         Assert.assertFalse(result);
     }
 
     @Test
     public void shouldDecreaseProductQuantity() {
-        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, PRODUCT_QUANTITY);
-        ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product, PRODUCT_QUANTITY);
         AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 30);
 
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, PRODUCT_QUANTITY,WAREHOUSE_SECTOR_ID);
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity2, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, PRODUCT_QUANTITY, WAREHOUSE_SECTOR_ID);
         warehouseSectorService.removeAmountOfProductBySectorId(amountOfProduct, WAREHOUSE_SECTOR_ID);
 
         Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
@@ -128,14 +120,12 @@ public class WarehouseSectorServiceTest {
     }
 
     @Test
-    public void shouldReserveAmountOfProduct(){
-        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, 20);
-        ProductWithQuantity productWithQuantity2 = new ProductWithQuantity(product2, 20);
+    public void shouldReserveAmountOfProduct() {
         AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 15);
         AmountOfProduct amountOfProduct2 = new AmountOfProduct(product2.getId(), 20);
 
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, 20,WAREHOUSE_SECTOR_ID);
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity2, 20, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, 20, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product2, 20, WAREHOUSE_SECTOR_ID);
 
         warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct);
         warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct2);
@@ -153,12 +143,11 @@ public class WarehouseSectorServiceTest {
     }
 
     @Test
-    public void shouldUnReserveAmountOfProduct(){
-        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, 20);
+    public void shouldUnReserveAmountOfProduct() {
         AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 15);
         AmountOfProduct amountOfProduct2 = new AmountOfProduct(product.getId(), 10);
 
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, 20,WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, 20, WAREHOUSE_SECTOR_ID);
         warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct);
         warehouseSectorService.unReserveSaleOrderedAmountOfProduct(amountOfProduct2);
 
@@ -172,12 +161,11 @@ public class WarehouseSectorServiceTest {
     }
 
     @Test
-    public void shouldRemoveReservedAmountOfProduct(){
-        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, 20);
+    public void shouldRemoveReservedAmountOfProduct() {
         AmountOfProduct reserveAmountOfProduct = new AmountOfProduct(product.getId(), 15);
         AmountOfProduct removeReservedAmountOfProduct = new AmountOfProduct(product.getId(), 15);
 
-        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, 20,WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.addProductWithQuantityBySectorId(product, 20, WAREHOUSE_SECTOR_ID);
         warehouseSectorService.reserveSaleOrderedAmountOfProduct(reserveAmountOfProduct);
         warehouseSectorService.removeSaleOrderedAmountOfProduct(removeReservedAmountOfProduct);
 
@@ -192,6 +180,4 @@ public class WarehouseSectorServiceTest {
         Assert.assertFalse(isContaining);
         Assert.assertEquals(expectedCurrentAmount, currentAmount);
     }
-
-
 }

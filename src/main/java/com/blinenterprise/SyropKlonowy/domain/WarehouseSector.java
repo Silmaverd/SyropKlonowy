@@ -45,7 +45,8 @@ public class WarehouseSector {
     public boolean removeSaleOrderedAmountOfProduct(AmountOfProduct amountOfProduct) {
         Long productId = amountOfProduct.getProductId();
         Integer quantityOfProduct = amountOfProduct.getQuantity();
-        if (saleOrderedAmountOfProducts.containsKey(productId) && isPossibleToRemoveProducts(quantityOfProduct) &&
+        if (saleOrderedAmountOfProducts.containsKey(productId) &&
+                isPossibleToRemoveProducts(quantityOfProduct) &&
                 saleOrderedAmountOfProducts.get(productId).decreaseQuantityBy(quantityOfProduct)) {
 
             if (saleOrderedAmountOfProducts.get(productId).getQuantity() == 0) {

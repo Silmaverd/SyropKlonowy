@@ -59,13 +59,20 @@ public class DeliveryService {
     @Transactional
     public void placeProduct(Long deliveryId, Long productId, int amountPlaced, Long sectorId) {
         Delivery delivery = findById(deliveryId).orElseThrow(IllegalArgumentException::new);
-        ProductWithQuantity productWithQuantityToPlace = delivery.getListOfProducts().stream()
+        ProductWithQuantity productWithQuantityToPlace = delivery.getListOfProducts()
+                .stream()
                 .filter(productWithQuantity -> productWithQuantity.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        if(warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace, amountPlaced, sectorId)){
-            delivery.notifyProductPlacement(productId, amountPlaced);
-            deliveryRepository.save(delivery);
+        if (productWithQuantityToPlace.decreaseAmountBy(amountPlaced)) {
+            if (warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace.getProduct(), amountPlaced, sectorId)) {
+                delivery.notifyProductPlacement(productId, amountPlaced);
+                deliveryRepository.save(delivery);
+                return;
+            }
+            productWithQuantityToPlace.increaseAmountBy(amountPlaced);
+            return;
         }
+        log.info("Couldn't get products, wrong amount to get");
     }
 }
