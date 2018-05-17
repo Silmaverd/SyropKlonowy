@@ -11,12 +11,10 @@ import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
 import com.google.common.collect.Lists;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -24,7 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -74,6 +71,8 @@ public class WarehouseSectorServiceTest {
         Mockito.when(warehouseSectorRepositoryMock.save(any(WarehouseSector.class))).thenReturn(warehouseSector);
         Mockito.when(productServiceMock.findById(any(Long.class))).thenReturn(Optional.of(product));
         Mockito.when(warehouseSectorRepositoryMock.findAll()).thenReturn(Lists.newArrayList(warehouseSector));
+        Mockito.when(warehouseSectorRepositoryMock.findAllContainingProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
+        Mockito.when(warehouseSectorRepositoryMock.findAllContainingSaleOrderedProductOrderedASCByProductId(any(Long.class))).thenReturn(Lists.newArrayList(warehouseSector));
     }
 
     @Test
@@ -102,7 +101,6 @@ public class WarehouseSectorServiceTest {
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
     }
 
-
     @Test
     public void shouldReturnFalseWhenIncreaseProductQuantityOverMaxAmountOfWarehouseSector() {
         Integer overMaxAmountOfWarehouseSector = 100;
@@ -112,7 +110,6 @@ public class WarehouseSectorServiceTest {
 
         Assert.assertFalse(result);
     }
-
 
     @Test
     public void shouldDecreaseProductQuantity() {
@@ -153,6 +150,25 @@ public class WarehouseSectorServiceTest {
         Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
         Assert.assertEquals(expectedProductQuantity1, actualProductQuantity1);
         Assert.assertEquals(expectedProductQuantity2, actualProductQuantity2);
+    }
+
+    @Test
+    public void shouldUnReserveAmountOfProduct(){
+        ProductWithQuantity productWithQuantity = new ProductWithQuantity(product, 20);
+        AmountOfProduct amountOfProduct = new AmountOfProduct(product.getId(), 15);
+        AmountOfProduct amountOfProduct2 = new AmountOfProduct(product.getId(), 10);
+
+        warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, 20,WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct);
+        warehouseSectorService.unReserveSaleOrderedAmountOfProduct(amountOfProduct2);
+
+        Integer actualProductQuantity = warehouseSector.getQuantityOfProductByIdIfExist(product.getId());
+        Integer actualProductQuantity1 = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(product.getId());
+        Integer expectedProductQuantity = 15;
+        Integer expectedProductQuantity1 = 5;
+
+        Assert.assertEquals(expectedProductQuantity, actualProductQuantity);
+        Assert.assertEquals(expectedProductQuantity1, actualProductQuantity1);
     }
 
     @Test

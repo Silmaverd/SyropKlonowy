@@ -96,41 +96,29 @@ public class SaleOrderService {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.closeOrder()) {
             orderById.getAmountsOfProducts().forEach(amountOfProduct ->
-                    warehouseSectorService.unReserveAmountOfProduct(amountOfProduct));
+                    warehouseSectorService.unReserveSaleOrderedAmountOfProduct(amountOfProduct));
             saleOrderRepository.save(orderById);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public boolean payById(Long id) {
-        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
-        if (orderById.isPresent()) {
-            if (orderById.get().payOrder()) {
-                saleOrderRepository.save(orderById.get());
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            throw new IllegalArgumentException();
+        SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if (orderById.payOrder()) {
+            saleOrderRepository.save(orderById);
+            return true;
         }
+        return false;
     }
 
     public boolean sendById(Long id) {
-        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
-        if (orderById.isPresent()) {
-            if (orderById.get().sendOrder()) {
-                orderById.get().getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.removeSaleOrderedAmountOfProduct(amountOfProduct));
-                saleOrderRepository.save(orderById.get());
-                return true;
-            } else {
-                return false;
-            }
-
-        } else {
-            throw new IllegalArgumentException();
+        SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if (orderById.sendOrder()) {
+            orderById.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.removeSaleOrderedAmountOfProduct(amountOfProduct));
+            saleOrderRepository.save(orderById);
+            return true;
         }
+        return false;
     }
 }

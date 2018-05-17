@@ -42,6 +42,14 @@ public class WarehouseSectorService {
         return warehouseSectorRepository.save(warehouseSector);
     }
 
+    private List<WarehouseSector> findAllContainingProductOrderedASCByProductId(Long productId) {
+        return Lists.newArrayList(warehouseSectorRepository.findAllContainingProductOrderedASCByProductId(productId));
+    }
+
+    private List<WarehouseSector> findAllContainingSaleOrderedProductOrderedASCByProductId(Long productId) {
+        return Lists.newArrayList(warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedASCByProductId(productId));
+    }
+
     public boolean addProductWithQuantityBySectorId(ProductWithQuantity productWithQuantity, Integer amountPlaced, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
         if (!warehouseSector.isPossibleToAddNewProducts(amountPlaced)) {
@@ -93,7 +101,7 @@ public class WarehouseSectorService {
         return false;
     }
 
-    public boolean removeSaleOrderAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
+    private boolean removeSaleOrderAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
         if (!warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity())) {
             log.info("Couldn't remove product, sector has no enough ordered amount");
@@ -109,7 +117,7 @@ public class WarehouseSectorService {
     }
 
     public void removeSaleOrderedAmountOfProduct(AmountOfProduct orderedProduct) {
-        List<WarehouseSector> warehouseSectors = findAll();
+        List<WarehouseSector> warehouseSectors = findAllContainingSaleOrderedProductOrderedASCByProductId(orderedProduct.getProductId());
         Integer restOfProductQuantity = orderedProduct.getQuantity();
         for (WarehouseSector warehouseSector : warehouseSectors) {
             Integer productQuantity = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(orderedProduct.getProductId());
@@ -126,7 +134,7 @@ public class WarehouseSectorService {
     }
 
     public void reserveSaleOrderedAmountOfProduct(AmountOfProduct orderedProduct) {
-        List<WarehouseSector> warehouseSectors = findAll();
+        List<WarehouseSector> warehouseSectors = findAllContainingProductOrderedASCByProductId(orderedProduct.getProductId());
         Integer restOfProductQuantity = orderedProduct.getQuantity();
         for (WarehouseSector warehouseSector : warehouseSectors) {
             Integer productQuantity = warehouseSector.getQuantityOfProductByIdIfExist(orderedProduct.getProductId());
@@ -142,8 +150,8 @@ public class WarehouseSectorService {
         }
     }
 
-    public void unReserveAmountOfProduct(AmountOfProduct amountOfProduct) {
-        List<WarehouseSector> warehouseSectors = findAll();
+    public void unReserveSaleOrderedAmountOfProduct(AmountOfProduct amountOfProduct) {
+        List<WarehouseSector> warehouseSectors = findAllContainingSaleOrderedProductOrderedASCByProductId(amountOfProduct.getProductId());
         Integer restOfProductQuantity = amountOfProduct.getQuantity();
         for (WarehouseSector warehouseSector : warehouseSectors) {
             Integer productQuantity = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(amountOfProduct.getProductId());
