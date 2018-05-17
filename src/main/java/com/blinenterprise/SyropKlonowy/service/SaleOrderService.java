@@ -92,6 +92,7 @@ public class SaleOrderService {
         saleOrderRepository.deleteById(id);
     }
 
+    @Transactional
     public boolean closeById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.closeOrder()) {
@@ -103,6 +104,7 @@ public class SaleOrderService {
         return false;
     }
 
+    @Transactional
     public boolean payById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.payOrder()) {
@@ -112,6 +114,7 @@ public class SaleOrderService {
         return false;
     }
 
+    @Transactional
     public boolean sendById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.sendOrder()) {
