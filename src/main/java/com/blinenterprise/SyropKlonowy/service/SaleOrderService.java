@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -186,26 +187,29 @@ public class SaleOrderService {
         }
     }
 
-    public List<Object[]> findMostCommonlyPurchasedProducts(Long clientId){
+    public AmountOfProduct getAmountOfProduct(Object[] object){
+        return new AmountOfProduct((Long)object[0], (int)(long) object[1]);
+    }
+
+    public List<AmountOfProduct> getListOfAmountOfProduct(List<Object[]> listOfObjects){
+        return listOfObjects.stream().map(object -> new AmountOfProduct((Long) object[0], (int)(long) object[1])).collect(Collectors.toList());
+    }
+
+
+    public List<AmountOfProduct> findMostCommonlyPurchasedProducts(Long clientId){
         if(clientService.existById(clientId)) {
             List<Object[]> listOfProductIdWithQuantity = saleOrderRepository.findProductIdFromAllOrdersWithSumOfQuantity(clientId);
-            listOfProductIdWithQuantity.sort((object1, object2) -> (Long) object1[1]<(Long) object2[1]?1:
-                    ((Long)object1[1]==(Long)object2[1]?0:
-                            -1));
-            return listOfProductIdWithQuantity;
+            return getListOfAmountOfProduct(listOfProductIdWithQuantity);
         }
         else{
             throw new IllegalArgumentException();
         }
     }
 
-    public List<Object[]> findFrequentlyBoughtTogether(Long productId){
+    public List<AmountOfProduct> findFrequentlyBoughtTogether(Long productId){
         if(productService.existsById(productId)) {
             List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtTogether(productId);
-            listOfFrequentlyProduct.sort((object1, object2) -> (Long) object1[1]<(Long) object2[1]?1:
-                    ((Long)object1[1]==(Long)object2[1]?0:
-                            -1));
-            return listOfFrequentlyProduct;
+            return getListOfAmountOfProduct(listOfFrequentlyProduct);
         }
         else{
             throw new IllegalArgumentException();

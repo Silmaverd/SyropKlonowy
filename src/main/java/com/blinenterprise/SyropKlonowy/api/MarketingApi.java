@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.money.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.DataView;
@@ -84,9 +85,9 @@ public class MarketingApi {
             @RequestParam(value = "clientId") Long clientId
     ) {
         try {
-            List<Object[]> listOfProductIdWithQuantity = saleOrderService.findMostCommonlyPurchasedProducts(clientId);
-            DataView<Long, Long> marketingDataView = new DataView<>(listOfProductIdWithQuantity
-                    .stream().map(objects -> new Pair<>((Long)objects[0],(Long) objects[1])).collect(Collectors.toList()));
+            List<AmountOfProduct> listOfProductIdWithQuantity = saleOrderService.findMostCommonlyPurchasedProducts(clientId);
+            DataView<Long, Integer> marketingDataView = new DataView<>(listOfProductIdWithQuantity
+                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -101,9 +102,9 @@ public class MarketingApi {
             @RequestParam(value = "productId") Long productId
     ) {
         try {
-            List<Object[]> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
-            DataView<Long, Long> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(objects -> new Pair<>((Long)objects[0],(Long) objects[1])).collect(Collectors.toList()));
+            List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
+            DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
+                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {

@@ -27,7 +27,7 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
     @Query("select avg(p.price) from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId")
     BigDecimal findAveragePriceOfProductInClientOrders(@Param("clientId") Long clientId);
 
-    @Query("select p.id, sum(aop.quantity) from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId group by p.id")
+    @Query("select p.id, sum(aop.quantity) as sq from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId group by p.id order by sq desc")
     List<Object[]> findProductIdFromAllOrdersWithSumOfQuantity(@Param("clientId") Long clientId);
 
     @Query("select aop.productId, count(aop.productId) from SaleOrder s join s.amountsOfProducts aop where s.id in" +
