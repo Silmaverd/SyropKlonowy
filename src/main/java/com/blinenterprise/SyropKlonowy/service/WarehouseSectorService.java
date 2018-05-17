@@ -43,11 +43,15 @@ public class WarehouseSectorService {
     }
 
     private List<WarehouseSector> findAllContainingProductOrderedASCByProductId(Long productId) {
-        return Lists.newArrayList(warehouseSectorRepository.findAllContainingProductOrderedASCByProductId(productId));
+        return warehouseSectorRepository.findAllContainingProductOrderedASCByProductId(productId);
     }
 
     private List<WarehouseSector> findAllContainingSaleOrderedProductOrderedASCByProductId(Long productId) {
-        return Lists.newArrayList(warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedASCByProductId(productId));
+        return warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedASCByProductId(productId);
+    }
+
+    private List<WarehouseSector> findAllContainingSaleOrderedProductOrderedDESCByProductId(Long productId){
+        return warehouseSectorRepository.findAllContainingSaleOrderedProductOrderedDESCByProductId(productId);
     }
 
     public boolean addProductWithQuantityBySectorId(ProductWithQuantity productWithQuantity, Integer amountPlaced, Long sectorId) {
@@ -151,7 +155,7 @@ public class WarehouseSectorService {
     }
 
     public void unReserveSaleOrderedAmountOfProduct(AmountOfProduct amountOfProduct) {
-        List<WarehouseSector> warehouseSectors = findAllContainingSaleOrderedProductOrderedASCByProductId(amountOfProduct.getProductId());
+        List<WarehouseSector> warehouseSectors = findAllContainingSaleOrderedProductOrderedDESCByProductId(amountOfProduct.getProductId());
         Integer restOfProductQuantity = amountOfProduct.getQuantity();
         for (WarehouseSector warehouseSector : warehouseSectors) {
             Integer productQuantity = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(amountOfProduct.getProductId());
