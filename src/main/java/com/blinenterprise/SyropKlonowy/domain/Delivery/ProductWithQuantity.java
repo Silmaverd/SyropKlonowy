@@ -35,9 +35,8 @@ public class ProductWithQuantity {
         } else return false;
     }
 
-    public boolean increaseAmountBy(int amount) {
+    public void increaseAmountBy(int amount) {
         this.quantity += amount;
-        return true;
     }
 
     @Override

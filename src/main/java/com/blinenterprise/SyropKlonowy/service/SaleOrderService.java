@@ -122,6 +122,7 @@ public class SaleOrderService {
         Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
         if (orderById.isPresent()) {
             if (orderById.get().sendOrder()) {
+                orderById.get().getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.removeSaleOrderedAmountOfProduct(amountOfProduct));
                 saleOrderRepository.save(orderById.get());
                 return true;
             } else {

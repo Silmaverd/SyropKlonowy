@@ -69,7 +69,7 @@ public class WarehouseSectorService {
             log.info("Couldn't reserve product, sector has no enough amount");
             return false;
         }
-        if (warehouseSector.reserveSaleOrderedAmountOfProducs(amountOfProduct)) {
+        if (warehouseSector.reserveSaleOrderedAmountOfProduct(amountOfProduct)) {
             saveOrUpdate(warehouseSector);
             log.info("Reserved product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
             return true;
@@ -93,18 +93,51 @@ public class WarehouseSectorService {
         return false;
     }
 
+    public boolean removeSaleOrderAmountOfProductBySectorId(AmountOfProduct amountOfProduct, Long sectorId) {
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        if (!warehouseSector.isPossibleToRemoveProducts(amountOfProduct.getQuantity())) {
+            log.info("Couldn't remove product, sector has no enough ordered amount");
+            return false;
+        }
+        if (warehouseSector.removeSaleOrderedAmountOfProduct(amountOfProduct)) {
+            saveOrUpdate(warehouseSector);
+            log.info("Removed ordered product: " + amountOfProduct.getProductId() + " quantity: " + amountOfProduct.getQuantity());
+            return true;
+        }
+        log.info("Couldn't remove product, sector has no enough ordered amount of product");
+        return false;
+    }
+
+    public void removeSaleOrderedAmountOfProduct(AmountOfProduct orderedProduct) {
+        List<WarehouseSector> warehouseSectors = findAll();
+        Integer restOfProductQuantity = orderedProduct.getQuantity();
+        for (WarehouseSector warehouseSector : warehouseSectors) {
+            Integer productQuantity = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(orderedProduct.getProductId());
+            if (restOfProductQuantity <= productQuantity) {
+                if (removeSaleOrderAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), restOfProductQuantity), warehouseSector.getId())) {
+                    break;
+                }
+            } else if (productQuantity > 0) {
+                if (removeSaleOrderAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), productQuantity), warehouseSector.getId())) {
+                    restOfProductQuantity -= productQuantity;
+                }
+            }
+        }
+    }
+
     public void reserveSaleOrderedAmountOfProduct(AmountOfProduct orderedProduct) {
         List<WarehouseSector> warehouseSectors = findAll();
         Integer restOfProductQuantity = orderedProduct.getQuantity();
         for (WarehouseSector warehouseSector : warehouseSectors) {
             Integer productQuantity = warehouseSector.getQuantityOfProductByIdIfExist(orderedProduct.getProductId());
             if (restOfProductQuantity <= productQuantity) {
-                if(reserveSaleOrderedAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), restOfProductQuantity), warehouseSector.getId())){
+                if (reserveSaleOrderedAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), restOfProductQuantity), warehouseSector.getId())) {
                     break;
                 }
             } else if (productQuantity > 0) {
-                restOfProductQuantity -= productQuantity;
-                reserveSaleOrderedAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), productQuantity), warehouseSector.getId());
+                if (reserveSaleOrderedAmountOfProductBySectorId(new AmountOfProduct(orderedProduct.getProductId(), productQuantity), warehouseSector.getId())) {
+                    restOfProductQuantity -= productQuantity;
+                }
             }
         }
     }
@@ -115,11 +148,13 @@ public class WarehouseSectorService {
         for (WarehouseSector warehouseSector : warehouseSectors) {
             Integer productQuantity = warehouseSector.getSaleOrderQuantityOfProductByIdIfExist(amountOfProduct.getProductId());
             if (restOfProductQuantity <= productQuantity) {
-                warehouseSector.unReserveAmountOfProductsFromSaleOrder(new AmountOfProduct(amountOfProduct.getProductId(), restOfProductQuantity));
-                break;
+                if (warehouseSector.unReserveAmountOfProductsFromSaleOrder(new AmountOfProduct(amountOfProduct.getProductId(), restOfProductQuantity))) {
+                    break;
+                }
             } else if (productQuantity > 0) {
-                restOfProductQuantity -= productQuantity;
-                warehouseSector.unReserveAmountOfProductsFromSaleOrder(new AmountOfProduct(amountOfProduct.getProductId(), productQuantity));
+                if (warehouseSector.unReserveAmountOfProductsFromSaleOrder(new AmountOfProduct(amountOfProduct.getProductId(), productQuantity))) {
+                    restOfProductQuantity -= productQuantity;
+                }
             }
         }
     }

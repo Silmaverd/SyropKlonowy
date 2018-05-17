@@ -143,10 +143,10 @@ public class WarehouseSectorServiceTest {
         warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct);
         warehouseSectorService.reserveSaleOrderedAmountOfProduct(amountOfProduct2);
 
-        Integer actualProductQuantity = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
+        Integer actualProductQuantity = warehouseSector.getCurrentAmountOfProducts();
         Integer actualProductQuantity1 = warehouseSector.getSaleOrderedAmountOfProducts().get(product.getId()).getQuantity();
         Integer actualProductQuantity2 = warehouseSector.getSaleOrderedAmountOfProducts().get(product2.getId()).getQuantity();
-        Integer expectedProductQuantity = 20;
+        Integer expectedProductQuantity = 40;
         Integer expectedProductQuantity1 = 15;
         Integer expectedProductQuantity2 = 20;
 
@@ -163,7 +163,7 @@ public class WarehouseSectorServiceTest {
 
         warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantity, 20,WAREHOUSE_SECTOR_ID);
         warehouseSectorService.reserveSaleOrderedAmountOfProduct(reserveAmountOfProduct);
-        warehouseSectorService.removeAmountOfProductBySectorId(removeReservedAmountOfProduct, WAREHOUSE_SECTOR_ID);
+        warehouseSectorService.removeSaleOrderedAmountOfProduct(removeReservedAmountOfProduct);
 
         Integer actualProductQuantityInAmountOfProducts = warehouseSector.getAmountOfProducts().get(product.getId()).getQuantity();
         Boolean isContaining = warehouseSector.getSaleOrderedAmountOfProducts().containsKey(product.getId());

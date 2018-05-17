@@ -58,8 +58,7 @@ public class SaleOrder {
         }
     }
 
-    public boolean
-    sendOrder() {
+    public boolean sendOrder() {
         if (saleOrderStatus == SaleOrderStatus.PAID) {
             saleOrderStatus = SaleOrderStatus.SENT;
             return true;
