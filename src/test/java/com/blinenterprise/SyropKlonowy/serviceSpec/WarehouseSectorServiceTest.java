@@ -1,11 +1,11 @@
 package com.blinenterprise.SyropKlonowy.serviceSpec;
 
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
-import com.blinenterprise.SyropKlonowy.domain.builder.ProductBuilder;
-import com.blinenterprise.SyropKlonowy.domain.builder.WarehouseSectorBuilder;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.Product.Category;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
+import com.blinenterprise.SyropKlonowy.domain.Product.ProductBuilder;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSectorBuilder;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;

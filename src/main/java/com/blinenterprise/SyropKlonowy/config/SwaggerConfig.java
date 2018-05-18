@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.web;
+package com.blinenterprise.SyropKlonowy.config;
 
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;

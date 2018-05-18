@@ -1,6 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.Address;
+import com.blinenterprise.SyropKlonowy.domain.Client.Address;
 import com.blinenterprise.SyropKlonowy.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

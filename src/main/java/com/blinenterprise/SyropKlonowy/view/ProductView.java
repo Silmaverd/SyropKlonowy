@@ -1,10 +1,9 @@
 package com.blinenterprise.SyropKlonowy.view;
 
 
-import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.money.MoneyConverter;
-import com.blinenterprise.SyropKlonowy.web.View;
+import com.blinenterprise.SyropKlonowy.domain.Product.Category;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import lombok.Getter;
 
 import java.util.ArrayList;

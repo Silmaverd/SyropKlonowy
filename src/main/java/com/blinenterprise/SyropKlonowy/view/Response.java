@@ -1,5 +1,6 @@
-package com.blinenterprise.SyropKlonowy.web;
+package com.blinenterprise.SyropKlonowy.view;
 
+import com.blinenterprise.SyropKlonowy.view.View;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

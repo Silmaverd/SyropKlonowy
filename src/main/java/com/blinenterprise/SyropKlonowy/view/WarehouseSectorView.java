@@ -1,8 +1,7 @@
 package com.blinenterprise.SyropKlonowy.view;
 
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
-import com.blinenterprise.SyropKlonowy.web.View;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import lombok.Getter;
 
 import java.util.ArrayList;

@@ -1,8 +1,7 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
-import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.events.Operation;
-import com.blinenterprise.SyropKlonowy.events.UserOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

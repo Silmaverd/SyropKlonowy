@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain.money;
+package com.blinenterprise.SyropKlonowy.converter;
 
 
 import java.math.BigDecimal;

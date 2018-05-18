@@ -3,7 +3,7 @@ package com.blinenterprise.SyropKlonowy.service;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
-import com.blinenterprise.SyropKlonowy.domain.Product;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;

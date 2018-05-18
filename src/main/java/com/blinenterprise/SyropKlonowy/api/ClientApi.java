@@ -1,16 +1,15 @@
 package com.blinenterprise.SyropKlonowy.api;
 
 
-import com.blinenterprise.SyropKlonowy.domain.Address;
-import com.blinenterprise.SyropKlonowy.domain.Client;
-import com.blinenterprise.SyropKlonowy.domain.Enterprise;
+import com.blinenterprise.SyropKlonowy.domain.Client.Address;
+import com.blinenterprise.SyropKlonowy.domain.Client.Client;
+import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.service.AddressService;
 import com.blinenterprise.SyropKlonowy.service.ClientService;
-import com.blinenterprise.SyropKlonowy.web.ClientView;
-import com.blinenterprise.SyropKlonowy.web.Response;
+import com.blinenterprise.SyropKlonowy.view.ClientView;
+import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

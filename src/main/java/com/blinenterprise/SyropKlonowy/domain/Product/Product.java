@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain;
+package com.blinenterprise.SyropKlonowy.domain.Product;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
