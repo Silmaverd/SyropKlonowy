@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -121,4 +122,53 @@ public class SaleOrderService {
         }
         return false;
     }
+
+    public List<SaleOrder> findAllByClientId(Long clientId){
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findAllByClientId(clientId);
+    }
+
+    public BigDecimal findMaxPriceInClientOrders(Long clientId){
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findMaxPriceInClientOrders(clientId);
+    }
+
+    public BigDecimal findMinPriceInClientOrders(Long clientId) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findMinPriceInClientOrders(clientId);
+    }
+
+    public BigDecimal findMaxPriceOfProductInClientOrders(Long clientId) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findMaxPriceOfProductInClientOrders(clientId);
+    }
+
+    public BigDecimal findAveragePriceOfProductInClientOrders(Long clientId) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId);
+    }
+
+    public AmountOfProduct getAmountOfProduct(Object[] object){
+        return new AmountOfProduct((Long)object[0], (int)(long) object[1]);
+    }
+
+    public List<AmountOfProduct> getListOfAmountOfProduct(List<Object[]> listOfObjects){
+        return listOfObjects.stream().map(object -> new AmountOfProduct((Long) object[0], (int)(long) object[1])).collect(Collectors.toList());
+    }
+
+
+    public List<AmountOfProduct> findMostCommonlyPurchasedProducts(Long clientId) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        List<Object[]> listOfProductIdWithQuantity = saleOrderRepository.findProductIdFromAllOrdersWithSumOfQuantity(clientId);
+        return getListOfAmountOfProduct(listOfProductIdWithQuantity);
+    }
+
+    public List<AmountOfProduct> findFrequentlyBoughtTogether(Long productId) {
+        productService.findById(productId).orElseThrow(IllegalArgumentException::new);
+        List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtTogether(productId);
+        return getListOfAmountOfProduct(listOfFrequentlyProduct);
+    }
+
+
+
 }

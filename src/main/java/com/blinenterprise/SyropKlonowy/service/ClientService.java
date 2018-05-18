@@ -25,4 +25,5 @@ public class ClientService {
     public List<Client> findByName(String name){
         return Lists.newArrayList(clientRepository.findAllByName(name));
     }
+
 }

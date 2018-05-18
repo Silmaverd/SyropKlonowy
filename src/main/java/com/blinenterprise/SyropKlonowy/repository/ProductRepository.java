@@ -27,4 +27,5 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     List<Product> findAllByPriceGreaterThanEqualAndCategory(BigDecimal price, Category category);
 
     Optional<Product> findByCode(String code);
+
 }
