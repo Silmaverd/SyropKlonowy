@@ -19,21 +19,24 @@ public class ProductWithQuantity {
     private Long id;
 
     @ManyToOne
-    Product product;
+    private Product product;
 
-    int quantity;
+    private int quantity;
 
     public ProductWithQuantity(Product product, int quantity) {
         this.product = product;
         this.quantity = quantity;
     }
 
-    public boolean decreaseAmountBy(int amount){
+    public boolean decreaseAmountBy(int amount) {
         if (this.quantity >= amount) {
             this.quantity -= amount;
             return true;
-        }
-        else return false;
+        } else return false;
+    }
+
+    public void increaseAmountBy(int amount) {
+        this.quantity += amount;
     }
 
     @Override

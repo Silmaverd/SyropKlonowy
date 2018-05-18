@@ -1,8 +1,8 @@
 package com.blinenterprise.SyropKlonowy.domain;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -28,15 +28,11 @@ public class AmountOfProduct {
         this.quantity += quantity;
     }
 
-    public void decreaseQuantityBy(Integer quantity) {
+    public boolean decreaseQuantityBy(Integer quantity) {
         if (this.quantity >= quantity) {
             this.quantity -= quantity;
-        } else {
-            throw new IllegalArgumentException();
+            return true;
         }
-    }
-
-    public static AmountOfProduct fromProductWithQuantity(ProductWithQuantity productWithQuantity){
-        return new AmountOfProduct(productWithQuantity.getProduct().getId(), productWithQuantity.getQuantity());
+        return false;
     }
 }

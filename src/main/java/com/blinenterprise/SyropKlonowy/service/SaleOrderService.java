@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
 import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
@@ -30,7 +29,7 @@ public class SaleOrderService {
     private ProductService productService;
 
     @Autowired
-    private WarehouseService warehouseService;
+    private WarehouseSectorService warehouseSectorService;
 
     @Autowired
     private OrderClosureExecutor orderClosureExecutor;
@@ -45,7 +44,6 @@ public class SaleOrderService {
     private ClientService clientService;
 
     private Map<Long, SaleOrder> temporarySaleOrders = new HashMap<>();
-
 
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
@@ -66,11 +64,11 @@ public class SaleOrderService {
         Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(configContainer.getOrderClosureDelayInDays()));
         orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), closureDate);
 
-        saleOrderRepository.save(temporarySaleOrders.get(clientId));
-        log.info("Successfully confirmed new order with id:" + temporarySaleOrders.get(clientId).getId());
+        SaleOrder saleOrderByClient = temporarySaleOrders.get(clientId);
+        saleOrderRepository.save(saleOrderByClient);
+        log.info("Successfully confirmed new order with id:" + saleOrderByClient.getId());
 
-        temporarySaleOrders.get(clientId).getAmountsOfProducts().forEach(amountOfProduct ->
-                warehouseService.removeAmountOfProduct(amountOfProduct, configContainer.getMainWarehouseName()));
+        saleOrderByClient.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.reserveAmountOfProduct(amountOfProduct));
 
         temporarySaleOrders.remove(clientId);
     }
@@ -92,53 +90,37 @@ public class SaleOrderService {
         saleOrderRepository.deleteById(id);
     }
 
+    @Transactional
     public boolean closeById(Long id) {
-        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
-        if (orderById.isPresent()) {
-            if (orderById.get().closeOrder()) {
-                orderById.get().getAmountsOfProducts().forEach(amountOfProduct -> {
-                    ProductWithQuantity productWithQuantity = new ProductWithQuantity(
-                            productService.findById(amountOfProduct.getProductId()).orElseThrow(IllegalArgumentException::new),
-                            amountOfProduct.getQuantity());
-                    warehouseService.addProductWithQuantity(productWithQuantity, configContainer.getMainWarehouseName());
-                });
-                saleOrderRepository.save(orderById.get());
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            throw new IllegalArgumentException();
+        SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if (orderById.closeOrder()) {
+            orderById.getAmountsOfProducts().forEach(amountOfProduct ->
+                    warehouseSectorService.unReserveAmountOfProduct(amountOfProduct));
+            saleOrderRepository.save(orderById);
+            return true;
         }
+        return false;
     }
 
+    @Transactional
     public boolean payById(Long id) {
-        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
-        if (orderById.isPresent()) {
-            if (orderById.get().payOrder()) {
-                saleOrderRepository.save(orderById.get());
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            throw new IllegalArgumentException();
+        SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if (orderById.payOrder()) {
+            saleOrderRepository.save(orderById);
+            return true;
         }
+        return false;
     }
 
+    @Transactional
     public boolean sendById(Long id) {
-        Optional<SaleOrder> orderById = saleOrderRepository.findById(id);
-        if (orderById.isPresent()) {
-            if (orderById.get().sendOrder()) {
-                saleOrderRepository.save(orderById.get());
-                return true;
-            } else {
-                return false;
-            }
-
-        } else {
-            throw new IllegalArgumentException();
+        SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        if (orderById.sendOrder()) {
+            orderById.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.removeReservedAmountOfProduct(amountOfProduct));
+            saleOrderRepository.save(orderById);
+            return true;
         }
+        return false;
     }
 
     public List<SaleOrder> findAllByClientId(Long clientId){

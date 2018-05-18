@@ -27,7 +27,7 @@ public class DataLoader {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private WarehouseRepository warehouseRepository;
+    private WarehouseSectorRepository warehouseSectorRepository;
     @Autowired
     private DeliveryRepository deliveryRepository;
     @Autowired
@@ -43,8 +43,12 @@ public class DataLoader {
     SaleOrderService saleOrderService;
 
     private void loadProductsWithQuantity() {
-        Warehouse warehouse = new Warehouse("MAIN");
-        warehouseRepository.save(warehouse);
+        WarehouseSector warehouseSector1 = new WarehouseSector("MAIN1", 50);
+        WarehouseSector warehouseSector2 = new WarehouseSector("MAIN2", 50);
+        WarehouseSector warehouseSector3 = new WarehouseSector("MAIN3", 50);
+        warehouseSectorRepository.save(warehouseSector1);
+        warehouseSectorRepository.save(warehouseSector2);
+        warehouseSectorRepository.save(warehouseSector3);
 
         List<Product> products = Arrays.asList(
                 new Product("PC1", new BigDecimal(15556), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC", "X324"),
@@ -59,8 +63,30 @@ public class DataLoader {
         List<AmountOfProduct> amountOfProducts = new ArrayList<>();
         products.forEach(product -> amountOfProducts.add(new AmountOfProduct(product.getId(), 20)));
 
-        amountOfProducts.forEach(warehouse::addAmountOfProduct);
-        warehouseRepository.save(warehouse);
+        amountOfProducts.forEach(warehouseSector1::addAmountOfProduct);
+        amountOfProducts.forEach(warehouseSector2::addAmountOfProduct);
+        amountOfProducts.forEach(warehouseSector3::addAmountOfProduct);
+        warehouseSectorRepository.save(warehouseSector1);
+        warehouseSectorRepository.save(warehouseSector2);
+        warehouseSectorRepository.save(warehouseSector3);
+    }
+
+    private void loadOneProductWithDifferentQuantities() {
+        WarehouseSector warehouseSector1 = warehouseSectorRepository.findByName("MAIN1").orElseThrow(IllegalArgumentException::new);
+        WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("MAIN2").orElseThrow(IllegalArgumentException::new);
+        WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("MAIN3").orElseThrow(IllegalArgumentException::new);
+
+        Product productToOrder = new Product("DSADAD", new BigDecimal(10.12), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
+        productRepository.save(productToOrder);
+        AmountOfProduct aop1 = new AmountOfProduct(productToOrder.getId(), 10);
+        AmountOfProduct aop2 = new AmountOfProduct(productToOrder.getId(), 5);
+        AmountOfProduct aop3 = new AmountOfProduct(productToOrder.getId(), 8);
+        warehouseSector1.addAmountOfProduct(aop3);
+        warehouseSector2.addAmountOfProduct(aop2);
+        warehouseSector3.addAmountOfProduct(aop1);
+        warehouseSectorRepository.save(warehouseSector1);
+        warehouseSectorRepository.save(warehouseSector2);
+        warehouseSectorRepository.save(warehouseSector3);
     }
 
     private void loadDeliveries() {
@@ -86,7 +112,7 @@ public class DataLoader {
         );
         productWithQuantityRepository.saveAll(products2);
 
-        Long warehouseId = warehouseRepository.findByName("MAIN").get().getId();
+        Long warehouseId = warehouseSectorRepository.findByName("MAIN1").get().getId();
         log.debug("Main warehouse id: " + warehouseId);
         List<Delivery> deliveries = Arrays.asList(
                 new Delivery(products1),
@@ -153,6 +179,7 @@ public class DataLoader {
 
     public void loadTestDataBase() {
         loadProductsWithQuantity();
+        loadOneProductWithDifferentQuantities();
         loadDeliveries();
         loadClientsAndAddresses();
         loadSaleOrders();
