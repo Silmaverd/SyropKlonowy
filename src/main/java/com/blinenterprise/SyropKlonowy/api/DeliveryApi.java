@@ -1,11 +1,11 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.money.MoneyConverter;
+import com.blinenterprise.SyropKlonowy.domain.Product.Category;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
-import com.blinenterprise.SyropKlonowy.web.Response;
+import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

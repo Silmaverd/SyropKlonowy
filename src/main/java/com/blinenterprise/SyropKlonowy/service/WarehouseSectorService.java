@@ -1,8 +1,8 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;

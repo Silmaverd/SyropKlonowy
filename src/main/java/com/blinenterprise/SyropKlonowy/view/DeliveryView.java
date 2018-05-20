@@ -3,7 +3,6 @@ package com.blinenterprise.SyropKlonowy.view;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
-import com.blinenterprise.SyropKlonowy.web.View;
 import lombok.Getter;
 import lombok.ToString;
 

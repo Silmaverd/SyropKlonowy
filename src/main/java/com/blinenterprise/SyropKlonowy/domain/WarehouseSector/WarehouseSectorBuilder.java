@@ -1,6 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain.builder;
-
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
+package com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
 
 public final class WarehouseSectorBuilder {
     private Long id;

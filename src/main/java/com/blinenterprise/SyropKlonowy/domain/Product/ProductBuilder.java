@@ -1,7 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain.builder;
-
-import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Product;
+package com.blinenterprise.SyropKlonowy.domain.Product;
 
 import java.math.BigDecimal;
 import java.util.Date;

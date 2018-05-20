@@ -1,8 +1,7 @@
-package com.blinenterprise.SyropKlonowy.domain;
+package com.blinenterprise.SyropKlonowy.domain.Client;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;

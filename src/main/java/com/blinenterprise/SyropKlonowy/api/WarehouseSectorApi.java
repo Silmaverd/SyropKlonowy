@@ -1,9 +1,9 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
 import com.blinenterprise.SyropKlonowy.view.WarehouseSectorView;
-import com.blinenterprise.SyropKlonowy.web.Response;
+import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,16 @@
 package com.blinenterprise.SyropKlonowy;
 
-import com.blinenterprise.SyropKlonowy.domain.*;
+import com.blinenterprise.SyropKlonowy.domain.Client.Address;
+import com.blinenterprise.SyropKlonowy.domain.Client.Client;
+import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Product.Category;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.repository.*;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import lombok.extern.slf4j.Slf4j;

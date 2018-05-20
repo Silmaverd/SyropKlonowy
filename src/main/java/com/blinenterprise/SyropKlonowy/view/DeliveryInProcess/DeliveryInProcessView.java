@@ -1,14 +1,13 @@
-package com.blinenterprise.SyropKlonowy.domain.Delivery.processing;
+package com.blinenterprise.SyropKlonowy.view.DeliveryInProcess;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
-import com.blinenterprise.SyropKlonowy.web.View;
+import com.blinenterprise.SyropKlonowy.view.View;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Getter

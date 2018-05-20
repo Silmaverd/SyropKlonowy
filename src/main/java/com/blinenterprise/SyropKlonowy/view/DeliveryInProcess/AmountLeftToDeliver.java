@@ -1,4 +1,4 @@
-package com.blinenterprise.SyropKlonowy.domain.Delivery.processing;
+package com.blinenterprise.SyropKlonowy.view.DeliveryInProcess;
 
 import lombok.AllArgsConstructor;
 

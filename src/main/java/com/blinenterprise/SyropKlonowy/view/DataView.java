@@ -1,6 +1,5 @@
 package com.blinenterprise.SyropKlonowy.view;
 
-import com.blinenterprise.SyropKlonowy.web.View;
 import javafx.util.Pair;
 import lombok.Getter;
 

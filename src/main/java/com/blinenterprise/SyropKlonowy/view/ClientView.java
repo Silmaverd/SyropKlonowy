@@ -1,13 +1,9 @@
-package com.blinenterprise.SyropKlonowy.web;
+package com.blinenterprise.SyropKlonowy.view;
 
-import com.blinenterprise.SyropKlonowy.domain.Address;
-import com.blinenterprise.SyropKlonowy.domain.Client;
-import com.blinenterprise.SyropKlonowy.domain.Enterprise;
+import com.blinenterprise.SyropKlonowy.domain.Client.Address;
+import com.blinenterprise.SyropKlonowy.domain.Client.Client;
+import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 @Getter
 public class ClientView implements View {

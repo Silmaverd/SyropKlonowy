@@ -1,9 +1,8 @@
 package com.blinenterprise.SyropKlonowy.view;
 
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
-import com.blinenterprise.SyropKlonowy.web.View;
 import lombok.Getter;
 
 import java.math.BigDecimal;

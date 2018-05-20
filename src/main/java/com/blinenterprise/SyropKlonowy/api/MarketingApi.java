@@ -1,10 +1,10 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.domain.money.MoneyConverter;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.DataView;
-import com.blinenterprise.SyropKlonowy.web.Response;
+import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javafx.util.Pair;

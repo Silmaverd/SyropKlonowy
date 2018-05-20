@@ -3,7 +3,7 @@ package com.blinenterprise.SyropKlonowy.api;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.SaleOrderView;
-import com.blinenterprise.SyropKlonowy.web.Response;
+import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
