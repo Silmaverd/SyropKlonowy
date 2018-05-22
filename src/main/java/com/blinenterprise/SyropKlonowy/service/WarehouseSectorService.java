@@ -41,11 +41,11 @@ public class WarehouseSectorService {
         return warehouseSectorRepository.save(warehouseSector);
     }
 
-    private List<WarehouseSector> findAllContainingNotReservedProductOrderedASCByProductId(Long productId) {
+    public List<WarehouseSector> findAllContainingNotReservedProductOrderedASCByProductId(Long productId) {
         return warehouseSectorRepository.findAllContainingNotReservedProductOrderedASCByProductId(productId);
     }
 
-    private List<WarehouseSector> findAllContainingReservedProductOrderedASCByProductId(Long productId) {
+    public List<WarehouseSector> findAllContainingReservedProductOrderedASCByProductId(Long productId) {
         return warehouseSectorRepository.findAllContainingReservedProductOrderedASCByProductId(productId);
     }
 

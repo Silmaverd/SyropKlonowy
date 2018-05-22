@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 public class ProductView implements View {
 
-
+    private Long id;
     private String name;
     private String price;
     private Category category;
@@ -21,7 +21,8 @@ public class ProductView implements View {
     private String description;
 
 
-    private ProductView(String name, String price, Category category, Date productionDate, String description) {
+    private ProductView(String name, String price, Category category, Date productionDate, String description, Long id) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;
@@ -35,7 +36,8 @@ public class ProductView implements View {
                 MoneyConverter.getString(product.getPrice()),
                 product.getCategory(),
                 product.getProductionDate(),
-                product.getDescription());
+                product.getDescription(),
+                product.getId());
     }
 
     public static List<ProductView> from(List<Product> products) {

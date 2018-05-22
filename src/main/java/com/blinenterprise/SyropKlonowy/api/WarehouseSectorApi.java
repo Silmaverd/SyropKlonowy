@@ -2,6 +2,8 @@ package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
+import com.blinenterprise.SyropKlonowy.view.DataView;
+import com.blinenterprise.SyropKlonowy.view.LongView;
 import com.blinenterprise.SyropKlonowy.view.WarehouseSectorView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -71,6 +74,22 @@ public class WarehouseSectorApi {
             return new Response<WarehouseSectorView>(true, Arrays.asList(WarehouseSectorView.from(warehouseSectorService.findByName(name).orElseThrow(IllegalArgumentException::new))));
         } catch (Exception e) {
             return new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
+        }
+    }
+
+    @RequestMapping(path = "/warehouseSector/getAllContainingNotReservedProduct", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display all warehouse ids that contain product on not reserved list", response = Response.class)
+    public Response<LongView> getWarehouseIdsConatiningProduct(@RequestParam(value = "productId", required = true) Long productId) {
+        try {
+            List<Long> sectorIds = warehouseSectorService
+                    .findAllContainingNotReservedProductOrderedASCByProductId(productId)
+                    .stream()
+                    .map(product -> product.getId())
+                    .collect(Collectors.toList());
+
+            return new Response<>(true, Arrays.asList(LongView.from(sectorIds)));
+        } catch (Exception e) {
+            return new Response<LongView>(false, Optional.of(e.getMessage()));
         }
     }
 }

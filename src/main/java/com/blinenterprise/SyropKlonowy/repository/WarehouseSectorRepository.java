@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -22,4 +23,6 @@ public interface WarehouseSectorRepository extends CrudRepository<WarehouseSecto
 
     @Query("select ws from WarehouseSector ws join ws.reservedAmountOfProducts raop on raop.productId=:productId order by raop.quantity desc")
     List<WarehouseSector> findAllContainingReservedProductOrderedDESCByProductId(@Param("productId") Long productId);
+
+    List<Product>
 }

@@ -7,8 +7,8 @@ import com.blinenterprise.SyropKlonowy.view.DataView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/marketing")
+@RequestMapping("/api/marketing")
 @Api
 public class MarketingApi {
 
@@ -87,7 +87,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfProductIdWithQuantity = saleOrderService.findMostCommonlyPurchasedProducts(clientId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfProductIdWithQuantity
-                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
