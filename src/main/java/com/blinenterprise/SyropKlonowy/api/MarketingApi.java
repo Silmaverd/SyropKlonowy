@@ -1,9 +1,11 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.marketing.Recommendations;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.DataView;
+import com.blinenterprise.SyropKlonowy.view.ProductView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,12 +24,30 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/marketing")
+@RequestMapping("/api/marketing")
 @Api
 public class MarketingApi {
 
     @Autowired
     SaleOrderService saleOrderService;
+    @Autowired
+    Recommendations recommendations;
+
+
+    @RequestMapping(path = "/client/recommendProducts", method = {RequestMethod.GET})
+    @ApiOperation(value = "recommend products for a given client", response = Response.class)
+    public Response<ProductView> recommendProducts(
+            @RequestParam(value = "clientId") Long clientId
+    ) {
+        try {
+            List<ProductView> results = ProductView.from(recommendations.recommendProductsForClientId(clientId));
+            return new Response<ProductView>(true, results);
+
+        } catch (Exception e) {
+            log.error("Failed to recommend products. Exception:" + e.toString());
+            return new Response<ProductView>(false, Optional.of(e.toString()));
+        }
+    }
 
     @RequestMapping(path = "/client/showPriceRange", method = {RequestMethod.GET})
     @ApiOperation(value = "show client's orders price range", response = Response.class)
