@@ -15,4 +15,8 @@ public class ConfigContainer {
 
     @Value("30")
     private Integer orderClosureDelayInDays;
+
+    @Value("3")
+    private Integer productAmountToLoad;
+
 }

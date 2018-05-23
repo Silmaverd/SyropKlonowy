@@ -35,5 +35,4 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
             "and aop.productId<>:productId group by aop.productId order by count(aop.productId) desc")
     List<Object[]> findFrequentlyBoughtTogether(@Param("productId") Long productId);
 
-
 }
