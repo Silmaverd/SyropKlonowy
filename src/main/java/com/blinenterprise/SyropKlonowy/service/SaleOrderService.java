@@ -1,10 +1,10 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.repository.SaleOrderRepository;
 import com.google.common.collect.Lists;
@@ -130,21 +130,33 @@ public class SaleOrderService {
 
     public BigDecimal findMaxPriceInClientOrders(Long clientId){
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        if (saleOrderRepository.findAllByClientId(clientId).isEmpty()) {
+            throw new IllegalArgumentException("Client has no orders.");
+        }
         return saleOrderRepository.findMaxPriceInClientOrders(clientId);
     }
 
     public BigDecimal findMinPriceInClientOrders(Long clientId) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        if (saleOrderRepository.findAllByClientId(clientId).isEmpty()) {
+            throw new IllegalArgumentException("Client has no orders.");
+        }
         return saleOrderRepository.findMinPriceInClientOrders(clientId);
     }
 
     public BigDecimal findMaxPriceOfProductInClientOrders(Long clientId) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        if (saleOrderRepository.findAllByClientId(clientId).isEmpty()) {
+            throw new IllegalArgumentException("Client has no orders.");
+        }
         return saleOrderRepository.findMaxPriceOfProductInClientOrders(clientId);
     }
 
     public BigDecimal findAveragePriceOfProductInClientOrders(Long clientId) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        if (saleOrderRepository.findAllByClientId(clientId).isEmpty()) {
+            throw new IllegalArgumentException("Client has no orders.");
+        }
         return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId);
     }
 
