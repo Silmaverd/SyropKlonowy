@@ -17,6 +17,10 @@ public class ClientService {
 
     public void create(Client client){clientRepository.save(client);}
 
+    public List<Client> findAll() {
+        return Lists.newArrayList(clientRepository.findAll());
+    }
+
     public Optional<Client> findById(long id){
         return clientRepository.findById(id);
     }
