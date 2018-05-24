@@ -10,7 +10,10 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 
 @Slf4j
@@ -23,29 +26,33 @@ public class Recommendations {
     @Autowired
     ClientService clientService;
 
+    // TODO: Consider client type for recommendations
+    // TODO: Add minimum similarity for recommendation
+    // TODO: Make sure the results are sorted correctly
     public ArrayList<Product> recommendProductsForClientId(Long clientId) {
         ArrayList<Product> results = new ArrayList<>();
         LinkedHashSet<Long> resultIds = new LinkedHashSet<>();
-        ArrayList<Client> clients = new ArrayList(clientService.findAll());
+        ArrayList<Client> clients = new ArrayList<>(clientService.findAll());
         ArrayList<Product> clientProducts = Lists.newArrayList(
                 saleOrderService.findAllProductsOrderedByClient(clientId));
+
+        //clients.removeIf(client -> !client.getEnterpriseType().equals(clientService.findById(clientId).get().getEnterpriseType()));
         clients.removeIf(client -> saleOrderService.findAllByClientId(client.getId()).isEmpty());
-        clients.removeIf(client -> client.getId() == clientId);
+        clients.removeIf(client -> client.getId().equals(clientId));
+        clients.sort(Comparator.comparingDouble(client -> calculateClientSimilarity(clientId, client.getId())));
+        clients.removeIf(client -> calculateClientSimilarity(clientId, client.getId()) < 0.5);
+        if (clients.size() > 10) clients.subList(10, clients.size()).clear();
 
-        clients.sort((Client c1, Client c2) -> Double.compare(
-                calculateClientSimilarity(c1.getId(), clientId),
-                calculateClientSimilarity(c2.getId(), clientId)));
-
-        if (clients.size() > 10) {
-            clients.subList(10, clients.size()).clear();
-        }
         clients.forEach(client ->
-                saleOrderService.findMostCommonlyPurchasedProducts(client.getId()).forEach(
-                        amountOfProduct -> resultIds.add(amountOfProduct.getProductId())));
+                saleOrderService.findMostCommonlyPurchasedProducts(client.getId())
+                        .forEach(amountOfProduct ->
+                                resultIds.add(amountOfProduct.getProductId())));
 
         clientProducts.forEach(product ->
-                saleOrderService.findFrequentlyBoughtTogether(product.getId()).forEach(amountOfProduct ->
-                        resultIds.add(amountOfProduct.getProductId())));
+                saleOrderService.findFrequentlyBoughtTogether(product.getId())
+                        .forEach(amountOfProduct ->
+                                resultIds.add(amountOfProduct.getProductId())));
+
 
         resultIds.forEach(resultId -> results.add(productService.findById(resultId).get()));
         results.removeIf(product -> clientProducts.contains(product));
@@ -54,19 +61,43 @@ public class Recommendations {
 
     private Double calculateClientSimilarity(Long firstClientId, Long secondClientId) {
         Double clientSimilarity = 1.0;
-        Double spendingSimilarity = saleOrderService.findAveragePriceOfProductInClientOrders(firstClientId).divide(
-                saleOrderService.findAveragePriceOfProductInClientOrders(secondClientId)).doubleValue();
+        Double choiceSimilarity = 1.0;
+        Double spendingSimilarity = 1.0;
+
+        BigDecimal firstClientAveragePrice = saleOrderService.findAveragePriceOfProductInClientOrders(firstClientId);
+        BigDecimal secondClientAveragePrice = saleOrderService.findAveragePriceOfProductInClientOrders(secondClientId);
+
+
+
         ArrayList<Product> firstClientPurchasedList = new ArrayList<>();
         saleOrderService.findMostCommonlyPurchasedProducts(firstClientId).forEach(amountOfProduct ->
-                firstClientPurchasedList.add(productService.findById(amountOfProduct.getProductId()).orElseThrow(IllegalArgumentException::new)));
+                firstClientPurchasedList.add(productService.findById(amountOfProduct.getProductId()).get()));
         ArrayList<Product> secondClientPurchasedList = new ArrayList<>();
         saleOrderService.findMostCommonlyPurchasedProducts(secondClientId).forEach(amountOfProduct ->
                 secondClientPurchasedList.add(productService.findById(amountOfProduct.getProductId()).get()));
+
         ArrayList<Product> choiceIntersectionList = new ArrayList<>(firstClientPurchasedList);
         choiceIntersectionList.retainAll(secondClientPurchasedList);
 
-        Double choiceSimilarity = Double.valueOf(firstClientPurchasedList.size() / choiceIntersectionList.size() *
-                secondClientPurchasedList.size() / choiceIntersectionList.size());
+        if (!secondClientAveragePrice.equals(0)) {
+            log.error("Client id " + firstClientId + " average: " + firstClientAveragePrice);
+            log.error("Client id " + secondClientId + " average: " + secondClientAveragePrice);
+            spendingSimilarity = 1 - firstClientAveragePrice
+                    .subtract(secondClientAveragePrice)
+                    .abs()
+                    .divide(firstClientAveragePrice.add(secondClientAveragePrice), 2, RoundingMode.HALF_EVEN)
+                    .doubleValue();
+
+            log.error("Spending similarity: " + spendingSimilarity);
+        }
+
+        if (choiceIntersectionList.size() > 0) {
+            choiceSimilarity = 1 -
+                    ((double) firstClientPurchasedList.size() - (double) choiceIntersectionList.size()) /
+                            firstClientPurchasedList.size();
+            log.error("Choice similarity: " + choiceSimilarity);
+        }
+
         clientSimilarity = spendingSimilarity * choiceSimilarity;
         return clientSimilarity;
     }

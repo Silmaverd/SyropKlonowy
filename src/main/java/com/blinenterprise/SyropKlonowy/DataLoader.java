@@ -169,16 +169,25 @@ public class DataLoader {
                 new AmountOfProduct(productId4, 8)
         );
 
+        List<AmountOfProduct> amountsOfProducts4 = Arrays.asList(
+                new AmountOfProduct(productId2, 2),
+                new AmountOfProduct(productId4, 11)
+        );
+
 
         List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
         Long clientId1 = clientsByName1.get(0).getId();
         List<Client> clientsByName2 = Lists.newArrayList(clientRepository.findAllByName("Klient3"));
         Long clientId2 = clientsByName2.get(0).getId();
+        List<Client> clientsByName3 = Lists.newArrayList(clientRepository.findAllByName("Klient2"));
+        Long clientId3 = clientsByName3.get(0).getId();
+
 
         List<SaleOrder> saleOrders = Arrays.asList(
                 new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), amountsOfProducts3, new BigDecimal(300), SaleOrderStatus.NEW),
                 new SaleOrder(clientId2, Date.valueOf(LocalDate.now()), amountsOfProducts1, new BigDecimal(400), SaleOrderStatus.PAID),
-                new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), amountsOfProducts2, new BigDecimal(500), SaleOrderStatus.PAID)
+                new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), amountsOfProducts2, new BigDecimal(500), SaleOrderStatus.PAID),
+                new SaleOrder(clientId3, Date.valueOf(LocalDate.now().minusDays(12)), amountsOfProducts4, new BigDecimal(980), SaleOrderStatus.SENT)
         );
         saleOrderRepository.saveAll(saleOrders);
     }
