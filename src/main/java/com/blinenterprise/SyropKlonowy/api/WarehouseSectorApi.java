@@ -2,10 +2,7 @@ package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
-import com.blinenterprise.SyropKlonowy.view.DataView;
-import com.blinenterprise.SyropKlonowy.view.LongView;
-import com.blinenterprise.SyropKlonowy.view.WarehouseSectorView;
-import com.blinenterprise.SyropKlonowy.view.Response;
+import com.blinenterprise.SyropKlonowy.view.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -79,17 +76,41 @@ public class WarehouseSectorApi {
 
     @RequestMapping(path = "/warehouseSector/getAllContainingNotReservedProduct", method = {RequestMethod.GET})
     @ApiOperation(value = "Display all warehouse ids that contain product on not reserved list", response = Response.class)
-    public Response<LongView> getWarehouseIdsConatiningProduct(@RequestParam(value = "productId", required = true) Long productId) {
+    public Response<ProductInSectorView> getWarehouseIdsConatiningProduct(@RequestParam(value = "productId", required = true) Long productId) {
         try {
-            List<Long> sectorIds = warehouseSectorService
+            List<ProductInSectorView> productInSectors = warehouseSectorService
                     .findAllContainingNotReservedProductOrderedASCByProductId(productId)
                     .stream()
-                    .map(product -> product.getId())
+                    .map(sector -> ProductInSectorView.from(
+                            sector.getId(),
+                            productId,
+                            warehouseSectorService.findQuantityOfNotReservedProductOnSectorByProductId(sector.getId(), productId)
+                    ))
                     .collect(Collectors.toList());
 
-            return new Response<>(true, Arrays.asList(LongView.from(sectorIds)));
+            return new Response<>(true, productInSectors);
         } catch (Exception e) {
-            return new Response<LongView>(false, Optional.of(e.getMessage()));
+            return new Response<ProductInSectorView>(false, Optional.of(e.getMessage()));
+        }
+    }
+
+    @RequestMapping(path = "/warehouseSector/getAllContainingReservedProduct", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display all warehouse ids that contain product on reserved list", response = Response.class)
+    public Response<ProductInSectorView> getWarehouseIdsConatiningReservedProduct(@RequestParam(value = "productId", required = true) Long productId) {
+        try {
+            List<ProductInSectorView> productInSectors = warehouseSectorService
+                    .findAllContainingReservedProductOrderedASCByProductId(productId)
+                    .stream()
+                    .map(sector -> ProductInSectorView.from(
+                            sector.getId(),
+                            productId,
+                            warehouseSectorService.findQuantityOfReservedProductOnSectorByProductId(sector.getId(), productId)
+                    ))
+                    .collect(Collectors.toList());
+
+            return new Response<>(true, productInSectors);
+        } catch (Exception e) {
+            return new Response<ProductInSectorView>(false, Optional.of(e.getMessage()));
         }
     }
 }

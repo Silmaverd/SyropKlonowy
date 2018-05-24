@@ -23,6 +23,4 @@ public interface WarehouseSectorRepository extends CrudRepository<WarehouseSecto
 
     @Query("select ws from WarehouseSector ws join ws.reservedAmountOfProducts raop on raop.productId=:productId order by raop.quantity desc")
     List<WarehouseSector> findAllContainingReservedProductOrderedDESCByProductId(@Param("productId") Long productId);
-
-    List<Product>
 }

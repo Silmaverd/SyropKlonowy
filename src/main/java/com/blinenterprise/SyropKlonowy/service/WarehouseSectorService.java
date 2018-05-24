@@ -49,8 +49,18 @@ public class WarehouseSectorService {
         return warehouseSectorRepository.findAllContainingReservedProductOrderedASCByProductId(productId);
     }
 
-    private List<WarehouseSector> findAllContainingReservedProductOrderedDESCByProductId(Long productId) {
+    public List<WarehouseSector> findAllContainingReservedProductOrderedDESCByProductId(Long productId) {
         return warehouseSectorRepository.findAllContainingReservedProductOrderedDESCByProductId(productId);
+    }
+
+    public Integer findQuantityOfReservedProductOnSectorByProductId(Long sectorId, Long productId){
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        return warehouseSector.getQuantityOfReservedProductByIdIfExist(productId);
+    }
+
+    public Integer findQuantityOfNotReservedProductOnSectorByProductId(Long sectorId, Long productId){
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        return warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId);
     }
 
     public boolean addProductWithQuantityBySectorId(Product deliveredProduct, Integer quantityOfProduct, Long sectorId) {

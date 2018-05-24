@@ -49,38 +49,37 @@ public class DataLoader {
     SaleOrderService saleOrderService;
 
     private void loadProductsWithQuantity() {
-        WarehouseSector warehouseSector1 = new WarehouseSector("MAIN1", 50);
-        WarehouseSector warehouseSector2 = new WarehouseSector("MAIN2", 50);
-        WarehouseSector warehouseSector3 = new WarehouseSector("MAIN3", 50);
+        WarehouseSector warehouseSector1 = new WarehouseSector("Computers", 50);
+        WarehouseSector warehouseSector2 = new WarehouseSector("Speakers", 50);
+        WarehouseSector warehouseSector3 = new WarehouseSector("Phones", 50);
         warehouseSectorRepository.save(warehouseSector1);
         warehouseSectorRepository.save(warehouseSector2);
         warehouseSectorRepository.save(warehouseSector3);
 
-        List<Product> products = Arrays.asList(
-                new Product("PC1", new BigDecimal(15556), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC", "X324"),
-                new Product("Laptop1", new BigDecimal(356342), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusYears(4)), "laptop 1", "XEWE"),
-                new Product("Laptop3", new BigDecimal(200030), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusDays(3)), "laptop 2", "AVE32"),
-                new Product("Smarphone", new BigDecimal(80099), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusWeeks(1)), "laptop", "ADAG21"),
-                new Product("Speaker1", new BigDecimal(512), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 1", "23A5"),
-                new Product("Speaker2", new BigDecimal(1012), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "135DGG2")
-        );
+        Product pc1 = new Product("PC1", new BigDecimal(15556), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC", "X324");
+        Product l1 = new Product("Laptop1", new BigDecimal(356342), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusYears(4)), "laptop 1", "XEWE");
+        Product l2 = new Product("Laptop3", new BigDecimal(200030), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusDays(3)), "laptop 2", "AVE32");
+        Product phone1 = new Product("Smarphone", new BigDecimal(80099), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusWeeks(1)), "laptop", "ADAG21");
+        Product speak1 = new Product("Speaker1", new BigDecimal(512), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 1", "23A5");
+        Product speak2 = new Product("Speaker2", new BigDecimal(1012), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "135DGG2");
+        List products = Arrays.asList(pc1, l1, l2, phone1, speak1, speak2);
         productRepository.saveAll(products);
 
-        List<AmountOfProduct> amountOfProducts = new ArrayList<>();
-        products.forEach(product -> amountOfProducts.add(new AmountOfProduct(product.getId(), 20)));
-
-        amountOfProducts.forEach(warehouseSector1::addAmountOfProduct);
-        amountOfProducts.forEach(warehouseSector2::addAmountOfProduct);
-        amountOfProducts.forEach(warehouseSector3::addAmountOfProduct);
+        warehouseSector1.addAmountOfProduct(new AmountOfProduct(pc1.getId(), 12));
+        warehouseSector1.addAmountOfProduct(new AmountOfProduct(l1.getId(), 6));
+        warehouseSector1.addAmountOfProduct(new AmountOfProduct(l2.getId(), 22));
+        warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak1.getId(), 23));
+        warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 2));
+        warehouseSector3.addAmountOfProduct(new AmountOfProduct(phone1.getId(), 11));
         warehouseSectorRepository.save(warehouseSector1);
         warehouseSectorRepository.save(warehouseSector2);
         warehouseSectorRepository.save(warehouseSector3);
     }
 
     private void loadOneProductWithDifferentQuantities() {
-        WarehouseSector warehouseSector1 = warehouseSectorRepository.findByName("MAIN1").orElseThrow(IllegalArgumentException::new);
-        WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("MAIN2").orElseThrow(IllegalArgumentException::new);
-        WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("MAIN3").orElseThrow(IllegalArgumentException::new);
+        WarehouseSector warehouseSector1 = warehouseSectorRepository.findByName("Computers").orElseThrow(IllegalArgumentException::new);
+        WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("Speakers").orElseThrow(IllegalArgumentException::new);
+        WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("Phones").orElseThrow(IllegalArgumentException::new);
 
         Product productToOrder = new Product("DSADAD", new BigDecimal(10.12), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
         productRepository.save(productToOrder);
@@ -118,7 +117,7 @@ public class DataLoader {
         );
         productWithQuantityRepository.saveAll(products2);
 
-        Long warehouseId = warehouseSectorRepository.findByName("MAIN1").get().getId();
+        Long warehouseId = warehouseSectorRepository.findByName("Computers").get().getId();
         log.debug("Main warehouse id: " + warehouseId);
         List<Delivery> deliveries = Arrays.asList(
                 new Delivery(products1),
