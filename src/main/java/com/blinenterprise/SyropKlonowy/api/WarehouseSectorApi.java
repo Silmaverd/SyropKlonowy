@@ -8,15 +8,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 @RestController
 @RequestMapping("/api/warehouseSector")
@@ -40,9 +38,9 @@ public class WarehouseSectorApi {
     @RequestMapping(path = "/warehouseSector/addWarehouseSector", method = {RequestMethod.PUT})
     @ApiOperation(value = "Add a warehouseSector", response = Response.class)
     public Response<WarehouseSectorView> addWarehouseSector(@RequestParam(value = "name", required = true) String name,
-                                                            @RequestParam(value = "maxAmount") Integer maxAmount) {
+                                                            @RequestParam(value = "maxAmountOfProducts") Integer maxAmountOfProducts) {
         try {
-            WarehouseSector warehouseSector = new WarehouseSector(name, maxAmount);
+            WarehouseSector warehouseSector = new WarehouseSector(name, maxAmountOfProducts);
             warehouseSectorService.saveOrUpdate(warehouseSector);
             return new Response<WarehouseSectorView>(true, Optional.empty());
         } catch (Exception e) {
