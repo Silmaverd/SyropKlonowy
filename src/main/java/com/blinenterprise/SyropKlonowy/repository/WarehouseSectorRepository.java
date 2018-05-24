@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
