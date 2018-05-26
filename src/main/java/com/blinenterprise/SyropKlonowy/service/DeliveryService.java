@@ -2,6 +2,7 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
@@ -68,5 +69,9 @@ public class DeliveryService {
             delivery.notifyProductPlacement(productId, amountPlaced);
             deliveryRepository.save(delivery);
         }
+    }
+
+    public List<Delivery> findAllWithStatus(String deliveryStatus){
+        return deliveryRepository.findAllByDeliveryStatus(DeliveryStatus.valueOf(deliveryStatus.toUpperCase()));
     }
 }
