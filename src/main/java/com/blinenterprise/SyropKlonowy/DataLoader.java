@@ -69,7 +69,7 @@ public class DataLoader {
         warehouseSector1.addAmountOfProduct(new AmountOfProduct(l1.getId(), 6));
         warehouseSector1.addAmountOfProduct(new AmountOfProduct(l2.getId(), 22));
         warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak1.getId(), 23));
-        warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 2));
+        warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 5));
         warehouseSector3.addAmountOfProduct(new AmountOfProduct(phone1.getId(), 11));
         warehouseSectorRepository.save(warehouseSector1);
         warehouseSectorRepository.save(warehouseSector2);
@@ -150,36 +150,22 @@ public class DataLoader {
         Long productId3 = productRepository.findByCode("135DGG2").get().getId();
         Long productId4 = productRepository.findByCode("2325425").get().getId();
 
-        List<AmountOfProduct> amountsOfProducts1 = Arrays.asList(
-                new AmountOfProduct(productId1, 6),
-                new AmountOfProduct(productId2, 5),
-                new AmountOfProduct(productId3, 20)
-        );
-
-        List<AmountOfProduct> amountsOfProducts2 = Arrays.asList(
-                new AmountOfProduct(productId2, 10),
-                new AmountOfProduct(productId3, 20),
-                new AmountOfProduct(productId4, 2)
-        );
-
-        List<AmountOfProduct> amountsOfProducts3 = Arrays.asList(
-                new AmountOfProduct(productId1, 2),
-                new AmountOfProduct(productId3, 20),
-                new AmountOfProduct(productId4, 8)
-        );
-
-
         List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
         Long clientId1 = clientsByName1.get(0).getId();
         List<Client> clientsByName2 = Lists.newArrayList(clientRepository.findAllByName("Klient3"));
         Long clientId2 = clientsByName2.get(0).getId();
 
-        List<SaleOrder> saleOrders = Arrays.asList(
-                new SaleOrder(clientId1, Date.valueOf(LocalDate.now()), amountsOfProducts3, new BigDecimal(300), SaleOrderStatus.NEW),
-                new SaleOrder(clientId2, Date.valueOf(LocalDate.now()), amountsOfProducts1, new BigDecimal(400), SaleOrderStatus.PAID),
-                new SaleOrder(clientId2, Date.valueOf(LocalDate.now().minusWeeks(2)), amountsOfProducts2, new BigDecimal(500), SaleOrderStatus.PAID)
-        );
-        saleOrderRepository.saveAll(saleOrders);
+        saleOrderService.addProductToOrder(clientId1, productId1, 6);
+        saleOrderService.addProductToOrder(clientId1, productId2, 5);
+        saleOrderService.addProductToOrder(clientId1, productId3, 2);
+
+        saleOrderService.addProductToOrder(clientId2, productId3, 1);
+        saleOrderService.addProductToOrder(clientId2, productId4, 5);
+
+        saleOrderService.confirmTempClientOrder(clientId1);
+        saleOrderService.confirmTempClientOrder(clientId2);
+
+        saleOrderService.payById(saleOrderService.findAllByClientId(clientId2).get(0).getId());
     }
 
     public void loadTestDataBase() {
