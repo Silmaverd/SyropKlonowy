@@ -183,7 +183,7 @@ public class SaleOrderService {
 
     public List<AmountOfProduct> findFrequentlyBoughtInLastWeek(Enterprise enterpriseType){
         List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtInLastWeek(enterpriseType.name(),
-                Integer.parseInt(environment.getProperty("saleOrderService.productAmountToLoad")));
+                Integer.parseInt(environment.getProperty("productAmountToLoad")));
         return getListOfAmountOfProductFromNativeQuery(listOfFrequentlyProduct);
     }
 
