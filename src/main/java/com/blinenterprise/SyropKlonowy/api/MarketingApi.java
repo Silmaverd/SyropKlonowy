@@ -121,7 +121,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek();
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -138,7 +138,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek(enterpriseType);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
