@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
@@ -28,6 +29,7 @@ public class MarketingApi {
 
     @Autowired
     SaleOrderService saleOrderService;
+
 
     @RequestMapping(path = "/client/showPriceRange", method = {RequestMethod.GET})
     @ApiOperation(value = "show client's orders price range", response = Response.class)
@@ -105,6 +107,40 @@ public class MarketingApi {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
                     .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+            return new Response<>(true, Lists.newArrayList(marketingDataView));
+
+        } catch (Exception e) {
+            log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
+            return new Response<>(false, Optional.of(e.toString()));
+        }
+    }
+
+
+    @RequestMapping(path = "/product/showMostFrequentlyBoughtThisWeek", method = {RequestMethod.GET})
+    @ApiOperation(value = "show most frequently bought in last week", response = Response.class)
+    public Response<DataView> showMostFrequentlyBoughtThisWeek(
+    ) {
+        try {
+            List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek();
+            DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
+                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+            return new Response<>(true, Lists.newArrayList(marketingDataView));
+
+        } catch (Exception e) {
+            log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
+            return new Response<>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/product/showMostFrequentlyBoughtThisWeekByEnterprise", method = {RequestMethod.GET})
+    @ApiOperation(value = "show most frequently bought in last week by Enterprise", response = Response.class)
+    public Response<DataView> showMostFrequentlyBoughtThisWeekByEnterprise(
+            @RequestParam(value = "enterpriseType") Enterprise enterpriseType
+    ) {
+        try {
+            List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek(enterpriseType);
+            DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
+                    .stream().map(object -> new Pair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {

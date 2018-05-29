@@ -1,6 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.config.ConfigContainer;
+import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
@@ -10,10 +10,12 @@ import com.blinenterprise.SyropKlonowy.repository.SaleOrderRepository;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -35,13 +37,14 @@ public class SaleOrderService {
     private OrderClosureExecutor orderClosureExecutor;
 
     @Autowired
-    private ConfigContainer configContainer;
-
-    @Autowired
     private AmountOfProductService amountOfProductService;
 
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private Environment environment;
+
 
     private Map<Long, SaleOrder> temporarySaleOrders = new HashMap<>();
 
@@ -61,7 +64,7 @@ public class SaleOrderService {
         temporarySaleOrders.get(clientId).getAmountsOfProducts().forEach(amountOfProduct ->
                 amountOfProductService.save(amountOfProduct));
 
-        Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(configContainer.getOrderClosureDelayInDays()));
+        Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(Integer.parseInt(environment.getProperty("orderClosureDelayInDays"))));
         orderClosureExecutor.addClosureCommand(temporarySaleOrders.get(clientId).getId(), closureDate);
 
         SaleOrder saleOrderByClient = temporarySaleOrders.get(clientId);
@@ -156,6 +159,10 @@ public class SaleOrderService {
         return listOfObjects.stream().map(object -> new AmountOfProduct((Long) object[0], (int)(long) object[1])).collect(Collectors.toList());
     }
 
+    public List<AmountOfProduct> getListOfAmountOfProductFromNativeQuery(List<Object[]> listOfObjects){
+        return listOfObjects.stream().map(object -> new AmountOfProduct(((BigInteger) object[0]).longValue(), ((BigInteger) object[1]).intValue())).collect(Collectors.toList());
+    }
+
 
     public List<AmountOfProduct> findMostCommonlyPurchasedProducts(Long clientId) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
@@ -169,6 +176,16 @@ public class SaleOrderService {
         return getListOfAmountOfProduct(listOfFrequentlyProduct);
     }
 
+    public List<AmountOfProduct> findFrequentlyBoughtInLastWeek(){
+        List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtInLastWeek();
+        return getListOfAmountOfProductFromNativeQuery(listOfFrequentlyProduct);
+    }
+
+    public List<AmountOfProduct> findFrequentlyBoughtInLastWeek(Enterprise enterpriseType){
+        List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtInLastWeek(enterpriseType.name(),
+                Integer.parseInt(environment.getProperty("productAmountToLoad")));
+        return getListOfAmountOfProductFromNativeQuery(listOfFrequentlyProduct);
+    }
 
 
 }
