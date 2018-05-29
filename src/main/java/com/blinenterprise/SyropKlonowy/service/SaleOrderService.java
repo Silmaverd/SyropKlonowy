@@ -155,11 +155,14 @@ public class SaleOrderService {
         return new AmountOfProduct((Long)object[0], (int)(long) object[1]);
     }
 
-    public List<AmountOfProduct> getListOfAmountOfProduct(List<Object[]> listOfObjects){
+    public List<AmountOfProduct> getAmountOfProductListFromBigIntegerAndBigDecimal(List<Object[]> listOfObjects){
+        return listOfObjects.stream().map(object -> new AmountOfProduct(((BigInteger) object[0]).longValue(), ((BigDecimal) object[1]).intValue())).collect(Collectors.toList());
+    }
+    public List<AmountOfProduct> getAmountOfProductListFromLongAndLong(List<Object[]> listOfObjects){
         return listOfObjects.stream().map(object -> new AmountOfProduct((Long) object[0], (int)(long) object[1])).collect(Collectors.toList());
     }
 
-    public List<AmountOfProduct> getListOfAmountOfProductFromNativeQuery(List<Object[]> listOfObjects){
+    public List<AmountOfProduct> getAmountOfProductListFromBigIntegerAndBigInteger(List<Object[]> listOfObjects){
         return listOfObjects.stream().map(object -> new AmountOfProduct(((BigInteger) object[0]).longValue(), ((BigInteger) object[1]).intValue())).collect(Collectors.toList());
     }
 
@@ -167,24 +170,33 @@ public class SaleOrderService {
     public List<AmountOfProduct> findMostCommonlyPurchasedProducts(Long clientId) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
         List<Object[]> listOfProductIdWithQuantity = saleOrderRepository.findProductIdFromAllOrdersWithSumOfQuantity(clientId);
-        return getListOfAmountOfProduct(listOfProductIdWithQuantity);
+        return getAmountOfProductListFromLongAndLong(listOfProductIdWithQuantity);
     }
 
     public List<AmountOfProduct> findFrequentlyBoughtTogether(Long productId) {
         productService.findById(productId).orElseThrow(IllegalArgumentException::new);
         List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtTogether(productId);
-        return getListOfAmountOfProduct(listOfFrequentlyProduct);
+        return getAmountOfProductListFromLongAndLong(listOfFrequentlyProduct);
     }
 
     public List<AmountOfProduct> findFrequentlyBoughtInLastWeek(){
         List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtInLastWeek();
-        return getListOfAmountOfProductFromNativeQuery(listOfFrequentlyProduct);
+        return getAmountOfProductListFromBigIntegerAndBigInteger(listOfFrequentlyProduct);
     }
 
     public List<AmountOfProduct> findFrequentlyBoughtInLastWeek(Enterprise enterpriseType){
         List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtInLastWeek(enterpriseType.name(),
                 Integer.parseInt(environment.getProperty("productAmountToLoad")));
-        return getListOfAmountOfProductFromNativeQuery(listOfFrequentlyProduct);
+        return getAmountOfProductListFromBigIntegerAndBigInteger(listOfFrequentlyProduct);
+    }
+
+    public List<AmountOfProduct> findBoughtProductsSum(){
+        List<Object[]> listOfBoughtProductsSum = saleOrderRepository.findBoughtProductsSum();
+        return getAmountOfProductListFromBigIntegerAndBigDecimal(listOfBoughtProductsSum);
+    }
+
+    public BigDecimal findIncomeFromOrders(String fromDate, String toDate){
+        return saleOrderRepository.findIncomeFromOrders(fromDate, toDate);
     }
 
 
