@@ -35,5 +35,16 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
             "and aop.productId<>:productId group by aop.productId order by count(aop.productId) desc")
     List<Object[]> findFrequentlyBoughtTogether(@Param("productId") Long productId);
 
+    @Query(value = "select top 3 aop.product_Id, count(aop.product_Id) as cp from Sale_Order s, sale_order_amounts_of_products sa, Amount_Of_Product aop " +
+            "where  s.id = sa.SALE_ORDER_ID and aop.id = sa.AMOUNTS_OF_PRODUCTS_ID and s.date_of_order > DATEADD (dd, -7, GETDATE()) " +
+            "group by aop.product_Id order by cp desc", nativeQuery = true)
+    List<Object[]> findFrequentlyBoughtInLastWeek();
+
+    @Query(value = "select top :productAmountToLoad aop.product_Id, count(aop.product_Id) as cp from Sale_Order s, sale_order_amounts_of_products sa, Amount_Of_Product aop, Client c " +
+            "where  s.id = sa.SALE_ORDER_ID and aop.id = sa.AMOUNTS_OF_PRODUCTS_ID and s.client_Id=c.id " +
+            "and s.date_of_order > DATEADD (dd, -7, GETDATE()) and c.enterprise_Type = :enterpriseType " +
+            "group by aop.product_Id order by cp desc", nativeQuery = true)
+    List<Object[]> findFrequentlyBoughtInLastWeek(@Param("enterpriseType") String enterpriseType, @Param("productAmountToLoad") Integer productAmountToLoad);
+
 
 }
