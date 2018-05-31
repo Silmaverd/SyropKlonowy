@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.view;
 
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
@@ -17,7 +18,7 @@ public class SaleOrderView implements View {
     private Long clientId;
     private Date dateOfOrder;
     List<AmountOfProduct> amountsOfProducts;
-    private BigDecimal totalPrice;
+    private String totalPrice;
     private SaleOrderStatus saleOrderStatus;
 
     private SaleOrderView(Long id, Long clientId, Date dateOfOrder, List<AmountOfProduct> amountsOfProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
@@ -25,7 +26,7 @@ public class SaleOrderView implements View {
         this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;
         this.amountsOfProducts = amountsOfProducts;
-        this.totalPrice = totalPrice;
+        this.totalPrice = MoneyConverter.getString(totalPrice);
         this.saleOrderStatus = saleOrderStatus;
     }
 
