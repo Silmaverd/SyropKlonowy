@@ -92,11 +92,11 @@ public class MarketingApi {
             List<AmountOfProduct> listOfProductIdWithQuantity = saleOrderService.findMostCommonlyPurchasedProducts(clientId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfProductIdWithQuantity
                     .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show average price. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -109,11 +109,11 @@ public class MarketingApi {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
                     .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -126,11 +126,11 @@ public class MarketingApi {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek();
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
                     .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -143,11 +143,11 @@ public class MarketingApi {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek(enterpriseType);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
                     .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -159,11 +159,11 @@ public class MarketingApi {
             List<AmountOfProduct> listOfBoughtProductsSum = saleOrderService.findBoughtProductsSum();
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfBoughtProductsSum
                     .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show bought products sum. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -176,11 +176,11 @@ public class MarketingApi {
         try {
             BigDecimal incomeFromOrders = saleOrderService.findIncomeFromOrders(dateFrom, toDate);
             DataView<String, String> marketingDataView = new DataView<>(Arrays.asList(new DataViewValue<String,String>("gain", incomeFromOrders.toString())));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show income from orders. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
