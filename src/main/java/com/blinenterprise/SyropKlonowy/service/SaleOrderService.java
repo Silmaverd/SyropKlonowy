@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.service;
 
+import com.blinenterprise.SyropKlonowy.converter.AmountOfProductConverter;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
@@ -15,10 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -151,48 +150,32 @@ public class SaleOrderService {
         return saleOrderRepository.findAveragePriceOfProductInClientOrders(clientId);
     }
 
-    public AmountOfProduct getAmountOfProduct(Object[] object){
-        return new AmountOfProduct((Long)object[0], (int)(long) object[1]);
-    }
-
-    public List<AmountOfProduct> getAmountOfProductListFromBigIntegerAndBigDecimal(List<Object[]> listOfObjects){
-        return listOfObjects.stream().map(object -> new AmountOfProduct(((BigInteger) object[0]).longValue(), ((BigDecimal) object[1]).intValue())).collect(Collectors.toList());
-    }
-    public List<AmountOfProduct> getAmountOfProductListFromLongAndLong(List<Object[]> listOfObjects){
-        return listOfObjects.stream().map(object -> new AmountOfProduct((Long) object[0], (int)(long) object[1])).collect(Collectors.toList());
-    }
-
-    public List<AmountOfProduct> getAmountOfProductListFromBigIntegerAndBigInteger(List<Object[]> listOfObjects){
-        return listOfObjects.stream().map(object -> new AmountOfProduct(((BigInteger) object[0]).longValue(), ((BigInteger) object[1]).intValue())).collect(Collectors.toList());
-    }
-
-
     public List<AmountOfProduct> findMostCommonlyPurchasedProducts(Long clientId) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
         List<Object[]> listOfProductIdWithQuantity = saleOrderRepository.findProductIdFromAllOrdersWithSumOfQuantity(clientId);
-        return getAmountOfProductListFromLongAndLong(listOfProductIdWithQuantity);
+        return AmountOfProductConverter.getAmountOfProductListFromLongAndLong(listOfProductIdWithQuantity);
     }
 
     public List<AmountOfProduct> findFrequentlyBoughtTogether(Long productId) {
         productService.findById(productId).orElseThrow(IllegalArgumentException::new);
         List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtTogether(productId);
-        return getAmountOfProductListFromLongAndLong(listOfFrequentlyProduct);
+        return AmountOfProductConverter.getAmountOfProductListFromLongAndLong(listOfFrequentlyProduct);
     }
 
     public List<AmountOfProduct> findFrequentlyBoughtInLastWeek(){
         List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtInLastWeek();
-        return getAmountOfProductListFromBigIntegerAndBigInteger(listOfFrequentlyProduct);
+        return AmountOfProductConverter.getAmountOfProductListFromBigIntegerAndBigInteger(listOfFrequentlyProduct);
     }
 
     public List<AmountOfProduct> findFrequentlyBoughtInLastWeek(Enterprise enterpriseType){
         List<Object[]> listOfFrequentlyProduct = saleOrderRepository.findFrequentlyBoughtInLastWeek(enterpriseType.name(),
                 Integer.parseInt(environment.getProperty("productAmountToLoad")));
-        return getAmountOfProductListFromBigIntegerAndBigInteger(listOfFrequentlyProduct);
+        return AmountOfProductConverter.getAmountOfProductListFromBigIntegerAndBigInteger(listOfFrequentlyProduct);
     }
 
     public List<AmountOfProduct> findBoughtProductsSum(){
         List<Object[]> listOfBoughtProductsSum = saleOrderRepository.findBoughtProductsSum();
-        return getAmountOfProductListFromBigIntegerAndBigDecimal(listOfBoughtProductsSum);
+        return AmountOfProductConverter.getAmountOfProductListFromBigIntegerAndBigDecimal(listOfBoughtProductsSum);
     }
 
     public BigDecimal findIncomeFromOrders(String fromDate, String toDate){
