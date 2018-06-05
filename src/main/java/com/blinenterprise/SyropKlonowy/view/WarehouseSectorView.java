@@ -16,6 +16,7 @@ public class WarehouseSectorView implements View {
     private Integer maxAmountOfProducts;
     private List<AmountOfProduct> notReservedAmountOfProducts;
     private List<AmountOfProduct> reservedAmountOfProducts;
+    private Integer currentAmountOfProducts;
 
     public static WarehouseSectorView from(WarehouseSector warehouseSector) {
         return new WarehouseSectorView(
@@ -23,15 +24,17 @@ public class WarehouseSectorView implements View {
                 warehouseSector.getName(),
                 warehouseSector.getMaxAmountOfProducts(),
                 warehouseSector.getNotReservedAmountOfProducts(),
-                warehouseSector.getReservedAmountOfProducts());
+                warehouseSector.getReservedAmountOfProducts(),
+                warehouseSector.getCurrentAmountOfProducts());
     }
 
-    public WarehouseSectorView(Long id, String name, Integer maxAmountOfProducts, Map<Long, AmountOfProduct> notReservedAmountOfProducts, Map<Long, AmountOfProduct> reservedAmountOfProducts) {
+    public WarehouseSectorView(Long id, String name, Integer maxAmountOfProducts, Map<Long, AmountOfProduct> notReservedAmountOfProducts, Map<Long, AmountOfProduct> reservedAmountOfProducts, Integer currentAmountOfProducts) {
         this.id = id;
         this.name = name;
         this.maxAmountOfProducts = maxAmountOfProducts;
         this.notReservedAmountOfProducts = Lists.newArrayList(notReservedAmountOfProducts.values());
         this.reservedAmountOfProducts = Lists.newArrayList(reservedAmountOfProducts.values());
+        this.currentAmountOfProducts = currentAmountOfProducts;
     }
 
     public static List<WarehouseSectorView> from(List<WarehouseSector> warehouseSectors) {

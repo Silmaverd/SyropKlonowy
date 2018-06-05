@@ -2,6 +2,7 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
@@ -48,6 +49,14 @@ public class DeliveryService {
 
     public List<Delivery> findAllFrom(Date date) {
         return Lists.newArrayList(deliveryRepository.findAllByDeliveryDateAfter(date));
+    }
+
+    public List<Delivery> findAll() {
+        return Lists.newArrayList(deliveryRepository.findAll());
+    }
+
+    public List<Delivery> findAllByDeliveryStatus(DeliveryStatus deliveryStatus) {
+        return Lists.newArrayList(deliveryRepository.findAllByDeliveryStatus(deliveryStatus));
     }
 
     public void startHandlingADelivery(Long deliveryId) {
