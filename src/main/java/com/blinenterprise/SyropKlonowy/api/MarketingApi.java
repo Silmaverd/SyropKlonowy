@@ -5,11 +5,11 @@ import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.DataView;
+import com.blinenterprise.SyropKlonowy.view.DataViewValue;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,7 +91,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfProductIdWithQuantity = saleOrderService.findMostCommonlyPurchasedProducts(clientId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfProductIdWithQuantity
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -108,7 +108,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -125,7 +125,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek();
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -142,7 +142,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek(enterpriseType);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfBoughtProductsSum = saleOrderService.findBoughtProductsSum();
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfBoughtProductsSum
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
@@ -175,7 +175,7 @@ public class MarketingApi {
     ) {
         try {
             BigDecimal incomeFromOrders = saleOrderService.findIncomeFromOrders(dateFrom, toDate);
-            DataView<String, String> marketingDataView = new DataView<>(Arrays.asList(new ImmutablePair<String,String>("gain", incomeFromOrders.toString())));
+            DataView<String, String> marketingDataView = new DataView<>(Arrays.asList(new DataViewValue<String,String>("gain", incomeFromOrders.toString())));
             return new Response<>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
