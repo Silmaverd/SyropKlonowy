@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -46,5 +47,5 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
             "group by aop.product_Id order by cp desc", nativeQuery = true)
     List<Object[]> findFrequentlyBoughtInLastWeek(@Param("enterpriseType") String enterpriseType, @Param("productAmountToLoad") Integer productAmountToLoad);
 
-
+    List<SaleOrder> findAllBySaleOrderStatusOrSaleOrderStatus(SaleOrderStatus saleOrderStatus1, SaleOrderStatus saleOrderStatus2);
 }

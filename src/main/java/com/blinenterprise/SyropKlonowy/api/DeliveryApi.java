@@ -106,10 +106,15 @@ public class DeliveryApi {
         }
     }
 
-    @RequestMapping(path = "/delivery/getAllByDeliveryStatus", method = {RequestMethod.GET})
-    public Response<DeliveryView> getAllByDeliveryStatus(@RequestParam(value = "deliveryStatus") String deliveryStatus){
+    @RequestMapping(path = "/delivery/getAllByDeliveryStatusOrDeliveryStatus", method = {RequestMethod.GET})
+    public Response<DeliveryView> getAllByDeliveryStatusOrDeliveryStatus(
+            @RequestParam(value = "deliveryStatus1") String deliveryStatus1,
+            @RequestParam(value = "deliveryStatus2") String deliveryStatus2){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAllByDeliveryStatus(DeliveryStatus.valueOf(deliveryStatus)).stream().map(DeliveryView::from)
+            return new Response<DeliveryView>(true, deliveryService.findAllByDeliveryStatusOrDeliveryStatus(
+                    DeliveryStatus.valueOf(deliveryStatus1),
+                    DeliveryStatus.valueOf(deliveryStatus2))
+                    .stream().map(DeliveryView::from)
                     .collect(Collectors.toList()));
         }
         catch (Exception e){

@@ -55,8 +55,8 @@ public class DeliveryService {
         return Lists.newArrayList(deliveryRepository.findAll());
     }
 
-    public List<Delivery> findAllByDeliveryStatus(DeliveryStatus deliveryStatus) {
-        return Lists.newArrayList(deliveryRepository.findAllByDeliveryStatus(deliveryStatus));
+    public List<Delivery> findAllByDeliveryStatusOrDeliveryStatus(DeliveryStatus deliveryStatus1, DeliveryStatus deliveryStatus2) {
+        return Lists.newArrayList(deliveryRepository.findAllByDeliveryStatusOrDeliveryStatus(deliveryStatus1, deliveryStatus2));
     }
 
     public void startHandlingADelivery(Long deliveryId) {

@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.SaleOrderView;
@@ -72,6 +73,23 @@ public class SaleOrderApi {
     public Response<SaleOrderView> getAllOrders() {
         try {
             return new Response<SaleOrderView>(true, saleOrderService.findAll().stream().map(saleOrder ->
+                    SaleOrderView.from(saleOrder)
+            ).collect(Collectors.toList()));
+        } catch (Exception e) {
+            log.error("Failed to retrieve orders. Exception:" + e.toString());
+            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "getAllOrdersBySaleOrderStatusOrSaleOrderStatus", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display orders", response = Response.class)
+    public Response<SaleOrderView> getAllOrders(
+            @RequestParam(value = "saleOrderStatus1") String saleOrderStatus1,
+            @RequestParam(value = "saleOrderStatus2") String saleOrderStatus2) {
+        try {
+            return new Response<SaleOrderView>(true, saleOrderService.findAllBySaleOrderStatusOrSaleOrderStatus(
+                    SaleOrderStatus.valueOf(saleOrderStatus1),
+                    SaleOrderStatus.valueOf(saleOrderStatus2)).stream().map(saleOrder ->
                     SaleOrderView.from(saleOrder)
             ).collect(Collectors.toList()));
         } catch (Exception e) {
