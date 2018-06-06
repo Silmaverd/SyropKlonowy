@@ -78,4 +78,8 @@ public class DeliveryService {
             deliveryRepository.save(delivery);
         }
     }
+
+    public List<Delivery> findAllWithStatus(String deliveryStatus){
+        return deliveryRepository.findAllByDeliveryStatus(DeliveryStatus.valueOf(deliveryStatus.toUpperCase()));
+    }
 }
