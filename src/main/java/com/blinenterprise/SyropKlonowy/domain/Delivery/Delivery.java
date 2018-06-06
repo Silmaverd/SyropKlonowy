@@ -31,6 +31,7 @@ public class Delivery {
         productsPlacedInDeliveryProcess = new HashMap<>();
     }
 
+    @Column(length = 10000)
     private HashMap<Long, Integer> productsPlacedInDeliveryProcess;
 
     public ProductWithQuantity getProductWithQuantityForId(Long id) {

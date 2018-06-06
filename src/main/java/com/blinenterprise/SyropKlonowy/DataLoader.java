@@ -81,7 +81,7 @@ public class DataLoader {
         WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("Speakers").orElseThrow(IllegalArgumentException::new);
         WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("Phones").orElseThrow(IllegalArgumentException::new);
 
-        Product productToOrder = new Product("DSADAD", new BigDecimal(10.12), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
+        Product productToOrder = new Product("DSADAD", new BigDecimal(1012), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
         productRepository.save(productToOrder);
         AmountOfProduct aop1 = new AmountOfProduct(productToOrder.getId(), 10);
         AmountOfProduct aop2 = new AmountOfProduct(productToOrder.getId(), 5);
