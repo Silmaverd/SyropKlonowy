@@ -123,6 +123,7 @@ public class WarehouseSectorApi {
                             productWithQuantity.getProduct().getName(),
                             productWithQuantity.getProduct().getPrice(),
                             productWithQuantity.getProduct().getDescription(),
+                            sectorId,
                             productWithQuantity.getQuantity()
                     ))
                     .collect(Collectors.toList());
