@@ -41,6 +41,7 @@ public class DeliveryService {
         Delivery delivery = deliveryTemplate.build();
         deliveryRepository.save(delivery);
         deliveryTemplate = new DeliveryBuilder();
+        log.info("Delivery created successfully");
     }
 
     public Optional<Delivery> findById(Long id) {
