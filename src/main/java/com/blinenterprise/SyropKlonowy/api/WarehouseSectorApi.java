@@ -111,4 +111,25 @@ public class WarehouseSectorApi {
             return new Response<ProductInSectorView>(false, Optional.of(e.getMessage()));
         }
     }
+
+    @RequestMapping(path = "/warehouseSector/getAllProductsOnSector", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display all products on sector", response = Response.class)
+    public Response<WarehouseSectorProductsView> getWarehouseSectorProducts(@RequestParam(value = "sectorId") Long sectorId) {
+        try {
+            List<WarehouseSectorProductsView> productsInSector = warehouseSectorService
+                    .findAllProductWithQuantitiesOnSector(sectorId)
+                    .stream()
+                    .map(productWithQuantity -> WarehouseSectorProductsView.from(
+                            productWithQuantity.getProduct().getName(),
+                            productWithQuantity.getProduct().getPrice(),
+                            productWithQuantity.getProduct().getDescription(),
+                            productWithQuantity.getQuantity()
+                    ))
+                    .collect(Collectors.toList());
+
+            return new Response<>(true, productsInSector);
+        } catch (Exception e) {
+            return new Response<WarehouseSectorProductsView>(false, Optional.of(e.getMessage()));
+        }
+    }
 }
