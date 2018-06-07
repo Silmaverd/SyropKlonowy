@@ -69,6 +69,32 @@ public class SaleOrderApi {
         }
     }
 
+    @RequestMapping(path = "getTemporaryOrderByClientId", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display order that has not been yet confirmed by client id", response = Response.class)
+    public Response<SaleOrderView> getTemporaryOrderByClientId(@RequestParam(value = "clientId", required = true) Long clientId) {
+        try {
+            return new Response<SaleOrderView>(true, Arrays.asList(SaleOrderView.from(
+                    saleOrderService.findTemporaryOrderOfClient(clientId).orElse(null))));
+        } catch (Exception e) {
+            log.error("Failed to retrieve order. Exception:" + e.toString());
+            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "removeProductFromTemporaryOrder", method = {RequestMethod.POST})
+    @ApiOperation(value = "Remove product from order that has not been yet confirmed", response = Response.class)
+    public Response<SaleOrderView> removeProductFromTemporaryOrder(@RequestParam(value = "clientId", required = true) Long clientId,
+                                                                   @RequestParam(value = "productId", required = true) Long productId,
+                                                                   @RequestParam(value = "quantity", required = true) Integer quantity) {
+        try {
+            saleOrderService.removeProductFromOrder(clientId, productId, quantity);
+            return new Response<SaleOrderView>(true, Optional.empty());
+        } catch (Exception e) {
+            log.error("Failed to retrieve order. Exception:" + e.toString());
+            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
+        }
+    }
+
     @RequestMapping(path = "getAllOrders", method = {RequestMethod.GET})
     @ApiOperation(value = "Display all orders", response = Response.class)
     public Response<SaleOrderView> getAllOrders() {
