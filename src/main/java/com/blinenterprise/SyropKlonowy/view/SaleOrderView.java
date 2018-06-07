@@ -35,7 +35,7 @@ public class SaleOrderView implements View {
                 saleOrder.getId(),
                 saleOrder.getClientId(),
                 saleOrder.getDateOfOrder(),
-                saleOrder.getAmountsOfProducts(),
+                saleOrder.getProductsToOrder(),
                 saleOrder.getTotalPrice(),
                 saleOrder.getSaleOrderStatus());
     }

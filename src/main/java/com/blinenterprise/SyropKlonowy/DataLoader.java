@@ -4,6 +4,7 @@ import com.blinenterprise.SyropKlonowy.domain.Client.Address;
 import com.blinenterprise.SyropKlonowy.domain.Client.Client;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
@@ -117,8 +118,8 @@ public class DataLoader {
         Long warehouseId = warehouseSectorRepository.findByName("Computers").get().getId();
         log.debug("Main warehouse id: " + warehouseId);
         List<Delivery> deliveries = Arrays.asList(
-                new Delivery(products1),
-                new Delivery(products2)
+                new Delivery(products1, DeliveryStatus.NEW),
+                new Delivery(products2, DeliveryStatus.NEW)
         );
         deliveryRepository.saveAll(deliveries);
     }

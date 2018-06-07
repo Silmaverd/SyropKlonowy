@@ -33,6 +33,10 @@ public class DeliveryService {
         deliveryTemplate.addProduct(product, quantity);
     }
 
+    public void removeProductFromDelivery(String productName, int quantity) {
+        deliveryTemplate.removeQuantityOfProduct(productName, quantity);
+    }
+
     @Transactional
     public void createDeliveryFromCurrentTemplate() {
         deliveryTemplate.getListOfProducts().forEach(productWithQuantity ->
@@ -70,6 +74,10 @@ public class DeliveryService {
             delivery.notifyProductPlacement(productId, amountPlaced);
             deliveryRepository.save(delivery);
         }
+    }
+
+    public Delivery getCurrentTempate(){
+        return deliveryTemplate.getTemplate();
     }
 
     public List<Delivery> findAllWithStatus(String deliveryStatus){

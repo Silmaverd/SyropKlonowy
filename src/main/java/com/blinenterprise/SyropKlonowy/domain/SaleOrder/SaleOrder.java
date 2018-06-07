@@ -29,7 +29,7 @@ public class SaleOrder {
     private Date dateOfOrder;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<AmountOfProduct> amountsOfProducts = new ArrayList<>(0);
+    List<AmountOfProduct> productsToOrder = new ArrayList<>(0);
 
     private BigDecimal totalPrice;
 
@@ -71,19 +71,35 @@ public class SaleOrder {
 
     public void recalculateTotalPrice(ProductService productService) {
         totalPrice = new BigDecimal(0);
-        amountsOfProducts.forEach(amountOfProduct ->
+        productsToOrder.forEach(amountOfProduct ->
                 totalPrice = totalPrice.add(productService.findById(
                         amountOfProduct.getProductId()).get().getPrice().multiply(BigDecimal.valueOf(amountOfProduct.getQuantity()))));
     }
 
     public boolean addAmountOfProduct(AmountOfProduct amountOfProduct) {
-        return amountsOfProducts.add(amountOfProduct);
+        return productsToOrder.add(amountOfProduct);
     }
 
-    public SaleOrder(Long clientId, Date dateOfOrder, List<AmountOfProduct> amountsOfProducts, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
+    public boolean removeQuantityOfProductFromProductsToOrder(Long productId, Integer amount) {
+        AmountOfProduct productToReduce = getAmountOfProductWithProductId(productId);
+        if (productToReduce == null) return false;
+        if (amount == productToReduce.getQuantity() || !productToReduce.decreaseQuantityBy(amount)){
+            productsToOrder.remove(productToReduce);
+        }
+        return true;
+    }
+
+    public AmountOfProduct getAmountOfProductWithProductId(Long id){
+        for (AmountOfProduct amountOfProduct: productsToOrder){
+            if (amountOfProduct.getProductId().equals(id)) return amountOfProduct;
+        }
+        return null;
+    }
+
+    public SaleOrder(Long clientId, Date dateOfOrder, List<AmountOfProduct> productsToOrder, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
         this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;
-        this.amountsOfProducts = amountsOfProducts;
+        this.productsToOrder = productsToOrder;
         this.totalPrice = totalPrice;
         this.saleOrderStatus = saleOrderStatus;
     }
