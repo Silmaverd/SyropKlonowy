@@ -30,7 +30,7 @@ public final class DeliveryBuilder {
         return this;
     }
 
-    public DeliveryBuilder removeAmountOfProduct(String productName, int quantity) {
+    public DeliveryBuilder removeQuantityOfProduct(String productName, int quantity) {
         if (containsProductWithName(productName)){
             ProductWithQuantity productToReduce = getProductWithName(productName);
             if (quantity == productToReduce.getQuantity() || !productToReduce.decreaseAmountBy(quantity)){

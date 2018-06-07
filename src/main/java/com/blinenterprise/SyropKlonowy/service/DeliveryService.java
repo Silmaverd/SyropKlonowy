@@ -34,7 +34,7 @@ public class DeliveryService {
     }
 
     public void removeProductFromDelivery(String productName, int quantity) {
-        deliveryTemplate.removeAmountOfProduct(productName, quantity);
+        deliveryTemplate.removeQuantityOfProduct(productName, quantity);
     }
 
     @Transactional

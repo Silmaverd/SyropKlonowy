@@ -60,7 +60,7 @@ public class SaleOrderService {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
         SaleOrder selectedOrder = temporarySaleOrders.get(clientId);
         if (selectedOrder == null) throw new IllegalArgumentException("That order does not exist");
-        selectedOrder.removeAmountOfProduct(productId, quantity);
+        selectedOrder.removeQuantityOfProductFromProductsToOrder(productId, quantity);
         selectedOrder.recalculateTotalPrice(productService);
     }
 

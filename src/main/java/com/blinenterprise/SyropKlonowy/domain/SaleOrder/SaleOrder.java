@@ -80,7 +80,7 @@ public class SaleOrder {
         return productsToOrder.add(amountOfProduct);
     }
 
-    public boolean removeAmountOfProduct(Long productId, Integer amount) {
+    public boolean removeQuantityOfProductFromProductsToOrder(Long productId, Integer amount) {
         AmountOfProduct productToReduce = getAmountOfProductWithProductId(productId);
         if (productToReduce == null) return false;
         if (amount == productToReduce.getQuantity() || !productToReduce.decreaseQuantityBy(amount)){
