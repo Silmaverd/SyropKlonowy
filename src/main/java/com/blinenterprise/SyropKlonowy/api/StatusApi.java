@@ -1,10 +1,13 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
+import com.blinenterprise.SyropKlonowy.service.DeliveryService;
+import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.service.StatusService;
 import com.blinenterprise.SyropKlonowy.view.ClientView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import com.blinenterprise.SyropKlonowy.view.status.PriceView;
-import com.blinenterprise.SyropKlonowy.view.status.ProductsSoldView;
+import com.blinenterprise.SyropKlonowy.view.status.NumberView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,12 @@ public class StatusApi {
     @Autowired
     private StatusService statusService;
 
+    @Autowired
+    private SaleOrderService saleOrderService;
+
+    @Autowired
+    private DeliveryService deliveryService;
+
     @RequestMapping(path = "/status/getTotalIncomeFromOrdersSince", method = {RequestMethod.GET})
     @ApiOperation(value = "shows summed price of completed orders from specified date)", response = Response.class)
     public Response<PriceView> getTotalPriceOfOrdersSince(@RequestParam(value = "DD/MM/YYYY") String date) {
@@ -45,10 +54,10 @@ public class StatusApi {
 
     @RequestMapping(path = "/status/getNumberOfProductsSoldSince", method = {RequestMethod.GET})
     @ApiOperation(value = "shows summed number of sold products from specified date)", response = Response.class)
-    public Response<ProductsSoldView> getNumberOfSoldProductsSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+    public Response<NumberView> getNumberOfSoldProductsSince(@RequestParam(value = "DD/MM/YYYY") String date) {
         try {
             return new Response<>(true, Arrays.asList(
-                    ProductsSoldView.from(statusService.getNumberOfProductsSoldSince(dateFormatter.parse(date)).intValue())
+                    NumberView.from(statusService.getNumberOfProductsSoldSince(dateFormatter.parse(date)).intValue())
             ));
         } catch (Exception e) {
             log.error("Failed to retrieve number of products sold");
@@ -71,5 +80,46 @@ public class StatusApi {
         }
     }
 
+    @RequestMapping(path = "/status/getAmountOfSectors", method = {RequestMethod.GET})
+    @ApiOperation(value = "shows summed number of sectors)", response = Response.class)
+    public Response<NumberView> getNumberOfSoldProductsSince() {
+        try {
+            return new Response<>(true, Arrays.asList(
+                    NumberView.from(statusService.getAmountOfWarehouseSectors())
+            ));
+        } catch (Exception e) {
+            log.error("Failed to retrieve number of sectors");
+            return new Response<>(false, Optional.of(e.toString()));
+        }
+    }
 
+    @RequestMapping(path = "/status/getNumbersOfOrdersMadeSince", method = {RequestMethod.GET})
+    @ApiOperation(value = "shows summed number of orders made since specified date)", response = Response.class)
+    public Response<NumberView> getNumbersOfOrdersMadeSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+        try {
+            return new Response<>(true, Arrays.asList(
+                    NumberView.from(saleOrderService.findAllSaleOrdersSince(dateFormatter.parse(date)).size())
+            ));
+        } catch (Exception e) {
+            log.error("Failed to retrieve number of orders");
+            return new Response<>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/status/getNumberOfHandledDeliveriesSince", method = {RequestMethod.GET})
+    @ApiOperation(value = "shows summed number of deliveries handled since specified date)", response = Response.class)
+    public Response<NumberView> getNumberOfHandledDeliveriesSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+        try {
+            return new Response<>(true, Arrays.asList(
+                    NumberView.from(deliveryService.findAllFrom(dateFormatter.parse(date))
+                    .stream()
+                    .filter(delivery -> delivery.getDeliveryStatus().equals(DeliveryStatus.DONE))
+                    .mapToInt(delivery -> 1)
+                    .sum())
+            ));
+        } catch (Exception e) {
+            log.error("Failed to retrieve number of deliveries");
+            return new Response<>(false, Optional.of(e.toString()));
+        }
+    }
 }
