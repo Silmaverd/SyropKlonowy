@@ -9,7 +9,7 @@ public class MoneyConverter {
         price = price.replace("PLN", "");
         String[] prices = price.split(",|\\.");
 
-        return new BigDecimal(Integer.valueOf(prices[0])*100+Integer.valueOf(prices[1]));
+        return new BigDecimal(Integer.valueOf(prices[0])*100+(prices.length > 1?Integer.valueOf(prices[1]):0));
     }
 
     public static String getString(BigDecimal price){
