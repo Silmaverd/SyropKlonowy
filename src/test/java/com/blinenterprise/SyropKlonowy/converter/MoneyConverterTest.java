@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class MoneyConverterTest {
 
     @Test
-    public void test(){
+    public void moneyConverterAcceptsDifferentMoneyNotations(){
         BigDecimal priceDot = MoneyConverter.getBigDecimal("10.40");
         BigDecimal pricePrzec = MoneyConverter.getBigDecimal("10,40");
         BigDecimal priceNo = MoneyConverter.getBigDecimal("10");
