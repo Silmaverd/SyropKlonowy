@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 public class MoneyConverter {
 
     public static BigDecimal getBigDecimal(String price){
-        price = price.replace("PLN", "");
+        price = price.toUpperCase().replace("PLN", "");
         String[] prices = price.split(",|\\.");
 
         return new BigDecimal(Integer.valueOf(prices[0])*100+(prices.length > 1?Integer.valueOf(prices[1]):0));
