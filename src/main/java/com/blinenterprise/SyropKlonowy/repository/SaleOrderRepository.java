@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 
@@ -53,5 +54,6 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
 
     @Query(value = "select sum(s.total_price) as cp from Sale_Order s where  s.date_of_order between :fromDate and :toDate", nativeQuery = true)
     BigDecimal findIncomeFromOrders(@Param("fromDate")String fromDate, @Param("toDate") String toDate);
+    public List<SaleOrder> findAllByDateOfOrderAfter(Date date);
 
 }

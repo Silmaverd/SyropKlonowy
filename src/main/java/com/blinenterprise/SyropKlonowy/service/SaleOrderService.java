@@ -194,4 +194,8 @@ public class SaleOrderService {
         return Optional.of(temporarySaleOrders.get(clientId));
     }
 
+    public List<SaleOrder> findAllSaleOrdersSince(Date date){
+        return saleOrderRepository.findAllByDateOfOrderAfter(date);
+    }
+
 }
