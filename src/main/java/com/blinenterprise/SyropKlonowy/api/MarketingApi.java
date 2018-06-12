@@ -5,6 +5,7 @@ import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.DataView;
+import com.blinenterprise.SyropKlonowy.view.DataViewValue;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -89,12 +92,12 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfProductIdWithQuantity = saleOrderService.findMostCommonlyPurchasedProducts(clientId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfProductIdWithQuantity
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show average price. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -106,12 +109,12 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtTogether(productId);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -123,12 +126,13 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek();
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
+
 
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -140,12 +144,46 @@ public class MarketingApi {
         try {
             List<AmountOfProduct> listOfFrequentlyProduct = saleOrderService.findFrequentlyBoughtInLastWeek(enterpriseType);
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
-                    .stream().map(object -> new ImmutablePair<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
-            return new Response<>(true, Lists.newArrayList(marketingDataView));
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
+
 
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
-            return new Response<>(false, Optional.of(e.toString()));
+            return new Response<DataView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/product/showBoughtProductsSum", method = {RequestMethod.GET})
+    @ApiOperation(value = "show bought products sum", response = Response.class)
+    public Response<DataView> showBoughtProductsSum(
+    ) {
+        try {
+            List<AmountOfProduct> listOfBoughtProductsSum = saleOrderService.findBoughtProductsSum();
+            DataView<Long, Integer> marketingDataView = new DataView<>(listOfBoughtProductsSum
+                    .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
+
+        } catch (Exception e) {
+            log.error("Failed to show bought products sum. Exception:" + e.getMessage());
+            return new Response<DataView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/product/showIncomeFromOrders", method = {RequestMethod.GET})
+    @ApiOperation(value = "show income from orders", response = Response.class)
+    public Response<DataView> findIncomeFromOrders(
+            @RequestParam(value = "dateFrom in 'YYYY-MM-DD'") String dateFrom,
+            @RequestParam(value = "toDate in 'YYYY-MM-DD'") String toDate
+    ) {
+        try {
+            BigDecimal incomeFromOrders = saleOrderService.findIncomeFromOrders(dateFrom, toDate);
+            DataView<String, String> marketingDataView = new DataView<>(Arrays.asList(new DataViewValue<String,String>("gain", incomeFromOrders.toString())));
+            return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
+
+        } catch (Exception e) {
+            log.error("Failed to show income from orders. Exception:" + e.getMessage());
+            return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
 
