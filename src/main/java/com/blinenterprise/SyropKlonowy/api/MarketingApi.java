@@ -10,6 +10,7 @@ import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -128,6 +129,7 @@ public class MarketingApi {
                     .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
+
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
             return new Response<DataView>(false, Optional.of(e.toString()));
@@ -144,6 +146,7 @@ public class MarketingApi {
             DataView<Long, Integer> marketingDataView = new DataView<>(listOfFrequentlyProduct
                     .stream().map(object -> new DataViewValue<>(object.getProductId(), object.getQuantity())).collect(Collectors.toList()));
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
+
 
         } catch (Exception e) {
             log.error("Failed to show frequently bought products. Exception:" + e.getMessage());

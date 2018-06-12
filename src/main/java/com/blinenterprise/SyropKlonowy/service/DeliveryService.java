@@ -2,6 +2,7 @@ package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryBuilder;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.repository.DeliveryRepository;
@@ -32,6 +33,10 @@ public class DeliveryService {
         deliveryTemplate.addProduct(product, quantity);
     }
 
+    public void removeProductFromDelivery(String productName, int quantity) {
+        deliveryTemplate.removeQuantityOfProduct(productName, quantity);
+    }
+
     @Transactional
     public void createDeliveryFromCurrentTemplate() {
         deliveryTemplate.getListOfProducts().forEach(productWithQuantity ->
@@ -40,6 +45,7 @@ public class DeliveryService {
         Delivery delivery = deliveryTemplate.build();
         deliveryRepository.save(delivery);
         deliveryTemplate = new DeliveryBuilder();
+        log.info("Delivery created successfully");
     }
 
     public Optional<Delivery> findById(Long id) {
@@ -68,5 +74,13 @@ public class DeliveryService {
             delivery.notifyProductPlacement(productId, amountPlaced);
             deliveryRepository.save(delivery);
         }
+    }
+
+    public Delivery getCurrentTempate(){
+        return deliveryTemplate.getTemplate();
+    }
+
+    public List<Delivery> findAllWithStatus(String deliveryStatus){
+        return deliveryRepository.findAllByDeliveryStatus(DeliveryStatus.valueOf(deliveryStatus.toUpperCase()));
     }
 }
