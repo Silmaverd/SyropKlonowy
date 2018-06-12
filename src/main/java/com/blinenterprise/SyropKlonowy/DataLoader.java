@@ -8,8 +8,6 @@ import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
-import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
-import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.repository.*;
