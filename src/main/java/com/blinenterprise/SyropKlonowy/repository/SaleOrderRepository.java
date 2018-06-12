@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.math.BigDecimal;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @Repository
 public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
 

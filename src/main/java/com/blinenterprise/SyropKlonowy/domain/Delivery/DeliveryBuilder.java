@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.LinkedList;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @Getter
 public final class DeliveryBuilder {
 
