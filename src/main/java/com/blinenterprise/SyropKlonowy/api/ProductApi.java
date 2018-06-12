@@ -1,9 +1,12 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
+import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
 import com.blinenterprise.SyropKlonowy.view.ProductView;
 import com.blinenterprise.SyropKlonowy.view.Response;
+import com.blinenterprise.SyropKlonowy.view.WarehouseSectorProductsView;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -22,15 +26,33 @@ class ProductApi {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private WarehouseSectorService warehouseSectorService;
+
     @RequestMapping(path = "/product/getAll", method = {RequestMethod.GET})
     @ApiOperation(value = "Display all products", response = Response.class)
-    public Response<ProductView> getAllProducts() {
-        Response<ProductView> response;
+    public Response<WarehouseSectorProductsView> getAllProducts() {
+        Response<WarehouseSectorProductsView> response;
+        List<List<WarehouseSectorProductsView>> sectorsWithProducts = new ArrayList<>();
         try {
-            List<Product> result = productService.findAll();
-            response = new Response<ProductView>(true, ProductView.from(result));
+            warehouseSectorService.findAll().stream()
+                    .map(warehouseSector -> warehouseSector.getId())
+                    .forEach(sectorId -> {
+                        sectorsWithProducts.add(warehouseSectorService.findAllProductWithQuantitiesOnSector(sectorId).stream().map(productWithQuantity -> {
+                            return WarehouseSectorProductsView.from(productWithQuantity.getProduct().getId(),
+                                    productWithQuantity.getProduct().getName(),
+                                    productWithQuantity.getProduct().getPrice(),
+                                    productWithQuantity.getProduct().getCategory(),
+                                    productWithQuantity.getProduct().getDescription(),
+                                    sectorId,
+                                    productWithQuantity.getQuantity());
+                        }).collect(Collectors.toList()));
+                    });
+            List<WarehouseSectorProductsView> squashedSectorsWithProducts = new ArrayList<>();
+            sectorsWithProducts.forEach(sectorWithProducts -> sectorWithProducts.forEach(view -> squashedSectorsWithProducts.add(view)));
+            return new Response<WarehouseSectorProductsView>(true, squashedSectorsWithProducts);
         } catch (Exception e) {
-            response = new Response<ProductView>(false, Optional.of(e.getMessage()));
+            response = new Response<WarehouseSectorProductsView>(false, Optional.of(e.getMessage()));
         }
         return response;
 

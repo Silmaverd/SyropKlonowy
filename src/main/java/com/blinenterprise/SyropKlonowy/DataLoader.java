@@ -4,6 +4,7 @@ import com.blinenterprise.SyropKlonowy.domain.Client.Address;
 import com.blinenterprise.SyropKlonowy.domain.Client.Client;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
@@ -81,15 +82,13 @@ public class DataLoader {
         WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("Speakers").orElseThrow(IllegalArgumentException::new);
         WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("Phones").orElseThrow(IllegalArgumentException::new);
 
-        Product productToOrder = new Product("DSADAD", new BigDecimal(1012), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
+        Product productToOrder = new Product("Speaker 2", new BigDecimal(1021), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
+
         productRepository.save(productToOrder);
         AmountOfProduct aop1 = new AmountOfProduct(productToOrder.getId(), 10);
         AmountOfProduct aop2 = new AmountOfProduct(productToOrder.getId(), 5);
-        AmountOfProduct aop3 = new AmountOfProduct(productToOrder.getId(), 8);
-        warehouseSector1.addAmountOfProduct(aop3);
         warehouseSector2.addAmountOfProduct(aop2);
         warehouseSector3.addAmountOfProduct(aop1);
-        warehouseSectorRepository.save(warehouseSector1);
         warehouseSectorRepository.save(warehouseSector2);
         warehouseSectorRepository.save(warehouseSector3);
     }
@@ -120,18 +119,18 @@ public class DataLoader {
         Long warehouseId = warehouseSectorRepository.findByName("Computers").get().getId();
         log.debug("Main warehouse id: " + warehouseId);
         List<Delivery> deliveries = Arrays.asList(
-                new Delivery(products1),
-                new Delivery(products2)
+                new Delivery(products1, DeliveryStatus.NEW),
+                new Delivery(products2, DeliveryStatus.NEW)
         );
         deliveryRepository.saveAll(deliveries);
     }
 
     private void loadClientsAndAddresses() {
         List<Address> addresses = Arrays.asList(
-                new Address("Koryznowa", "1", "Lublin", "2424"),
-                new Address("Czeladników", "55", "Krakow", "2235"),
-                new Address("Wiejska", "3", "Warszawa", "23142"),
-                new Address("Niewiadomych", "4", "Poznań", "132")
+                new Address("Koryznowa", "1", "Lublin", "24-324"),
+                new Address("Czeladników", "55", "Krakow", "22-235"),
+                new Address("Wiejska", "3", "Warszawa", "23-142"),
+                new Address("Niewiadomych", "4", "Poznań", "11-132")
         );
         addressRepository.saveAll(addresses);
 

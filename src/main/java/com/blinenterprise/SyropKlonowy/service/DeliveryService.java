@@ -11,9 +11,11 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.*;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 @Service
 public class DeliveryService {
@@ -33,6 +35,10 @@ public class DeliveryService {
         deliveryTemplate.addProduct(product, quantity);
     }
 
+    public void removeProductFromDelivery(String productName, int quantity) {
+        deliveryTemplate.removeQuantityOfProduct(productName, quantity);
+    }
+
     @Transactional
     public void createDeliveryFromCurrentTemplate() {
         deliveryTemplate.getListOfProducts().forEach(productWithQuantity ->
@@ -41,6 +47,7 @@ public class DeliveryService {
         Delivery delivery = deliveryTemplate.build();
         deliveryRepository.save(delivery);
         deliveryTemplate = new DeliveryBuilder();
+        log.info("Delivery created successfully");
     }
 
     public Optional<Delivery> findById(Long id) {
@@ -71,7 +78,11 @@ public class DeliveryService {
         }
     }
 
-    public List<Delivery> findAllWithStatus(DeliveryStatus deliveryStatus){
+    public List<Delivery> findAllWithStatus(DeliveryStatus deliveryStatus) {
         return deliveryRepository.findAllByDeliveryStatus(deliveryStatus);
+    }
+
+    public Delivery getCurrentTempate(){
+        return deliveryTemplate.getTemplate();
     }
 }

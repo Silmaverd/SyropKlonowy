@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 @Service
 public class SaleOrderService {
@@ -56,12 +58,20 @@ public class SaleOrderService {
         temporarySaleOrders.get(clientId).recalculateTotalPrice(productService);
     }
 
+    public void removeProductFromOrder(Long clientId, Long productId, Integer quantity) {
+        clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        SaleOrder selectedOrder = temporarySaleOrders.get(clientId);
+        if (selectedOrder == null) throw new IllegalArgumentException("That order does not exist");
+        selectedOrder.removeQuantityOfProductFromProductsToOrder(productId, quantity);
+        selectedOrder.recalculateTotalPrice(productService);
+    }
+
     @Transactional
     public void confirmTempClientOrder(Long clientId) {
-        if (!temporarySaleOrders.containsKey(clientId) || temporarySaleOrders.get(clientId).getAmountsOfProducts().isEmpty()) {
+        if (!temporarySaleOrders.containsKey(clientId) || temporarySaleOrders.get(clientId).getProductsToOrder().isEmpty()) {
             throw new IllegalStateException();
         }
-        temporarySaleOrders.get(clientId).getAmountsOfProducts().forEach(amountOfProduct ->
+        temporarySaleOrders.get(clientId).getProductsToOrder().forEach(amountOfProduct ->
                 amountOfProductService.save(amountOfProduct));
 
         Date closureDate = new Date(new Date().getTime() + TimeUnit.DAYS.toMillis(Integer.parseInt(environment.getProperty("orderClosureDelayInDays"))));
@@ -71,7 +81,7 @@ public class SaleOrderService {
         saleOrderRepository.save(saleOrderByClient);
         log.info("Successfully confirmed new order with id:" + saleOrderByClient.getId());
 
-        saleOrderByClient.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.reserveAmountOfProduct(amountOfProduct));
+        saleOrderByClient.getProductsToOrder().forEach(amountOfProduct -> warehouseSectorService.reserveAmountOfProduct(amountOfProduct));
 
         temporarySaleOrders.remove(clientId);
     }
@@ -101,7 +111,7 @@ public class SaleOrderService {
     public boolean closeById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.closeOrder()) {
-            orderById.getAmountsOfProducts().forEach(amountOfProduct ->
+            orderById.getProductsToOrder().forEach(amountOfProduct ->
                     warehouseSectorService.unReserveAmountOfProduct(amountOfProduct));
             saleOrderRepository.save(orderById);
             return true;
@@ -123,7 +133,7 @@ public class SaleOrderService {
     public boolean sendById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         if (orderById.sendOrder()) {
-            orderById.getAmountsOfProducts().forEach(amountOfProduct -> warehouseSectorService.removeReservedAmountOfProduct(amountOfProduct));
+            orderById.getProductsToOrder().forEach(amountOfProduct -> warehouseSectorService.removeReservedAmountOfProduct(amountOfProduct));
             saleOrderRepository.save(orderById);
             return true;
         }
@@ -191,5 +201,8 @@ public class SaleOrderService {
         return getListOfAmountOfProductFromNativeQuery(listOfFrequentlyProduct);
     }
 
+    public Optional<SaleOrder> findTemporaryOrderOfClient(Long clientId) {
+        return Optional.of(temporarySaleOrders.get(clientId));
+    }
 
 }

@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-
+@CrossOrigin(origins = "http://localhost:4200")
 @Repository
 public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
 
@@ -22,17 +23,17 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
     @Query("select min(s.totalPrice) from SaleOrder s where s.clientId=:clientId")
     BigDecimal findMinPriceInClientOrders(@Param("clientId") Long clientId);
 
-    @Query("select max(p.price) from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId")
+    @Query("select max(p.price) from SaleOrder s join s.productsToOrder aop, Product p where aop.productId=p.id and s.clientId=:clientId")
     BigDecimal findMaxPriceOfProductInClientOrders(@Param("clientId") Long clientId);
 
-    @Query("select avg(p.price) from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId")
+    @Query("select avg(p.price) from SaleOrder s join s.productsToOrder aop, Product p where aop.productId=p.id and s.clientId=:clientId")
     BigDecimal findAveragePriceOfProductInClientOrders(@Param("clientId") Long clientId);
 
-    @Query("select p.id, sum(aop.quantity) as sq from SaleOrder s join s.amountsOfProducts aop, Product p where aop.productId=p.id and s.clientId=:clientId group by p.id order by sq desc")
+    @Query("select p.id, sum(aop.quantity) as sq from SaleOrder s join s.productsToOrder aop, Product p where aop.productId=p.id and s.clientId=:clientId group by p.id order by sq desc")
     List<Object[]> findProductIdFromAllOrdersWithSumOfQuantity(@Param("clientId") Long clientId);
 
-    @Query("select aop.productId, count(aop.productId) from SaleOrder s join s.amountsOfProducts aop where s.id in" +
-            "(select s.id from SaleOrder s join s.amountsOfProducts aop where aop.productId=:productId)" +
+    @Query("select aop.productId, count(aop.productId) from SaleOrder s join s.productsToOrder aop where s.id in" +
+            "(select s.id from SaleOrder s join s.productsToOrder aop where aop.productId=:productId)" +
             "and aop.productId<>:productId group by aop.productId order by count(aop.productId) desc")
     List<Object[]> findFrequentlyBoughtTogether(@Param("productId") Long productId);
 
