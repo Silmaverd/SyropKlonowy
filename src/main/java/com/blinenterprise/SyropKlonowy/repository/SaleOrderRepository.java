@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 
@@ -46,5 +47,6 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
             "group by aop.product_Id order by cp desc", nativeQuery = true)
     List<Object[]> findFrequentlyBoughtInLastWeek(@Param("enterpriseType") String enterpriseType, @Param("productAmountToLoad") Integer productAmountToLoad);
 
+    public List<SaleOrder> findAllByDateOfOrderAfter(Date date);
 
 }
