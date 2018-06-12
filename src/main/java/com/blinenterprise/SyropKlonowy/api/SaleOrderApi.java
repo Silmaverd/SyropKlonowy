@@ -81,15 +81,13 @@ public class SaleOrderApi {
         }
     }
 
-    @RequestMapping(path = "getAllOrdersBySaleOrderStatusOrSaleOrderStatus", method = {RequestMethod.GET})
+    @RequestMapping(path = "getAllOrdersBySaleOrderStatus", method = {RequestMethod.GET})
     @ApiOperation(value = "Display orders", response = Response.class)
-    public Response<SaleOrderView> getAllOrders(
-            @RequestParam(value = "saleOrderStatus1") String saleOrderStatus1,
-            @RequestParam(value = "saleOrderStatus2") String saleOrderStatus2) {
+    public Response<SaleOrderView> getAllOrdersBySaleOrderStatus(
+            @RequestParam(value = "status") String saleOrderStatus) {
         try {
-            return new Response<SaleOrderView>(true, saleOrderService.findAllBySaleOrderStatusOrSaleOrderStatus(
-                    SaleOrderStatus.valueOf(saleOrderStatus1),
-                    SaleOrderStatus.valueOf(saleOrderStatus2)).stream().map(saleOrder ->
+            return new Response<SaleOrderView>(true, saleOrderService.findAllBySaleOrderStatus(
+                    SaleOrderStatus.valueOf(saleOrderStatus)).stream().map(saleOrder ->
                     SaleOrderView.from(saleOrder)
             ).collect(Collectors.toList()));
         } catch (Exception e) {

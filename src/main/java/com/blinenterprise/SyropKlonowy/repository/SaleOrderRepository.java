@@ -47,5 +47,5 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
             "group by aop.product_Id order by cp desc", nativeQuery = true)
     List<Object[]> findFrequentlyBoughtInLastWeek(@Param("enterpriseType") String enterpriseType, @Param("productAmountToLoad") Integer productAmountToLoad);
 
-    List<SaleOrder> findAllBySaleOrderStatusOrSaleOrderStatus(SaleOrderStatus saleOrderStatus1, SaleOrderStatus saleOrderStatus2);
+    List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus);
 }

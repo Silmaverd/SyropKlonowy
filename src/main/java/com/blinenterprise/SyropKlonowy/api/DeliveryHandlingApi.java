@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.view.DeliveryInProcess.DeliveryInProcessView;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
@@ -68,7 +69,7 @@ public class DeliveryHandlingApi {
     @RequestMapping(path = "/deliveryHandling/getAllDeliveriesWithStatus", method = {RequestMethod.GET})
     public Response<DeliveryView> getAllDeliveriesForWithStatus(@RequestParam(value = "status") String status){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAllWithStatus(status).stream().map(delivery ->
+            return new Response<DeliveryView>(true, deliveryService.findAllWithStatus(DeliveryStatus.valueOf(status.toUpperCase())).stream().map(delivery ->
                     DeliveryView.from(delivery)
             ).collect(Collectors.toList()));
         }

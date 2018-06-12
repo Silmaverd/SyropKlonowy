@@ -18,8 +18,6 @@ public interface DeliveryRepository extends CrudRepository<Delivery, Long> {
 
     List<Delivery> findAllByDeliveryDateAfter(Date date);
 
-    List<Delivery> findAllByDeliveryStatusOrDeliveryStatus(DeliveryStatus deliveryStatus1, DeliveryStatus deliveryStatus2);
-
     List<Delivery> findAllByDeliveryStatus(DeliveryStatus status);
 
 }

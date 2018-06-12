@@ -93,8 +93,8 @@ public class SaleOrderService {
         saleOrderRepository.deleteById(id);
     }
 
-    public List<SaleOrder> findAllBySaleOrderStatusOrSaleOrderStatus(SaleOrderStatus saleOrderStatus1, SaleOrderStatus saleOrderStatus2){
-        return Lists.newArrayList(saleOrderRepository.findAllBySaleOrderStatusOrSaleOrderStatus(saleOrderStatus1, saleOrderStatus2));
+    public List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus){
+        return Lists.newArrayList(saleOrderRepository.findAllBySaleOrderStatus(saleOrderStatus));
     }
 
     @Transactional

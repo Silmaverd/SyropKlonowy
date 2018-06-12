@@ -93,33 +93,4 @@ public class DeliveryApi {
             return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
-
-    @RequestMapping(path = "/delivery/getAll", method = {RequestMethod.GET})
-    public Response<DeliveryView> getAll(){
-        try {
-            return new Response<DeliveryView>(true, deliveryService.findAll().stream().map(DeliveryView::from)
-                    .collect(Collectors.toList()));
-        }
-        catch (Exception e){
-            log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
-        }
-    }
-
-    @RequestMapping(path = "/delivery/getAllByDeliveryStatusOrDeliveryStatus", method = {RequestMethod.GET})
-    public Response<DeliveryView> getAllByDeliveryStatusOrDeliveryStatus(
-            @RequestParam(value = "deliveryStatus1") String deliveryStatus1,
-            @RequestParam(value = "deliveryStatus2") String deliveryStatus2){
-        try {
-            return new Response<DeliveryView>(true, deliveryService.findAllByDeliveryStatusOrDeliveryStatus(
-                    DeliveryStatus.valueOf(deliveryStatus1),
-                    DeliveryStatus.valueOf(deliveryStatus2))
-                    .stream().map(DeliveryView::from)
-                    .collect(Collectors.toList()));
-        }
-        catch (Exception e){
-            log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
-        }
-    }
 }

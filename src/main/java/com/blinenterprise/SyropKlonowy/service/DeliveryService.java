@@ -51,14 +51,6 @@ public class DeliveryService {
         return Lists.newArrayList(deliveryRepository.findAllByDeliveryDateAfter(date));
     }
 
-    public List<Delivery> findAll() {
-        return Lists.newArrayList(deliveryRepository.findAll());
-    }
-
-    public List<Delivery> findAllByDeliveryStatusOrDeliveryStatus(DeliveryStatus deliveryStatus1, DeliveryStatus deliveryStatus2) {
-        return Lists.newArrayList(deliveryRepository.findAllByDeliveryStatusOrDeliveryStatus(deliveryStatus1, deliveryStatus2));
-    }
-
     public void startHandlingADelivery(Long deliveryId) {
         Delivery delivery = findById(deliveryId).orElseThrow(IllegalArgumentException::new);
         delivery.beginDelivering();
@@ -79,7 +71,7 @@ public class DeliveryService {
         }
     }
 
-    public List<Delivery> findAllWithStatus(String deliveryStatus){
-        return deliveryRepository.findAllByDeliveryStatus(DeliveryStatus.valueOf(deliveryStatus.toUpperCase()));
+    public List<Delivery> findAllWithStatus(DeliveryStatus deliveryStatus){
+        return deliveryRepository.findAllByDeliveryStatus(deliveryStatus);
     }
 }
