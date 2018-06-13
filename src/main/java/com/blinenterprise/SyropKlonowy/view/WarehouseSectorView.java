@@ -3,7 +3,6 @@ package com.blinenterprise.SyropKlonowy.view;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import lombok.Getter;
-import org.assertj.core.util.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +31,8 @@ public class WarehouseSectorView implements View {
         this.id = id;
         this.name = name;
         this.maxAmountOfProducts = maxAmountOfProducts;
-        this.notReservedAmountOfProducts = Lists.newArrayList(notReservedAmountOfProducts.values());
-        this.reservedAmountOfProducts = Lists.newArrayList(reservedAmountOfProducts.values());
+        this.notReservedAmountOfProducts = new ArrayList<>(notReservedAmountOfProducts.values());
+        this.reservedAmountOfProducts = new ArrayList<>(reservedAmountOfProducts.values());
         this.currentAmountOfProducts = currentAmountOfProducts;
     }
 
