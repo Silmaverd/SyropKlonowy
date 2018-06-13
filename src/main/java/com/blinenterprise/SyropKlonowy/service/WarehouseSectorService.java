@@ -68,11 +68,10 @@ public class WarehouseSectorService {
     }
 
     public Integer findQuantityOfNotReservedProductOnAllSectorsByProductId(Long productId) {
-        Integer totalProductQuantity = 0;
-        for (WarehouseSector warehouseSector : findAllContainingNotReservedProductOrderedASCByProductId(productId)) {
-            totalProductQuantity += warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId);
-        }
-        return totalProductQuantity;
+        return findAllContainingNotReservedProductOrderedASCByProductId(productId)
+                .stream()
+                .mapToInt(warehouseSector -> warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId))
+                .sum();
     }
 
     public List<AmountOfProduct> findAllAmountsOfProductOnSector(Long sectorId) {
