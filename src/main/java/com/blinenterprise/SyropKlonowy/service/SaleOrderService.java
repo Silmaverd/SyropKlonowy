@@ -1,10 +1,10 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.repository.SaleOrderRepository;
 import com.google.common.collect.Lists;
@@ -201,6 +201,10 @@ public class SaleOrderService {
 
     public List<SaleOrder> findAllSaleOrdersSince(Date date){
         return saleOrderRepository.findAllByDateOfOrderAfter(date);
+    }
+
+    public List<SaleOrder> findAllSaleOrdersBetweenDates(Date fromDate, Date toDate) {
+        return saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate);
     }
 
 }

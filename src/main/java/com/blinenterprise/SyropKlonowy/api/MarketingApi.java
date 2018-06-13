@@ -1,11 +1,12 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.DataView;
 import com.blinenterprise.SyropKlonowy.view.Response;
+import com.blinenterprise.SyropKlonowy.view.SaleReportView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -148,5 +150,20 @@ public class MarketingApi {
             return new Response<>(false, Optional.of(e.toString()));
         }
     }
+
+    @RequestMapping(path = "/product/showSalesReportForPeriod", method = {RequestMethod.GET})
+    @ApiOperation(value = "show a sales report for the period of time provided", response = Response.class)
+    public Response<SaleReportView> showSalesReportForPeriod(
+            @RequestParam(value = "startDate") Date startDate,
+            @RequestParam(value = "endDate") Date endDate
+    ) {
+        try {
+            SaleReportView saleReportView = SaleReportView.generateWithinPeriod(startDate, endDate, saleOrderService);
+            return new Response<>(true, Lists.newArrayList(saleReportView));
+        } catch (Exception e) {
+            return new Response<>(true, Optional.of("bla"));
+        }
+    }
+
 
 }

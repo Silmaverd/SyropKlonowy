@@ -49,4 +49,6 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
 
     public List<SaleOrder> findAllByDateOfOrderAfter(Date date);
 
+    public List<SaleOrder> findAllByDateOfOrderBetween(Date fromDate, Date toDate);
+
 }
