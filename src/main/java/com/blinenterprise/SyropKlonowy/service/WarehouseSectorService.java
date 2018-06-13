@@ -1,10 +1,9 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
-import com.blinenterprise.SyropKlonowy.repository.ProductRepository;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -16,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -67,6 +65,13 @@ public class WarehouseSectorService {
     public Integer findQuantityOfNotReservedProductOnSectorByProductId(Long sectorId, Long productId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
         return warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId);
+    }
+
+    public Integer findQuantityOfNotReservedProductOnAllSectorsByProductId(Long productId) {
+        return findAllContainingNotReservedProductOrderedASCByProductId(productId)
+                .stream()
+                .mapToInt(warehouseSector -> warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId))
+                .sum();
     }
 
     public List<AmountOfProduct> findAllAmountsOfProductOnSector(Long sectorId) {

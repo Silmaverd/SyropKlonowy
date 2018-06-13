@@ -145,7 +145,7 @@ public class DataLoader {
         Long productId1 = productRepository.findByCode("X324").get().getId();
         Long productId2 = productRepository.findByCode("AVE32").get().getId();
         Long productId3 = productRepository.findByCode("135DGG2").get().getId();
-        Long productId4 = productRepository.findByCode("2325425").get().getId();
+        Long productId4 = productRepository.findByCode("23A5").get().getId();
 
         List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
         Long clientId1 = clientsByName1.get(0).getId();
