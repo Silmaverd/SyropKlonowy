@@ -8,6 +8,7 @@ import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.service.AddressService;
 import com.blinenterprise.SyropKlonowy.service.ClientService;
 import com.blinenterprise.SyropKlonowy.view.ClientView;
+import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.ProductView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,6 +68,17 @@ public class ClientApi {
             return new Response<ClientView>(false, Optional.of(e.getMessage()));
         }
     }
+
+    @RequestMapping(path = "/client/getClientById", method = {RequestMethod.GET})
+    public Response<ClientView> getClientById(@RequestParam(value = "clientId", required = true) Long clientId) {
+        try {
+            return new Response<ClientView>(true, Arrays.asList(ClientView.from(clientService.findById(clientId).orElseThrow(IllegalArgumentException::new))));
+        }
+        catch (Exception e){
+            return new Response<ClientView>(false, Optional.of(e.getMessage()));
+        }
+    }
+
 
     @RequestMapping(path = "/client/getAll", method = {RequestMethod.GET})
     @ApiOperation(value = "Display all clients", response = Response.class)
