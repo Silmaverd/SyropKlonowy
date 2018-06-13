@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -47,5 +47,15 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
             "group by aop.product_Id order by cp desc", nativeQuery = true)
     List<Object[]> findFrequentlyBoughtInLastWeek(@Param("enterpriseType") String enterpriseType, @Param("productAmountToLoad") Integer productAmountToLoad);
 
+
     List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus);
+
+    @Query(value = "select aop.product_Id, sum(aop.product_Id) as cp from Sale_Order s, sale_order_amounts_of_products sa, Amount_Of_Product aop " +
+            "where  s.id = sa.SALE_ORDER_ID and aop.id = sa.AMOUNTS_OF_PRODUCTS_ID " +
+            "group by aop.product_Id order by cp desc", nativeQuery = true)
+    List<Object[]> findBoughtProductsSum();
+
+    @Query(value = "select sum(s.total_price) as cp from Sale_Order s where  s.date_of_order between :fromDate and :toDate", nativeQuery = true)
+    BigDecimal findIncomeFromOrders(@Param("fromDate")String fromDate, @Param("toDate") String toDate);
+    public List<SaleOrder> findAllByDateOfOrderAfter(Date date);
 }

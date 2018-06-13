@@ -70,11 +70,11 @@ public class DeliveryService {
                 .stream()
                 .filter(productWithQuantity -> productWithQuantity.getProduct().getId().equals(productId))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("Cannot found such amount og specified product in delivery"));
         if (warehouseSectorService.addProductWithQuantityBySectorId(productWithQuantityToPlace.getProduct(), amountPlaced, sectorId)) {
             delivery.notifyProductPlacement(productId, amountPlaced);
             deliveryRepository.save(delivery);
-        }
+        } else throw new IllegalArgumentException("Not enough space on sector for given amount of product");
     }
 
     public List<Delivery> findAllWithStatus(DeliveryStatus deliveryStatus) {
