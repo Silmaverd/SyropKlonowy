@@ -96,6 +96,14 @@ public class SaleOrder {
         return null;
     }
 
+    public Integer getTotalVolumeOfProducts() {
+        Integer totalVolume = 0;
+        for (AmountOfProduct amountOfProduct : productsToOrder) {
+            totalVolume += amountOfProduct.getQuantity();
+        }
+        return totalVolume;
+    }
+
     public SaleOrder(Long clientId, Date dateOfOrder, List<AmountOfProduct> productsToOrder, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
         this.clientId = clientId;
         this.dateOfOrder = dateOfOrder;

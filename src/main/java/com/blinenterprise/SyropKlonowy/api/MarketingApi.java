@@ -3,6 +3,7 @@ package com.blinenterprise.SyropKlonowy.api;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.service.SaleOrderReportService;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.DataView;
 import com.blinenterprise.SyropKlonowy.view.Response;
@@ -31,6 +32,8 @@ public class MarketingApi {
 
     @Autowired
     SaleOrderService saleOrderService;
+    @Autowired
+    SaleOrderReportService saleOrderReportService;
 
 
     @RequestMapping(path = "/client/showPriceRange", method = {RequestMethod.GET})
@@ -158,10 +161,11 @@ public class MarketingApi {
             @RequestParam(value = "endDate") Date endDate
     ) {
         try {
-            SaleReportView saleReportView = SaleReportView.generateWithinPeriod(startDate, endDate, saleOrderService);
+            SaleReportView saleReportView = saleOrderReportService.generateWithinPeriod(startDate, endDate);
             return new Response<>(true, Lists.newArrayList(saleReportView));
         } catch (Exception e) {
-            return new Response<>(true, Optional.of("bla"));
+            log.error("Failed to create a sale order report. Exception:" + e.getMessage());
+            return new Response<>(true, Optional.of(e.toString()));
         }
     }
 

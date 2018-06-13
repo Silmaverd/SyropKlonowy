@@ -207,4 +207,30 @@ public class SaleOrderService {
         return saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate);
     }
 
+    public Map<Enterprise, Integer> findEnterpriseClientsWithOrderVolumeBetweenDates(Date fromDate, Date toDate) {
+        Map<Enterprise, Integer> enterpriseVolumeMap = new HashMap<>();
+        for (Enterprise enterpriseValue : Enterprise.values()) {
+            enterpriseVolumeMap.putIfAbsent(enterpriseValue, 0);
+        }
+        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder ->
+                clientService.findById(saleOrder.getClientId()).ifPresent(client -> {
+                    enterpriseVolumeMap.put(client.getEnterpriseType(),
+                            enterpriseVolumeMap.get(client.getEnterpriseType()) + saleOrder.getTotalVolumeOfProducts());
+                }));
+        return enterpriseVolumeMap;
+    }
+
+    public Map<Enterprise, BigDecimal> findEnterpriseClientsWithOrderValueBetweenDates(Date fromDate, Date toDate) {
+        Map<Enterprise, BigDecimal> enterpriseValueMap = new HashMap<>();
+        for (Enterprise enterpriseValue : Enterprise.values()) {
+            enterpriseValueMap.putIfAbsent(enterpriseValue, new BigDecimal(0));
+        }
+        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder ->
+                clientService.findById(saleOrder.getClientId()).ifPresent(client -> {
+                    enterpriseValueMap.put(client.getEnterpriseType(),
+                            enterpriseValueMap.get(client.getEnterpriseType()).add(saleOrder.getTotalPrice()));
+                }));
+        return enterpriseValueMap;
+    }
+
 }
