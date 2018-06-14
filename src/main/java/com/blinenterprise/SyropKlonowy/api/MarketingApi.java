@@ -176,11 +176,11 @@ public class MarketingApi {
     @RequestMapping(path = "/product/showIncomeFromOrders", method = {RequestMethod.GET})
     @ApiOperation(value = "show income from orders", response = Response.class)
     public Response<DataView> findIncomeFromOrders(
-            @RequestParam(value = "dateFrom in 'YYYY-MM-DD'") String dateFrom,
-            @RequestParam(value = "toDate in 'YYYY-MM-DD'") String toDate
+            @ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "startDate") String startDate,
+            @ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "endDate") String endDate
     ) {
         try {
-            BigDecimal incomeFromOrders = saleOrderService.findIncomeFromOrders(dateFrom, toDate);
+            BigDecimal incomeFromOrders = saleOrderService.findIncomeFromOrders(dateFormatter.parse(startDate), dateFormatter.parse(endDate));
             DataView<String, String> marketingDataView = new DataView<>(Arrays.asList(new DataViewValue<String,String>("gain", incomeFromOrders.toString())));
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 

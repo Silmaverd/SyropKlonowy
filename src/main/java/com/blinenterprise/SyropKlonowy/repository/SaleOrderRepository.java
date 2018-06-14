@@ -53,8 +53,8 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
             "group by aop.product_Id order by cp desc", nativeQuery = true)
     List<Object[]> findBoughtProductsSum();
 
-    @Query(value = "select sum(s.total_price) as cp from Sale_Order s where  s.date_of_order between :fromDate and :toDate", nativeQuery = true)
-    BigDecimal findIncomeFromOrders(@Param("fromDate")String fromDate, @Param("toDate") String toDate);
+    @Query(value = "select sum(s.total_price) as cp from Sale_Order s where  s.date_of_order between :startDate and :endDate", nativeQuery = true)
+    BigDecimal findIncomeFromOrders(@Param("startDate")Date startDate, @Param("endDate") Date endDate);
     public List<SaleOrder> findAllByDateOfOrderAfter(Date date);
 
     public List<SaleOrder> findAllByDateOfOrderBetween(Date fromDate, Date toDate);

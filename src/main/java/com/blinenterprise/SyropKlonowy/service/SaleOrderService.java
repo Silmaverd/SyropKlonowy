@@ -200,8 +200,8 @@ public class SaleOrderService {
         return AmountOfProductConverter.getAmountOfProductListFromBigIntegerAndBigDecimal(listOfBoughtProductsSum);
     }
 
-    public BigDecimal findIncomeFromOrders(String fromDate, String toDate){
-        return saleOrderRepository.findIncomeFromOrders(fromDate, toDate);
+    public BigDecimal findIncomeFromOrders(Date startDate, Date endDate){
+        return saleOrderRepository.findIncomeFromOrders(startDate, endDate);
     }
 
     public Optional<SaleOrder> findTemporaryOrderOfClient(Long clientId) {
