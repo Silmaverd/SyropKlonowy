@@ -1,37 +1,174 @@
 package com.blinenterprise.SyropKlonowy;
 
-import com.blinenterprise.SyropKlonowy.domain.Category;
-import com.blinenterprise.SyropKlonowy.domain.Product;
-import com.blinenterprise.SyropKlonowy.repository.ProductRepository;
+import com.blinenterprise.SyropKlonowy.domain.Client.Address;
+import com.blinenterprise.SyropKlonowy.domain.Client.Client;
+import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
+import com.blinenterprise.SyropKlonowy.domain.Product.Category;
+import com.blinenterprise.SyropKlonowy.domain.Product.Product;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
+import com.blinenterprise.SyropKlonowy.repository.*;
+import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+@Slf4j
 @Deprecated
 @Component
-public class DataLoader implements ApplicationRunner {
-
-    private ProductRepository productRepository;
+public class DataLoader {
 
     @Autowired
-    public DataLoader(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    private ProductRepository productRepository;
+    @Autowired
+    private WarehouseSectorRepository warehouseSectorRepository;
+    @Autowired
+    private DeliveryRepository deliveryRepository;
+    @Autowired
+    private ProductWithQuantityRepository productWithQuantityRepository;
+    @Autowired
+    private AddressRepository addressRepository;
+    @Autowired
+    private ClientRepository clientRepository;
+    @Autowired
+    private SaleOrderRepository saleOrderRepository;
+
+    @Autowired
+    SaleOrderService saleOrderService;
+
+    private void loadProductsWithQuantity() {
+        WarehouseSector warehouseSector1 = new WarehouseSector("Computers", 50);
+        WarehouseSector warehouseSector2 = new WarehouseSector("Speakers", 50);
+        WarehouseSector warehouseSector3 = new WarehouseSector("Phones", 50);
+        warehouseSectorRepository.save(warehouseSector1);
+        warehouseSectorRepository.save(warehouseSector2);
+        warehouseSectorRepository.save(warehouseSector3);
+
+        Product pc1 = new Product("PC1", new BigDecimal(155156), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC");
+        Product l1 = new Product("Laptop1", new BigDecimal(356232), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusYears(4)), "laptop 1");
+        Product l2 = new Product("Laptop3", new BigDecimal(200330), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusDays(3)), "laptop 2");
+        Product phone1 = new Product("Smarphone", new BigDecimal(80000), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusWeeks(1)), "laptop");
+        Product speak1 = new Product("Speaker1", new BigDecimal(5212), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 1");
+        Product speak2 = new Product("Speaker2", new BigDecimal(10012), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2");
+        List products = Arrays.asList(pc1, l1, l2, phone1, speak1, speak2);
+        productRepository.saveAll(products);
+
+        warehouseSector1.addAmountOfProduct(new AmountOfProduct(pc1.getId(), 12));
+        warehouseSector1.addAmountOfProduct(new AmountOfProduct(l1.getId(), 6));
+        warehouseSector1.addAmountOfProduct(new AmountOfProduct(l2.getId(), 22));
+        warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak1.getId(), 23));
+        warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 5));
+        warehouseSector3.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 10));
+        warehouseSector3.addAmountOfProduct(new AmountOfProduct(phone1.getId(), 11));
+        warehouseSectorRepository.save(warehouseSector1);
+        warehouseSectorRepository.save(warehouseSector2);
+        warehouseSectorRepository.save(warehouseSector3);
     }
 
-    @Override
-    public void run(ApplicationArguments args) {
-        productRepository.saveAll(Arrays.asList(
-                new Product("PC1", 155.56, Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC"),
-                new Product("Laptop1", 3563.42, Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusYears(4)), "laptop 1"),
-                new Product("Laptop3", 2000.30, Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusDays(3)), "laptop 2"),
-                new Product("Smarphone", 800.99, Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusWeeks(1)), "laptop"),
-                new Product("Speaker1", 5.12, Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 1"),
-                new Product("Speaker2", 10.12, Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2")
-        ));
+    private void loadOneProductWithDifferentQuantities() {
+        WarehouseSector warehouseSector1 = warehouseSectorRepository.findByName("Computers").orElseThrow(IllegalArgumentException::new);
+        WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("Speakers").orElseThrow(IllegalArgumentException::new);
+        WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("Phones").orElseThrow(IllegalArgumentException::new);
+
+        Product productToOrder = new Product("Speaker 2", new BigDecimal(1021), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2");
+        productRepository.save(productToOrder);
+        AmountOfProduct aop1 = new AmountOfProduct(productToOrder.getId(), 10);
+        AmountOfProduct aop2 = new AmountOfProduct(productToOrder.getId(), 5);
+        warehouseSector2.addAmountOfProduct(aop2);
+        warehouseSector3.addAmountOfProduct(aop1);
+        warehouseSectorRepository.save(warehouseSector2);
+        warehouseSectorRepository.save(warehouseSector3);
+    }
+
+    private void loadDeliveries() {
+
+        List<Product> products = Arrays.asList(
+                new Product("Galaxy Advance", new BigDecimal(100122), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone"),
+                new Product("AudioSet", new BigDecimal(50333), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio"),
+                new Product("Bass column", new BigDecimal(301223), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker"),
+                new Product("Acer Notebook", new BigDecimal(50333), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer")
+        );
+        productRepository.saveAll(products);
+
+
+        ArrayList<ProductWithQuantity> products1 = Lists.newArrayList(
+                new ProductWithQuantity(products.get(0), 10),
+                new ProductWithQuantity(products.get(1), 5)
+        );
+        productWithQuantityRepository.saveAll(products1);
+
+        ArrayList<ProductWithQuantity> products2 = Lists.newArrayList(
+                new ProductWithQuantity(products.get(2), 50),
+                new ProductWithQuantity(products.get(3), 15)
+        );
+        productWithQuantityRepository.saveAll(products2);
+
+        Long warehouseId = warehouseSectorRepository.findByName("Computers").get().getId();
+        log.debug("Main warehouse id: " + warehouseId);
+        List<Delivery> deliveries = Arrays.asList(
+                new Delivery(products1, DeliveryStatus.NEW),
+                new Delivery(products2, DeliveryStatus.NEW)
+        );
+        deliveryRepository.saveAll(deliveries);
+    }
+
+    private void loadClientsAndAddresses() {
+        List<Address> addresses = Arrays.asList(
+                new Address("Koryznowa", "1", "Lublin", "24-324"),
+                new Address("Czeladników", "55", "Krakow", "22-235"),
+                new Address("Wiejska", "3", "Warszawa", "23-142"),
+                new Address("Niewiadomych", "4", "Poznań", "11-132")
+        );
+        addressRepository.saveAll(addresses);
+
+        List<Client> clients = Arrays.asList(
+                new Client("Klient1", "Company1", true, addresses.get(0), Enterprise.LARGE_ENTERPRISE),
+                new Client("Klient2", "Company2", false, addresses.get(1), Enterprise.SMALL_ENTERPRISE),
+                new Client("Klient3", "Company3", false, addresses.get(2), Enterprise.PRIVATE_PERSON),
+                new Client("Klient4", "Company4", true, addresses.get(3), Enterprise.LARGE_ENTERPRISE)
+        );
+        clientRepository.saveAll(clients);
+    }
+
+    private void loadSaleOrders() {
+        Long productId1 = productRepository.findByName("PC1").get().getId();
+        Long productId2 = productRepository.findByName("Laptop3").get().getId();
+        Long productId3 = productRepository.findByName("Speaker2").get().getId();
+        Long productId4 = productRepository.findByName("Speaker1").get().getId();
+
+        List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
+        Long clientId1 = clientsByName1.get(0).getId();
+        List<Client> clientsByName2 = Lists.newArrayList(clientRepository.findAllByName("Klient3"));
+        Long clientId2 = clientsByName2.get(0).getId();
+
+        saleOrderService.addProductToOrder(clientId1, productId1, 6);
+        saleOrderService.addProductToOrder(clientId1, productId2, 5);
+        saleOrderService.addProductToOrder(clientId1, productId3, 2);
+
+        saleOrderService.addProductToOrder(clientId2, productId3, 1);
+        saleOrderService.addProductToOrder(clientId2, productId4, 5);
+
+        saleOrderService.confirmTempClientOrder(clientId1);
+        saleOrderService.confirmTempClientOrder(clientId2);
+
+        saleOrderService.payById(saleOrderService.findAllByClientId(clientId2).get(0).getId());
+    }
+
+    public void loadTestDataBase() {
+        loadProductsWithQuantity();
+        loadDeliveries();
+        loadClientsAndAddresses();
+        loadSaleOrders();
     }
 }
