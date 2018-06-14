@@ -10,6 +10,7 @@ import com.blinenterprise.SyropKlonowy.view.status.PriceView;
 import com.blinenterprise.SyropKlonowy.view.status.NumberView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +42,7 @@ public class StatusApi {
 
     @RequestMapping(path = "/status/getTotalIncomeFromOrdersSince", method = {RequestMethod.GET})
     @ApiOperation(value = "shows summed price of completed orders from specified date)", response = Response.class)
-    public Response<PriceView> getTotalPriceOfOrdersSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+    public Response<PriceView> getTotalPriceOfOrdersSince(@ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "date") String date) {
         try {
             return new Response<>(true, Arrays.asList(
                     PriceView.from(statusService.getTotalIncomeFromOrdersSince(dateFormatter.parse(date)))
@@ -54,7 +55,7 @@ public class StatusApi {
 
     @RequestMapping(path = "/status/getNumberOfProductsSoldSince", method = {RequestMethod.GET})
     @ApiOperation(value = "shows summed number of sold products from specified date)", response = Response.class)
-    public Response<NumberView> getNumberOfSoldProductsSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+    public Response<NumberView> getNumberOfSoldProductsSince(@ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "date") String date) {
         try {
             return new Response<>(true, Arrays.asList(
                     NumberView.from(statusService.getNumberOfProductsSoldSince(dateFormatter.parse(date)).intValue())
@@ -67,7 +68,7 @@ public class StatusApi {
 
     @RequestMapping(path = "/status/getClientsActiveSince", method = {RequestMethod.GET})
     @ApiOperation(value = "shows clients that made orders since specified date)", response = Response.class)
-    public Response<ClientView> getClientsActiveSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+    public Response<ClientView> getClientsActiveSince(@ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "date") String date) {
         try {
             return new Response<>(true, statusService.getClientsActiveSice(dateFormatter.parse(date))
                     .stream()
@@ -95,7 +96,7 @@ public class StatusApi {
 
     @RequestMapping(path = "/status/getNumbersOfOrdersMadeSince", method = {RequestMethod.GET})
     @ApiOperation(value = "shows summed number of orders made since specified date)", response = Response.class)
-    public Response<NumberView> getNumbersOfOrdersMadeSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+    public Response<NumberView> getNumbersOfOrdersMadeSince(@ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "date") String date) {
         try {
             return new Response<>(true, Arrays.asList(
                     NumberView.from(saleOrderService.findAllSaleOrdersSince(dateFormatter.parse(date)).size())
@@ -108,7 +109,7 @@ public class StatusApi {
 
     @RequestMapping(path = "/status/getNumberOfHandledDeliveriesSince", method = {RequestMethod.GET})
     @ApiOperation(value = "shows summed number of deliveries handled since specified date)", response = Response.class)
-    public Response<NumberView> getNumberOfHandledDeliveriesSince(@RequestParam(value = "DD/MM/YYYY") String date) {
+    public Response<NumberView> getNumberOfHandledDeliveriesSince(@ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "date") String date) {
         try {
             return new Response<>(true, Arrays.asList(
                     NumberView.from(deliveryService.findAllFrom(dateFormatter.parse(date))

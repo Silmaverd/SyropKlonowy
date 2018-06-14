@@ -1,9 +1,8 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
-import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.Response;
@@ -41,7 +40,7 @@ public class DeliveryApi {
             @RequestParam(value = "price") String price,
             @RequestParam(value = "category") String category,
             @ApiParam(value = "Date in DD/MM/YYYY")
-            @RequestParam(value = "production date") String date,
+            @RequestParam(value = "productionDate") String date,
             @RequestParam(value = "description") String description,
             @RequestParam(value = "quantity") int quantity
     ){
@@ -71,7 +70,7 @@ public class DeliveryApi {
 
 
     @RequestMapping(path = "/delivery/getDeliveryWithId", method = {RequestMethod.GET})
-    public Response<DeliveryView> getDelivery(@RequestParam(value = "id", required = true) Long id){
+    public Response<DeliveryView> getDeliveryWithId(@RequestParam(value = "id", required = true) Long id){
         try {
             return new Response<DeliveryView>(true, Arrays.asList(DeliveryView.from(deliveryService.findById(id).orElseThrow(IllegalArgumentException::new))));
         }
@@ -82,12 +81,10 @@ public class DeliveryApi {
     }
 
     @RequestMapping(path = "/delivery/getAllDeliveriesAfter", method = {RequestMethod.GET})
-    public Response<DeliveryView> getAllDeliveriesForWarehouseWithId(@ApiParam(value = "Date in DD/MM/YYYY")
-                                                                     @RequestParam(value = "date") String date){
+    public Response<DeliveryView> getAllDeliveriesAfter(@ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "date") String date){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAllFrom(dateFormatter.parse(date)).stream().map(delivery ->
-                    DeliveryView.from(delivery)
-            ).collect(Collectors.toList()));
+            return new Response<DeliveryView>(true, deliveryService.findAllFrom(dateFormatter.parse(date)).stream().map(DeliveryView::from)
+                    .collect(Collectors.toList()));
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
@@ -107,7 +104,7 @@ public class DeliveryApi {
     }
 
     @RequestMapping(path = "/delivery/removeProductFromCurrentTemplate", method = {RequestMethod.GET})
-    public Response<DeliveryView> removeProductFromCurrentTemplate(@RequestParam(value = "product name") String productName,
+    public Response<DeliveryView> removeProductFromCurrentTemplate(@RequestParam(value = "productName") String productName,
                                                                    @RequestParam(value = "quantity") Integer quantity){
         try {
             deliveryService.removeProductFromDelivery(productName, quantity);

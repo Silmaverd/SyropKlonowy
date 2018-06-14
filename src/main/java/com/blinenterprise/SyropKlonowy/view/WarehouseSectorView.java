@@ -13,8 +13,9 @@ public class WarehouseSectorView implements View {
     private Long id;
     private String name;
     private Integer maxAmountOfProducts;
-    private Map<Long, AmountOfProduct> notReservedAmountOfProducts;
-    private Map<Long, AmountOfProduct> reservedAmountOfProducts;
+    private List<AmountOfProduct> notReservedAmountOfProducts;
+    private List<AmountOfProduct> reservedAmountOfProducts;
+    private Integer currentAmountOfProducts;
 
     public static WarehouseSectorView from(WarehouseSector warehouseSector) {
         return new WarehouseSectorView(
@@ -22,15 +23,17 @@ public class WarehouseSectorView implements View {
                 warehouseSector.getName(),
                 warehouseSector.getMaxAmountOfProducts(),
                 warehouseSector.getNotReservedAmountOfProducts(),
-                warehouseSector.getReservedAmountOfProducts());
+                warehouseSector.getReservedAmountOfProducts(),
+                warehouseSector.getCurrentAmountOfProducts());
     }
 
-    public WarehouseSectorView(Long id, String name, Integer maxAmountOfProducts, Map<Long, AmountOfProduct> notReservedAmountOfProducts, Map<Long, AmountOfProduct> reservedAmountOfProducts) {
+    public WarehouseSectorView(Long id, String name, Integer maxAmountOfProducts, Map<Long, AmountOfProduct> notReservedAmountOfProducts, Map<Long, AmountOfProduct> reservedAmountOfProducts, Integer currentAmountOfProducts) {
         this.id = id;
         this.name = name;
         this.maxAmountOfProducts = maxAmountOfProducts;
-        this.notReservedAmountOfProducts = notReservedAmountOfProducts;
-        this.reservedAmountOfProducts = reservedAmountOfProducts;
+        this.notReservedAmountOfProducts = new ArrayList<>(notReservedAmountOfProducts.values());
+        this.reservedAmountOfProducts = new ArrayList<>(reservedAmountOfProducts.values());
+        this.currentAmountOfProducts = currentAmountOfProducts;
     }
 
     public static List<WarehouseSectorView> from(List<WarehouseSector> warehouseSectors) {

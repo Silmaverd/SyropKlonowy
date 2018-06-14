@@ -110,6 +110,10 @@ public class SaleOrderService {
         saleOrderRepository.deleteById(id);
     }
 
+    public List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus){
+        return Lists.newArrayList(saleOrderRepository.findAllBySaleOrderStatus(saleOrderStatus));
+    }
+
     @Transactional
     public boolean closeById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);

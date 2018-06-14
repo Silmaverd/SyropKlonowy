@@ -1,6 +1,5 @@
 package com.blinenterprise.SyropKlonowy.view;
 
-
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
@@ -19,7 +18,6 @@ public class ProductView implements View {
     private Category category;
     private Date productionDate;
     private String description;
-
 
     private ProductView(String name, String price, Category category, Date productionDate, String description, Long id) {
         this.id = id;
@@ -48,6 +46,4 @@ public class ProductView implements View {
         }
         return productViewList;
     }
-
-
 }

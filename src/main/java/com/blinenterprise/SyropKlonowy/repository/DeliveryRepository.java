@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.repository;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +17,5 @@ public interface DeliveryRepository extends CrudRepository<Delivery, Long> {
     List<Delivery> findAllByDeliveryDateAfter(Date date);
 
     List<Delivery> findAllByDeliveryStatus(DeliveryStatus status);
+
 }

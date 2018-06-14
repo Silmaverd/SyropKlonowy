@@ -125,10 +125,10 @@ public class DataLoader {
 
     private void loadClientsAndAddresses() {
         List<Address> addresses = Arrays.asList(
-                new Address("Koryznowa", "1", "Lublin", 2424),
-                new Address("Czeladników", "55", "Krakow", 2235),
-                new Address("Wiejska", "3", "Warszawa", 23142),
-                new Address("Niewiadomych", "4", "Poznań", 132)
+                new Address("Koryznowa", "1", "Lublin", "24-324"),
+                new Address("Czeladników", "55", "Krakow", "22-235"),
+                new Address("Wiejska", "3", "Warszawa", "23-142"),
+                new Address("Niewiadomych", "4", "Poznań", "11-132")
         );
         addressRepository.saveAll(addresses);
 

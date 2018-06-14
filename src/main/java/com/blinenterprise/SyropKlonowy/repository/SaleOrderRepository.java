@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -56,4 +57,5 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
     BigDecimal findIncomeFromOrders(@Param("fromDate")String fromDate, @Param("toDate") String toDate);
     public List<SaleOrder> findAllByDateOfOrderAfter(Date date);
 
+    List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus);
 }

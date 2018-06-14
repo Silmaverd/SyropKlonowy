@@ -9,10 +9,7 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +36,10 @@ class ProductApi {
                     .map(warehouseSector -> warehouseSector.getId())
                     .forEach(sectorId -> {
                         sectorsWithProducts.add(warehouseSectorService.findAllProductWithQuantitiesOnSector(sectorId).stream().map(productWithQuantity -> {
-                            return WarehouseSectorProductsView.from(productWithQuantity.getProduct().getName(),
+                            return WarehouseSectorProductsView.from(productWithQuantity.getProduct().getId(),
+                                    productWithQuantity.getProduct().getName(),
                                     productWithQuantity.getProduct().getPrice(),
+                                    productWithQuantity.getProduct().getCategory(),
                                     productWithQuantity.getProduct().getDescription(),
                                     sectorId,
                                     productWithQuantity.getQuantity());
@@ -64,8 +63,10 @@ class ProductApi {
                     .stream()
                     .forEach(product -> {
                         views.add(ProductWithQuantityView.from(
+                                product.getId(),
                                 product.getName(),
                                 MoneyConverter.getString(product.getPrice()),
+                                product.getCategory().toString(),
                                 product.getProductionDate(),
                                 product.getDescription(),
                                 warehouseSectorService.findQuantityOfNotReservedProductOnAllSectorsByProductId(product.getId())
