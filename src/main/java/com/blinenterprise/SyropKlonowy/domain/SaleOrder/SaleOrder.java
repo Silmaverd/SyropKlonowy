@@ -109,4 +109,13 @@ public class SaleOrder {
         this.totalPrice = totalPrice;
         this.saleOrderStatus = saleOrderStatus;
     }
+
+    public SaleOrder(Long id, Long clientId, Date dateOfOrder, List<AmountOfProduct> productsToOrder, BigDecimal totalPrice, SaleOrderStatus saleOrderStatus) {
+        this.id = id;
+        this.clientId = clientId;
+        this.dateOfOrder = dateOfOrder;
+        this.productsToOrder = productsToOrder;
+        this.totalPrice = totalPrice;
+        this.saleOrderStatus = saleOrderStatus;
+    }
 }
