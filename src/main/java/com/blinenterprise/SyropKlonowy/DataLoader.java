@@ -69,6 +69,7 @@ public class DataLoader {
         warehouseSector1.addAmountOfProduct(new AmountOfProduct(l2.getId(), 22));
         warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak1.getId(), 23));
         warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 5));
+        warehouseSector3.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 10));
         warehouseSector3.addAmountOfProduct(new AmountOfProduct(phone1.getId(), 11));
         warehouseSectorRepository.save(warehouseSector1);
         warehouseSectorRepository.save(warehouseSector2);
@@ -93,10 +94,10 @@ public class DataLoader {
     private void loadDeliveries() {
 
         List<Product> products = Arrays.asList(
-                new Product("phone", new BigDecimal(100122), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone"),
-                new Product("audio", new BigDecimal(50333), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio"),
-                new Product("speaker", new BigDecimal(301223), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker"),
-                new Product("computer", new BigDecimal(50333), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer")
+                new Product("Galaxy Advance", new BigDecimal(100122), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone"),
+                new Product("AudioSet", new BigDecimal(50333), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio"),
+                new Product("Bass column", new BigDecimal(301223), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker"),
+                new Product("Acer Notebook", new BigDecimal(50333), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer")
         );
         productRepository.saveAll(products);
 
@@ -166,7 +167,6 @@ public class DataLoader {
 
     public void loadTestDataBase() {
         loadProductsWithQuantity();
-        loadOneProductWithDifferentQuantities();
         loadDeliveries();
         loadClientsAndAddresses();
         loadSaleOrders();
