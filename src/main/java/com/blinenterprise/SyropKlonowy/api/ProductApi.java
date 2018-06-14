@@ -68,7 +68,6 @@ class ProductApi {
                                 MoneyConverter.getString(product.getPrice()),
                                 product.getProductionDate(),
                                 product.getDescription(),
-                                product.getCode(),
                                 warehouseSectorService.findQuantityOfNotReservedProductOnAllSectorsByProductId(product.getId())
                         ));
                     });
