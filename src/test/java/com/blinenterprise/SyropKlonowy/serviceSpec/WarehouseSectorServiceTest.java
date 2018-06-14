@@ -36,7 +36,6 @@ public class WarehouseSectorServiceTest {
     private Product product = ProductBuilder.aProduct()
             .withId(1L)
             .withCategory(Category.AUDIO)
-            .withCode("XXX3")
             .withDescription("Opis produktu")
             .withName("produkt1")
             .withPrice(new BigDecimal(20))
@@ -46,7 +45,6 @@ public class WarehouseSectorServiceTest {
     private Product product2 = ProductBuilder.aProduct()
             .withId(2L)
             .withCategory(Category.SPEAKER)
-            .withCode("XXX5")
             .withDescription("Opis produktu")
             .withName("produkt2")
             .withPrice(new BigDecimal(20))
@@ -65,8 +63,8 @@ public class WarehouseSectorServiceTest {
     @Before
     public void setUp() {
         Mockito.when(warehouseSectorRepositoryMock.findById(any(Long.class))).thenReturn(Optional.of(warehouseSector));
-        Mockito.when(productServiceMock.findByCode(product.getCode())).thenReturn(Optional.of(product));
-        Mockito.when(productServiceMock.findByCode(product2.getCode())).thenReturn(Optional.of(product2));
+        Mockito.when(productServiceMock.findByName(product.getName())).thenReturn(Optional.of(product));
+        Mockito.when(productServiceMock.findByName(product2.getName())).thenReturn(Optional.of(product2));
         Mockito.when(warehouseSectorRepositoryMock.save(any(WarehouseSector.class))).thenReturn(warehouseSector);
         Mockito.when(productServiceMock.findById(any(Long.class))).thenReturn(Optional.of(product));
         Mockito.when(warehouseSectorRepositoryMock.findAll()).thenReturn(Lists.newArrayList(warehouseSector));

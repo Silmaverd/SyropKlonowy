@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,7 +68,6 @@ class ProductApi {
                                 MoneyConverter.getString(product.getPrice()),
                                 product.getProductionDate(),
                                 product.getDescription(),
-                                product.getCode(),
                                 warehouseSectorService.findQuantityOfNotReservedProductOnAllSectorsByProductId(product.getId())
                         ));
                     });
@@ -83,9 +83,8 @@ class ProductApi {
     public Response<ProductView> getProductByName(@RequestParam(value = "name", required = true) String name) {
         Response<ProductView> response;
         try {
-            ArrayList<Product> result = Lists.newArrayList(productService.findAllByName(name));
-            response = new Response<ProductView>(true, ProductView.from(result));
-        } catch (Exception e) {
+            response = new Response<ProductView>(true, Arrays.asList(ProductView.from(productService.findByName(name).orElseThrow(IllegalArgumentException::new))));
+        } catch (Exception e){
             response = new Response<ProductView>(false, Optional.of(e.getMessage()));
         }
         return response;

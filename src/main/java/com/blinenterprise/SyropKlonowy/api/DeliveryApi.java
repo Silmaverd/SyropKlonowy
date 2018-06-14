@@ -43,11 +43,10 @@ public class DeliveryApi {
             @ApiParam(value = "Date in DD/MM/YYYY")
             @RequestParam(value = "production date") String date,
             @RequestParam(value = "description") String description,
-            @RequestParam(value = "quantity") int quantity,
-            @RequestParam(value = "code") String code
+            @RequestParam(value = "quantity") int quantity
     ){
         try{
-            Product product = new Product(name, MoneyConverter.getBigDecimal(price), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description, code);
+            Product product = new Product(name, MoneyConverter.getBigDecimal(price), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description);
             deliveryService.addProductToDelivery(product, quantity);
             return new Response<DeliveryView>(true, Optional.empty());
         }
