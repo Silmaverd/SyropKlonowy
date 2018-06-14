@@ -69,23 +69,9 @@ public class DataLoader {
         warehouseSector1.addAmountOfProduct(new AmountOfProduct(l2.getId(), 22));
         warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak1.getId(), 23));
         warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 5));
+        warehouseSector3.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 10));
         warehouseSector3.addAmountOfProduct(new AmountOfProduct(phone1.getId(), 11));
         warehouseSectorRepository.save(warehouseSector1);
-        warehouseSectorRepository.save(warehouseSector2);
-        warehouseSectorRepository.save(warehouseSector3);
-    }
-
-    private void loadOneProductWithDifferentQuantities() {
-        WarehouseSector warehouseSector1 = warehouseSectorRepository.findByName("Computers").orElseThrow(IllegalArgumentException::new);
-        WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("Speakers").orElseThrow(IllegalArgumentException::new);
-        WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("Phones").orElseThrow(IllegalArgumentException::new);
-
-        Product productToOrder = new Product("Speaker 2", new BigDecimal(1021), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
-        productRepository.save(productToOrder);
-        AmountOfProduct aop1 = new AmountOfProduct(productToOrder.getId(), 10);
-        AmountOfProduct aop2 = new AmountOfProduct(productToOrder.getId(), 5);
-        warehouseSector2.addAmountOfProduct(aop2);
-        warehouseSector3.addAmountOfProduct(aop1);
         warehouseSectorRepository.save(warehouseSector2);
         warehouseSectorRepository.save(warehouseSector3);
     }
@@ -93,10 +79,10 @@ public class DataLoader {
     private void loadDeliveries() {
 
         List<Product> products = Arrays.asList(
-                new Product("phone", new BigDecimal(100122), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone", "2323"),
-                new Product("audio", new BigDecimal(50333), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio", "2325425"),
-                new Product("speaker", new BigDecimal(301223), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker", "SDAD22"),
-                new Product("computer", new BigDecimal(50333), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer", "322AAA")
+                new Product("Galaxy Advance", new BigDecimal(100122), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone", "2323"),
+                new Product("AudioSet", new BigDecimal(50333), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio", "2325425"),
+                new Product("Bass column", new BigDecimal(301223), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker", "SDAD22"),
+                new Product("Acer Notebook", new BigDecimal(50333), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer", "322AAA")
         );
         productRepository.saveAll(products);
 
@@ -166,7 +152,6 @@ public class DataLoader {
 
     public void loadTestDataBase() {
         loadProductsWithQuantity();
-        loadOneProductWithDifferentQuantities();
         loadDeliveries();
         loadClientsAndAddresses();
         loadSaleOrders();

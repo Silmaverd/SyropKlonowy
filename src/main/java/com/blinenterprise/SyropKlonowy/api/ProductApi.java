@@ -1,12 +1,11 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
-import com.blinenterprise.SyropKlonowy.view.ProductView;
-import com.blinenterprise.SyropKlonowy.view.Response;
-import com.blinenterprise.SyropKlonowy.view.WarehouseSectorProductsView;
+import com.blinenterprise.SyropKlonowy.view.*;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,6 +57,30 @@ class ProductApi {
 
     }
 
+    @RequestMapping(path = "/product/getAllNonReservedAmountsOfProducts", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display all products with their unreserved amounts from all sectors", response = Response.class)
+    public Response<ProductWithQuantityView> getAllProductsAndDistinctSectors() {
+        List<ProductWithQuantityView> views = new ArrayList<>();
+        try {
+            productService.findAll()
+                    .stream()
+                    .forEach(product -> {
+                        views.add(ProductWithQuantityView.from(
+                                product.getName(),
+                                MoneyConverter.getString(product.getPrice()),
+                                product.getProductionDate(),
+                                product.getDescription(),
+                                product.getCode(),
+                                warehouseSectorService.findQuantityOfNotReservedProductOnAllSectorsByProductId(product.getId())
+                        ));
+                    });
+            return new Response<ProductWithQuantityView>(true, views);
+        } catch (Exception e) {
+            return new Response<ProductWithQuantityView>(false, Optional.of(e.getMessage()));
+        }
+
+    }
+
     @RequestMapping(path = "/product/getByName", method = {RequestMethod.GET})
     @ApiOperation(value = "Display products by name", response = Response.class)
     public Response<ProductView> getProductByName(@RequestParam(value = "name", required = true) String name) {
@@ -65,7 +88,7 @@ class ProductApi {
         try {
             ArrayList<Product> result = Lists.newArrayList(productService.findAllByName(name));
             response = new Response<ProductView>(true, ProductView.from(result));
-        } catch (Exception e){
+        } catch (Exception e) {
             response = new Response<ProductView>(false, Optional.of(e.getMessage()));
         }
         return response;
@@ -86,7 +109,6 @@ class ProductApi {
         return response;
 
     }
-
 
 
 }
