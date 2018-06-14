@@ -57,5 +57,7 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
     BigDecimal findIncomeFromOrders(@Param("fromDate")String fromDate, @Param("toDate") String toDate);
     public List<SaleOrder> findAllByDateOfOrderAfter(Date date);
 
+    public List<SaleOrder> findAllByDateOfOrderBetween(Date fromDate, Date toDate);
+
     List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus);
 }

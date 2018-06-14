@@ -64,7 +64,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to perform a delivery "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -76,7 +76,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -88,7 +88,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -99,7 +99,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to retrive current delivery template"+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -112,7 +112,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to retrive current delivery template"+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 }

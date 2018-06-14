@@ -86,7 +86,7 @@ class ProductApi {
         try {
             response = new Response<ProductView>(true, Arrays.asList(ProductView.from(productService.findByName(name).orElseThrow(IllegalArgumentException::new))));
         } catch (Exception e){
-            response = new Response<ProductView>(false, Optional.of(e.getMessage()));
+            response = new Response<ProductView>(false, Optional.of(e.toString()));
         }
         return response;
 
@@ -101,7 +101,7 @@ class ProductApi {
             productService.findById(id).ifPresent(result::add);
             response = new Response<ProductView>(true, ProductView.from(result));
         } catch (Exception e) {
-            response = new Response<ProductView>(false, Optional.of(e.getMessage()));
+            response = new Response<ProductView>(false, Optional.of(e.toString()));
         }
         return response;
 

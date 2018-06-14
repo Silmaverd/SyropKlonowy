@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -88,6 +89,16 @@ public class WarehouseSectorService {
             }
         });
         return products;
+    }
+
+    public List<AmountOfProduct> findAllNotReservedAmountsOfProductOnAllSectors() {
+        HashMap<Long, AmountOfProduct> notReservedAmountOfProductsInAllSectors = new HashMap<>();
+        findAll().forEach(warehouseSector ->
+                warehouseSector.getNotReservedAmountOfProducts().forEach((aLong, amountOfProduct) -> {
+                    notReservedAmountOfProductsInAllSectors.putIfAbsent(aLong, new AmountOfProduct(aLong, 0));
+                    notReservedAmountOfProductsInAllSectors.get(aLong).increaseQuantityBy(amountOfProduct.getQuantity());
+                }));
+        return Lists.newArrayList(notReservedAmountOfProductsInAllSectors.values());
     }
 
     public List<ProductWithQuantity> findAllProductWithQuantitiesOnSector(Long sectorId) {

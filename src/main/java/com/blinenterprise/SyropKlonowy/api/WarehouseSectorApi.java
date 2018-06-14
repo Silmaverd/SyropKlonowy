@@ -2,7 +2,10 @@ package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
-import com.blinenterprise.SyropKlonowy.view.*;
+import com.blinenterprise.SyropKlonowy.view.ProductInSectorView;
+import com.blinenterprise.SyropKlonowy.view.Response;
+import com.blinenterprise.SyropKlonowy.view.WarehouseSectorProductsView;
+import com.blinenterprise.SyropKlonowy.view.WarehouseSectorView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +33,7 @@ public class WarehouseSectorApi {
             return new Response<WarehouseSectorView>(true, Arrays.asList(WarehouseSectorView.from(warehouseSectorService.findById(id).orElseThrow(IllegalArgumentException::new))));
         } catch (Exception e) {
             log.error("Failed to fetch warehouseSectors "+e.toString());
-            return new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
+            return new Response<WarehouseSectorView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -43,7 +46,7 @@ public class WarehouseSectorApi {
             warehouseSectorService.saveOrUpdate(warehouseSector);
             return new Response<WarehouseSectorView>(true, Optional.empty());
         } catch (Exception e) {
-            return new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
+            return new Response<WarehouseSectorView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -55,7 +58,7 @@ public class WarehouseSectorApi {
             List<WarehouseSector> result = warehouseSectorService.findAll();
             response = new Response<WarehouseSectorView>(true, WarehouseSectorView.from(result));
         } catch (Exception e) {
-            response = new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
+            response = new Response<WarehouseSectorView>(false, Optional.of(e.toString()));
         }
         return response;
 
@@ -67,7 +70,7 @@ public class WarehouseSectorApi {
         try {
             return new Response<WarehouseSectorView>(true, Arrays.asList(WarehouseSectorView.from(warehouseSectorService.findByName(name).orElseThrow(IllegalArgumentException::new))));
         } catch (Exception e) {
-            return new Response<WarehouseSectorView>(false, Optional.of(e.getMessage()));
+            return new Response<WarehouseSectorView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -87,7 +90,7 @@ public class WarehouseSectorApi {
 
             return new Response<>(true, productInSectors);
         } catch (Exception e) {
-            return new Response<ProductInSectorView>(false, Optional.of(e.getMessage()));
+            return new Response<ProductInSectorView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -107,7 +110,7 @@ public class WarehouseSectorApi {
 
             return new Response<>(true, productInSectors);
         } catch (Exception e) {
-            return new Response<ProductInSectorView>(false, Optional.of(e.getMessage()));
+            return new Response<ProductInSectorView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -131,7 +134,7 @@ public class WarehouseSectorApi {
 
             return new Response<>(true, productsInSector);
         } catch (Exception e) {
-            return new Response<WarehouseSectorProductsView>(false, Optional.of(e.getMessage()));
+            return new Response<WarehouseSectorProductsView>(false, Optional.of(e.toString()));
         }
     }
 }
