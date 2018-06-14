@@ -17,17 +17,6 @@ import java.util.stream.Collectors;
 @Getter
 public class DeliveryView implements View {
 
-    @Getter
-    @AllArgsConstructor
-    class ProductWithQuantityView {
-        private String name;
-        private String price;
-        private Date productionDate;
-        private String description;
-        private String code;
-        private Integer quantity;
-    }
-
     private Long id;
     private Date deliveryDate;
     private List<ProductWithQuantityView> listOfProducts;
@@ -43,7 +32,7 @@ public class DeliveryView implements View {
     public DeliveryView(Long id, Date deliveryDate, List<ProductWithQuantity> listOfProducts, DeliveryStatus deliveryStatus) {
         this.id = id;
         this.deliveryDate = deliveryDate;
-        this.listOfProducts = listOfProducts.stream().map(productWithQuantity -> new ProductWithQuantityView(
+        this.listOfProducts = listOfProducts.stream().map(productWithQuantity -> ProductWithQuantityView.from(
                 productWithQuantity.getProduct().getName(),
                 MoneyConverter.getString(productWithQuantity.getProduct().getPrice()),
                 productWithQuantity.getProduct().getProductionDate(),
