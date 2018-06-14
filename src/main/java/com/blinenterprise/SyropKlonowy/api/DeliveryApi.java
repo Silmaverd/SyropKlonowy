@@ -1,9 +1,8 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
-import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.Response;
@@ -66,7 +65,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to perform a delivery "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -78,7 +77,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -92,7 +91,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -103,7 +102,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to retrive current delivery template"+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -116,7 +115,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to retrive current delivery template"+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 }

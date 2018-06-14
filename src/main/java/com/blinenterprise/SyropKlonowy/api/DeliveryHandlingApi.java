@@ -1,8 +1,8 @@
 package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
-import com.blinenterprise.SyropKlonowy.view.DeliveryInProcess.DeliveryInProcessView;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
+import com.blinenterprise.SyropKlonowy.view.DeliveryInProcess.DeliveryInProcessView;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
@@ -76,7 +76,7 @@ public class DeliveryHandlingApi {
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 

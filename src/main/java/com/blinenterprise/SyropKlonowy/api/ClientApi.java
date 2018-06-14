@@ -11,7 +11,10 @@ import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +45,7 @@ public class ClientApi {
             return new Response<ClientView>(true, Optional.empty());
         }
         catch (Exception e){
-            return new Response<ClientView>(false, Optional.of(e.getMessage()));
+            return new Response<ClientView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -60,7 +63,7 @@ public class ClientApi {
             return new Response<ClientView>(true, returnList);
         }
         catch (Exception e){
-            return new Response<ClientView>(false, Optional.of(e.getMessage()));
+            return new Response<ClientView>(false, Optional.of(e.toString()));
         }
     }
 }

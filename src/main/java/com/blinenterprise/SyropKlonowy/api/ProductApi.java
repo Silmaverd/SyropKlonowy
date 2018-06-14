@@ -1,6 +1,5 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
@@ -52,7 +51,7 @@ class ProductApi {
             sectorsWithProducts.forEach(sectorWithProducts -> sectorWithProducts.forEach(view -> squashedSectorsWithProducts.add(view)));
             return new Response<WarehouseSectorProductsView>(true, squashedSectorsWithProducts);
         } catch (Exception e) {
-            response = new Response<WarehouseSectorProductsView>(false, Optional.of(e.getMessage()));
+            response = new Response<WarehouseSectorProductsView>(false, Optional.of(e.toString()));
         }
         return response;
 
@@ -66,7 +65,7 @@ class ProductApi {
             ArrayList<Product> result = Lists.newArrayList(productService.findAllByName(name));
             response = new Response<ProductView>(true, ProductView.from(result));
         } catch (Exception e){
-            response = new Response<ProductView>(false, Optional.of(e.getMessage()));
+            response = new Response<ProductView>(false, Optional.of(e.toString()));
         }
         return response;
 
@@ -81,7 +80,7 @@ class ProductApi {
             productService.findById(id).ifPresent(result::add);
             response = new Response<ProductView>(true, ProductView.from(result));
         } catch (Exception e) {
-            response = new Response<ProductView>(false, Optional.of(e.getMessage()));
+            response = new Response<ProductView>(false, Optional.of(e.toString()));
         }
         return response;
 
