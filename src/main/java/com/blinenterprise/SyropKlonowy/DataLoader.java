@@ -55,12 +55,12 @@ public class DataLoader {
         warehouseSectorRepository.save(warehouseSector2);
         warehouseSectorRepository.save(warehouseSector3);
 
-        Product pc1 = new Product("PC1", new BigDecimal(155156), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC", "X324");
-        Product l1 = new Product("Laptop1", new BigDecimal(356232), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusYears(4)), "laptop 1", "XEWE");
-        Product l2 = new Product("Laptop3", new BigDecimal(200330), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusDays(3)), "laptop 2", "AVE32");
-        Product phone1 = new Product("Smarphone", new BigDecimal(80000), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusWeeks(1)), "laptop", "ADAG21");
-        Product speak1 = new Product("Speaker1", new BigDecimal(5212), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 1", "23A5");
-        Product speak2 = new Product("Speaker2", new BigDecimal(10012), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "135DGG2");
+        Product pc1 = new Product("PC1", new BigDecimal(155156), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(5)), "universal PC");
+        Product l1 = new Product("Laptop1", new BigDecimal(356232), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusYears(4)), "laptop 1");
+        Product l2 = new Product("Laptop3", new BigDecimal(200330), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusDays(3)), "laptop 2");
+        Product phone1 = new Product("Smarphone", new BigDecimal(80000), Category.COMPUTER_LAPTOP, Date.valueOf(LocalDate.now().minusWeeks(1)), "laptop");
+        Product speak1 = new Product("Speaker1", new BigDecimal(5212), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 1");
+        Product speak2 = new Product("Speaker2", new BigDecimal(10012), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2");
         List products = Arrays.asList(pc1, l1, l2, phone1, speak1, speak2);
         productRepository.saveAll(products);
 
@@ -69,6 +69,7 @@ public class DataLoader {
         warehouseSector1.addAmountOfProduct(new AmountOfProduct(l2.getId(), 22));
         warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak1.getId(), 23));
         warehouseSector2.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 5));
+        warehouseSector3.addAmountOfProduct(new AmountOfProduct(speak2.getId(), 10));
         warehouseSector3.addAmountOfProduct(new AmountOfProduct(phone1.getId(), 11));
         warehouseSectorRepository.save(warehouseSector1);
         warehouseSectorRepository.save(warehouseSector2);
@@ -80,8 +81,7 @@ public class DataLoader {
         WarehouseSector warehouseSector2 = warehouseSectorRepository.findByName("Speakers").orElseThrow(IllegalArgumentException::new);
         WarehouseSector warehouseSector3 = warehouseSectorRepository.findByName("Phones").orElseThrow(IllegalArgumentException::new);
 
-        Product productToOrder = new Product("Speaker 2", new BigDecimal(1021), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2", "1111");
-
+        Product productToOrder = new Product("Speaker 2", new BigDecimal(1021), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(1)), "speaker 2");
         productRepository.save(productToOrder);
         AmountOfProduct aop1 = new AmountOfProduct(productToOrder.getId(), 10);
         AmountOfProduct aop2 = new AmountOfProduct(productToOrder.getId(), 5);
@@ -94,10 +94,10 @@ public class DataLoader {
     private void loadDeliveries() {
 
         List<Product> products = Arrays.asList(
-                new Product("phone", new BigDecimal(100122), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone", "2323"),
-                new Product("audio", new BigDecimal(50333), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio", "2325425"),
-                new Product("speaker", new BigDecimal(301223), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker", "SDAD22"),
-                new Product("computer", new BigDecimal(50333), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer", "322AAA")
+                new Product("Galaxy Advance", new BigDecimal(100122), Category.PHONE, Date.valueOf(LocalDate.now().minusWeeks(1)), "phone"),
+                new Product("AudioSet", new BigDecimal(50333), Category.AUDIO, Date.valueOf(LocalDate.now().minusWeeks(3)), "audio"),
+                new Product("Bass column", new BigDecimal(301223), Category.SPEAKER, Date.valueOf(LocalDate.now().minusWeeks(2)), "speaker"),
+                new Product("Acer Notebook", new BigDecimal(50333), Category.COMPUTER_PC, Date.valueOf(LocalDate.now().minusWeeks(7)), "computer")
         );
         productRepository.saveAll(products);
 
@@ -142,10 +142,10 @@ public class DataLoader {
     }
 
     private void loadSaleOrders() {
-        Long productId1 = productRepository.findByCode("X324").get().getId();
-        Long productId2 = productRepository.findByCode("AVE32").get().getId();
-        Long productId3 = productRepository.findByCode("135DGG2").get().getId();
-        Long productId4 = productRepository.findByCode("23A5").get().getId();
+        Long productId1 = productRepository.findByName("PC1").get().getId();
+        Long productId2 = productRepository.findByName("Laptop3").get().getId();
+        Long productId3 = productRepository.findByName("Speaker2").get().getId();
+        Long productId4 = productRepository.findByName("Speaker1").get().getId();
 
         List<Client> clientsByName1 = Lists.newArrayList(clientRepository.findAllByName("Klient1"));
         Long clientId1 = clientsByName1.get(0).getId();
@@ -167,7 +167,6 @@ public class DataLoader {
 
     public void loadTestDataBase() {
         loadProductsWithQuantity();
-        loadOneProductWithDifferentQuantities();
         loadDeliveries();
         loadClientsAndAddresses();
         loadSaleOrders();

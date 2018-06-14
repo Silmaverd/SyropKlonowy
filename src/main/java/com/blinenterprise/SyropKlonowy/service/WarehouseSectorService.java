@@ -101,7 +101,7 @@ public class WarehouseSectorService {
     public boolean addProductWithQuantityBySectorId(Product deliveredProduct, Integer quantityOfProduct, Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
         if (warehouseSector.isPossibleToAddNewProducts(quantityOfProduct)) {
-            Product productInStock = productService.findByCode(deliveredProduct.getCode())
+            Product productInStock = productService.findByName(deliveredProduct.getName())
                     .orElseGet(() -> productService.save(deliveredProduct));
             if (warehouseSector.addAmountOfProduct(new AmountOfProduct(productInStock.getId(), quantityOfProduct))) {
                 saveOrUpdate(warehouseSector);

@@ -1,8 +1,8 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
-import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.Response;
@@ -11,13 +11,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 @Slf4j
 @RestController
@@ -40,12 +42,10 @@ public class DeliveryApi {
             @ApiParam(value = "Date in DD/MM/YYYY")
             @RequestParam(value = "productionDate") String date,
             @RequestParam(value = "description") String description,
-            @RequestParam(value = "quantity") int quantity,
-            @RequestParam(value = "code") String code
+            @RequestParam(value = "quantity") int quantity
     ){
         try{
-            Product product = new Product(name, MoneyConverter.getBigDecimal(price), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description, code);
-            log.info(product.getName());
+            Product product = new Product(name, MoneyConverter.getBigDecimal(price), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description);
             deliveryService.addProductToDelivery(product, quantity);
             return new Response<DeliveryView>(true, Optional.empty());
         }
