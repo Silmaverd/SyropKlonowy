@@ -33,6 +33,7 @@ public class DeliveryView implements View {
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.listOfProducts = listOfProducts.stream().map(productWithQuantity -> ProductWithQuantityView.from(
+                productWithQuantity.getProduct().getId(),
                 productWithQuantity.getProduct().getName(),
                 MoneyConverter.getString(productWithQuantity.getProduct().getPrice()),
                 productWithQuantity.getProduct().getCategory().toString(),

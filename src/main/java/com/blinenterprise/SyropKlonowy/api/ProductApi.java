@@ -63,8 +63,10 @@ class ProductApi {
                     .stream()
                     .forEach(product -> {
                         views.add(ProductWithQuantityView.from(
+                                product.getId(),
                                 product.getName(),
                                 MoneyConverter.getString(product.getPrice()),
+                                product.getCategory().toString(),
                                 product.getProductionDate(),
                                 product.getDescription(),
                                 warehouseSectorService.findQuantityOfNotReservedProductOnAllSectorsByProductId(product.getId())
