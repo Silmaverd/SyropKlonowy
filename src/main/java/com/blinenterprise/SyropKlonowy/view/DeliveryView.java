@@ -24,7 +24,6 @@ public class DeliveryView implements View {
         private String price;
         private Date productionDate;
         private String description;
-        private String code;
         private Integer quantity;
     }
 
@@ -48,7 +47,6 @@ public class DeliveryView implements View {
                 MoneyConverter.getString(productWithQuantity.getProduct().getPrice()),
                 productWithQuantity.getProduct().getProductionDate(),
                 productWithQuantity.getProduct().getDescription(),
-                productWithQuantity.getProduct().getCode(),
                 productWithQuantity.getQuantity()
         )).collect(Collectors.toList());
         this.deliveryStatus = deliveryStatus;

@@ -17,7 +17,9 @@ public class Product {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(unique = true)
     private String name;
+
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
@@ -28,25 +30,20 @@ public class Product {
 
     private String description;
 
-    @Column(unique = true)
-    private String code;
-
-    public Product(String name, BigDecimal price, Category category, Date productionDate, String description, String code) {
+    public Product(String name, BigDecimal price, Category category, Date productionDate, String description) {
         this.name = name;
         this.price = price;
         this.category = category;
         this.productionDate = productionDate;
         this.description = description;
-        this.code = code;
     }
 
-    public Product(Long id, String name, BigDecimal price, Category category, Date productionDate, String description, String code) {
+    public Product(Long id, String name, BigDecimal price, Category category, Date productionDate, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;
         this.productionDate = productionDate;
         this.description = description;
-        this.code = code;
     }
 }

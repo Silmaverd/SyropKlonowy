@@ -7,6 +7,7 @@ import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
 import com.blinenterprise.SyropKlonowy.view.ProductView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import com.blinenterprise.SyropKlonowy.view.WarehouseSectorProductsView;
+import com.blinenterprise.SyropKlonowy.view.WarehouseSectorView;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,8 +65,7 @@ class ProductApi {
     public Response<ProductView> getProductByName(@RequestParam(value = "name", required = true) String name) {
         Response<ProductView> response;
         try {
-            ArrayList<Product> result = Lists.newArrayList(productService.findAllByName(name));
-            response = new Response<ProductView>(true, ProductView.from(result));
+            response = new Response<ProductView>(true, Arrays.asList(ProductView.from(productService.findByName(name).orElseThrow(IllegalArgumentException::new))));
         } catch (Exception e){
             response = new Response<ProductView>(false, Optional.of(e.getMessage()));
         }

@@ -12,9 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends CrudRepository<Product, Long> {
 
-    Product findByName(String name);
-
-    List<Product> findAllByName(String name);
+    Optional<Product> findByName(String name);
 
     List<Product> findAllByCategory(Category category);
 
@@ -25,7 +23,4 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     List<Product> findAllByPriceLessThanEqualAndCategory(BigDecimal price, Category category);
 
     List<Product> findAllByPriceGreaterThanEqualAndCategory(BigDecimal price, Category category);
-
-    Optional<Product> findByCode(String code);
-
 }
