@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 @Service
 public class SaleOrderReportService {
@@ -25,8 +25,8 @@ public class SaleOrderReportService {
     WarehouseSectorService warehouseSectorService;
 
     public SaleReportView generateWithinPeriod(Date fromDate, Date toDate) {
-        TreeMap<Long, Integer> purchasedProductsWithQuantity = new TreeMap<Long, Integer>();
-        TreeMap<Long, Integer> productsRunningOutWithQuantity = new TreeMap<Long, Integer>();
+        HashMap<Long, Integer> purchasedProductsWithQuantity = new HashMap<Long, Integer>();
+        HashMap<Long, Integer> productsRunningOutWithQuantity = new HashMap<Long, Integer>();
         List<AmountOfProduct> notReservedAmountOfProductsInAllSectors = warehouseSectorService.findAllNotReservedAmountsOfProductOnAllSectors();
         ArrayList<SaleOrder> ordersMadeWithinPeriod = Lists.newArrayList(saleOrderService.findAllSaleOrdersBetweenDates(fromDate, toDate));
         ordersMadeWithinPeriod.removeIf(saleOrder -> saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.NEW) ||
