@@ -49,8 +49,18 @@ public class SaleOrderService {
 
     public void addProductToOrder(Long clientId, Long productId, Integer quantity) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
+        Integer productAvailableQuantity = 0;
         Product productToAdd = productService.findById(productId).orElseThrow(IllegalArgumentException::new);
         temporarySaleOrders.putIfAbsent(clientId, new SaleOrder(clientId, new Date(), new ArrayList<>(), BigDecimal.valueOf(0), SaleOrderStatus.NEW));
+
+        productAvailableQuantity += warehouseSectorService.findQuantityOfNotReservedProductOnAllSectorsByProductId(productId);
+        if (temporarySaleOrders.get(clientId).getAmountOfProductWithProductId(productId) != null) {
+            productAvailableQuantity -= temporarySaleOrders.get(clientId).getAmountOfProductWithProductId(productId).getQuantity();
+        }
+        if (productAvailableQuantity < quantity) {
+            throw new IllegalArgumentException("Not enough unreserved products in the warehouse.");
+        }
+
         temporarySaleOrders.get(clientId).addAmountOfProduct(new AmountOfProduct(productToAdd.getId(), quantity));
         temporarySaleOrders.get(clientId).recalculateTotalPrice(productService);
     }

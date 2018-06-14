@@ -77,6 +77,12 @@ public class SaleOrder {
     }
 
     public boolean addAmountOfProduct(AmountOfProduct amountOfProduct) {
+        for (AmountOfProduct amountOfProductSearched : productsToOrder) {
+            if (amountOfProductSearched.getProductId().equals(amountOfProduct.getProductId())) {
+                amountOfProductSearched.increaseQuantityBy(amountOfProduct.getQuantity());
+                return true;
+            }
+        }
         return productsToOrder.add(amountOfProduct);
     }
 

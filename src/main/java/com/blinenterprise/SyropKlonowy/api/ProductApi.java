@@ -51,9 +51,8 @@ class ProductApi {
             sectorsWithProducts.forEach(sectorWithProducts -> sectorWithProducts.forEach(view -> squashedSectorsWithProducts.add(view)));
             return new Response<WarehouseSectorProductsView>(true, squashedSectorsWithProducts);
         } catch (Exception e) {
-            response = new Response<WarehouseSectorProductsView>(false, Optional.of(e.toString()));
+            return new Response<WarehouseSectorProductsView>(false, Optional.of(e.toString()));
         }
-        return response;
 
     }
 

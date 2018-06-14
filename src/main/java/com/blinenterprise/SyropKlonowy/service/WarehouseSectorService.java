@@ -64,9 +64,16 @@ public class WarehouseSectorService {
         return warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId);
     }
 
+    public Integer findQuantityOfNotReservedProductOnAllSectorsByProductId(Long productId) {
+        return findAllContainingNotReservedProductOrderedASCByProductId(productId)
+                .stream()
+                .mapToInt(warehouseSector -> warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId))
+                .sum();
+    }
+
     public List<AmountOfProduct> findAllAmountsOfProductOnSector(Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        Collection<AmountOfProduct> products = warehouseSector.getNotReservedAmountOfProducts().values();
+        ArrayList<AmountOfProduct> products = Lists.newArrayList(warehouseSector.getNotReservedAmountOfProducts().values());
         warehouseSector.getReservedAmountOfProducts().values().forEach(amountOfProduct -> {
             if(products.stream().anyMatch(product -> product.getProductId().equals(amountOfProduct.getProductId()))){
                 products.stream()
@@ -78,7 +85,7 @@ public class WarehouseSectorService {
                 products.add(amountOfProduct);
             }
         });
-        return new ArrayList<>(products);
+        return products;
     }
 
     public List<AmountOfProduct> findAllAmountsOfProductOnAllSectors() {
