@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.service;
 
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderReport;
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.view.SaleReportView;
@@ -26,7 +27,7 @@ public class SaleOrderReportService {
     public SaleReportView generateWithinPeriod(Date fromDate, Date toDate) {
         TreeMap<Long, Integer> purchasedProductsWithQuantity = new TreeMap<Long, Integer>();
         TreeMap<Long, Integer> productsRunningOutWithQuantity = new TreeMap<Long, Integer>();
-        List<AmountOfProduct> notReservedAmountOfProductsInAllSectors = warehouseSectorService.findAllAmountsOfProductOnAllSectors();
+        List<AmountOfProduct> notReservedAmountOfProductsInAllSectors = warehouseSectorService.findAllNotReservedAmountsOfProductOnAllSectors();
         ArrayList<SaleOrder> ordersMadeWithinPeriod = Lists.newArrayList(saleOrderService.findAllSaleOrdersBetweenDates(fromDate, toDate));
         ordersMadeWithinPeriod.removeIf(saleOrder -> saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.NEW) ||
                 saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.CLOSED));
@@ -41,11 +42,12 @@ public class SaleOrderReportService {
                 productsRunningOutWithQuantity.put(amountOfProduct.getProductId(), amountOfProduct.getQuantity()));
 
 
-        return new SaleReportView(fromDate,
+        return SaleReportView.from(new SaleOrderReport(
+                fromDate,
                 toDate,
                 purchasedProductsWithQuantity,
                 productsRunningOutWithQuantity,
                 saleOrderService.findEnterpriseClientsWithOrderVolumeBetweenDates(fromDate, toDate),
-                saleOrderService.findEnterpriseClientsWithOrderValueBetweenDates(fromDate, toDate));
+                saleOrderService.findEnterpriseClientsWithOrderValueBetweenDates(fromDate, toDate)));
     }
 }

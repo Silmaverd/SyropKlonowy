@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +37,7 @@ public class MarketingApi {
     SaleOrderService saleOrderService;
     @Autowired
     SaleOrderReportService saleOrderReportService;
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
 
     @RequestMapping(path = "/client/showPriceRange", method = {RequestMethod.GET})
@@ -196,12 +197,13 @@ public class MarketingApi {
     @ApiOperation(value = "show a sales report for the period of time provided", response = Response.class)
     public Response<SaleReportView> showSalesReportForPeriod(
             @ApiParam(value = "Date in DD/MM/YYYY")
-            @RequestParam(value = "startDate") Date startDate,
+            @RequestParam(value = "startDate") String startDate,
             @ApiParam(value = "Date in DD/MM/YYYY")
-            @RequestParam(value = "endDate") Date endDate
+            @RequestParam(value = "endDate") String endDate
     ) {
         try {
-            SaleReportView saleReportView = saleOrderReportService.generateWithinPeriod(startDate, endDate);
+            SaleReportView saleReportView = saleOrderReportService.generateWithinPeriod(
+                    dateFormatter.parse(startDate), dateFormatter.parse(endDate));
             return new Response<>(true, Lists.newArrayList(saleReportView));
         } catch (Exception e) {
             log.error("Failed to create a sale order report. Exception:" + e.toString());

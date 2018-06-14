@@ -88,7 +88,7 @@ public class WarehouseSectorService {
         return products;
     }
 
-    public List<AmountOfProduct> findAllAmountsOfProductOnAllSectors() {
+    public List<AmountOfProduct> findAllNotReservedAmountsOfProductOnAllSectors() {
         Map<Long, AmountOfProduct> notReservedAmountOfProductsInAllSectors = new HashMap<>();
         findAll().forEach(warehouseSector ->
                 warehouseSector.getNotReservedAmountOfProducts().forEach((aLong, amountOfProduct) -> {
