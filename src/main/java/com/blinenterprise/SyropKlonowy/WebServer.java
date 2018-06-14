@@ -2,16 +2,11 @@ package com.blinenterprise.SyropKlonowy;
 
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureWorker;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

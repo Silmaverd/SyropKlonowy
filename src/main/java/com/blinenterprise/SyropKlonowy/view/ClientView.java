@@ -3,7 +3,6 @@ package com.blinenterprise.SyropKlonowy.view;
 import com.blinenterprise.SyropKlonowy.domain.Client.Address;
 import com.blinenterprise.SyropKlonowy.domain.Client.Client;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
-import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import lombok.Getter;
 
 import java.util.ArrayList;

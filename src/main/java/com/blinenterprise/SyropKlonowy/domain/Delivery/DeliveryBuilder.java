@@ -2,7 +2,6 @@ package com.blinenterprise.SyropKlonowy.domain.Delivery;
 
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import lombok.Getter;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.LinkedList;
 import java.util.List;

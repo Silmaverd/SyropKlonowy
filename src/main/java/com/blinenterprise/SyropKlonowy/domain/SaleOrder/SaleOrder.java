@@ -5,7 +5,6 @@ import com.blinenterprise.SyropKlonowy.service.ProductService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
