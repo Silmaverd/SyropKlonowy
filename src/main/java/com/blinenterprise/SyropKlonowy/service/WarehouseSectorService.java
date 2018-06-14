@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,7 +75,7 @@ public class WarehouseSectorService {
 
     public List<AmountOfProduct> findAllAmountsOfProductOnSector(Long sectorId) {
         WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
-        Collection<AmountOfProduct> products = warehouseSector.getNotReservedAmountOfProducts().values();
+        ArrayList<AmountOfProduct> products = Lists.newArrayList(warehouseSector.getNotReservedAmountOfProducts().values());
         warehouseSector.getReservedAmountOfProducts().values().forEach(amountOfProduct -> {
             if(products.stream().anyMatch(product -> product.getProductId().equals(amountOfProduct.getProductId()))){
                 products.stream()
@@ -88,7 +87,7 @@ public class WarehouseSectorService {
                 products.add(amountOfProduct);
             }
         });
-        return new ArrayList<>(products);
+        return products;
     }
 
     public List<ProductWithQuantity> findAllProductWithQuantitiesOnSector(Long sectorId) {
