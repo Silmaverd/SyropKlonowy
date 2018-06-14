@@ -217,11 +217,13 @@ public class SaleOrderService {
         for (Enterprise enterpriseValue : Enterprise.values()) {
             enterpriseVolumeMap.putIfAbsent(enterpriseValue, 0);
         }
-        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder ->
-                clientService.findById(saleOrder.getClientId()).ifPresent(client -> {
-                    enterpriseVolumeMap.put(client.getEnterpriseType(),
-                            enterpriseVolumeMap.get(client.getEnterpriseType()) + saleOrder.getTotalVolumeOfProducts());
-                }));
+        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder -> {
+            if (saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.PAID) || saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.SENT)) {
+                clientService.findById(saleOrder.getClientId()).ifPresent(client ->
+                        enterpriseVolumeMap.put(client.getEnterpriseType(),
+                                enterpriseVolumeMap.get(client.getEnterpriseType()) + saleOrder.getTotalVolumeOfProducts()));
+            }
+        });
         return enterpriseVolumeMap;
     }
 
@@ -230,11 +232,13 @@ public class SaleOrderService {
         for (Enterprise enterpriseValue : Enterprise.values()) {
             enterpriseValueMap.putIfAbsent(enterpriseValue, new BigDecimal(0));
         }
-        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder ->
-                clientService.findById(saleOrder.getClientId()).ifPresent(client -> {
+        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder -> {
+            if (saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.PAID) || saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.SENT)) {
+                clientService.findById(saleOrder.getClientId()).ifPresent(client ->
                     enterpriseValueMap.put(client.getEnterpriseType(),
-                            enterpriseValueMap.get(client.getEnterpriseType()).add(saleOrder.getTotalPrice()));
-                }));
+                            enterpriseValueMap.get(client.getEnterpriseType()).add(saleOrder.getTotalPrice())));
+            }
+        });
         return enterpriseValueMap;
     }
 
