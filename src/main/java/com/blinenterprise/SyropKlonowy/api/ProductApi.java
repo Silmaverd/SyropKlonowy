@@ -1,6 +1,5 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
 import com.blinenterprise.SyropKlonowy.service.ProductService;
 import com.blinenterprise.SyropKlonowy.service.WarehouseSectorService;
@@ -52,9 +51,8 @@ class ProductApi {
             sectorsWithProducts.forEach(sectorWithProducts -> sectorWithProducts.forEach(view -> squashedSectorsWithProducts.add(view)));
             return new Response<WarehouseSectorProductsView>(true, squashedSectorsWithProducts);
         } catch (Exception e) {
-            response = new Response<WarehouseSectorProductsView>(false, Optional.of(e.getMessage()));
+            return new Response<WarehouseSectorProductsView>(false, Optional.of(e.toString()));
         }
-        return response;
 
     }
 
