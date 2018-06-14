@@ -10,7 +10,6 @@ public final class ProductBuilder {
     private Category category;
     private Date productionDate;
     private String description;
-    private String code;
 
     private ProductBuilder() {
     }
@@ -49,16 +48,11 @@ public final class ProductBuilder {
         return this;
     }
 
-    public ProductBuilder withCode(String code) {
-        this.code = code;
-        return this;
-    }
-
     public Product build() {
-        return new Product(name, price, category, productionDate, description, code);
+        return new Product(name, price, category, productionDate, description);
     }
 
     public Product buildWithId() {
-        return new Product(id, name, price, category, productionDate, description, code);
+        return new Product(id, name, price, category, productionDate, description);
     }
 }

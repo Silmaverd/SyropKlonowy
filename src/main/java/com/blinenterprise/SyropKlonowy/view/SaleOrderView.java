@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-
 @Getter
 public class SaleOrderView implements View {
 

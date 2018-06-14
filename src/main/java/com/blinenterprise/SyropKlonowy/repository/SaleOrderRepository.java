@@ -1,6 +1,7 @@
 package com.blinenterprise.SyropKlonowy.repository;
 
 import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrder;
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -58,4 +59,5 @@ public interface SaleOrderRepository extends CrudRepository<SaleOrder, Long> {
 
     public List<SaleOrder> findAllByDateOfOrderBetween(Date fromDate, Date toDate);
 
+    List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus);
 }

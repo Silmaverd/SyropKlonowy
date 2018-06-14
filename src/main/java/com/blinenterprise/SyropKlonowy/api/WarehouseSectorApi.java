@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @Slf4j
 @RestController
 @RequestMapping("/api/warehouseSector")
@@ -123,8 +122,10 @@ public class WarehouseSectorApi {
                     .findAllProductWithQuantitiesOnSector(sectorId)
                     .stream()
                     .map(productWithQuantity -> WarehouseSectorProductsView.from(
+                            productWithQuantity.getProduct().getId(),
                             productWithQuantity.getProduct().getName(),
                             productWithQuantity.getProduct().getPrice(),
+                            productWithQuantity.getProduct().getCategory(),
                             productWithQuantity.getProduct().getDescription(),
                             sectorId,
                             productWithQuantity.getQuantity()

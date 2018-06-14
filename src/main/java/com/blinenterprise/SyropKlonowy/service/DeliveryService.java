@@ -76,11 +76,11 @@ public class DeliveryService {
         } else throw new IllegalArgumentException("Not enough space on sector for given amount of product");
     }
 
-    public Delivery getCurrentTempate(){
-        return deliveryTemplate.getTemplate();
+    public List<Delivery> findAllWithStatus(DeliveryStatus deliveryStatus) {
+        return deliveryRepository.findAllByDeliveryStatus(deliveryStatus);
     }
 
-    public List<Delivery> findAllWithStatus(String deliveryStatus){
-        return deliveryRepository.findAllByDeliveryStatus(DeliveryStatus.valueOf(deliveryStatus.toUpperCase()));
+    public Delivery getCurrentTempate(){
+        return deliveryTemplate.getTemplate();
     }
 }
