@@ -10,7 +10,10 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -89,7 +92,7 @@ public class WarehouseSectorService {
     }
 
     public List<AmountOfProduct> findAllNotReservedAmountsOfProductOnAllSectors() {
-        Map<Long, AmountOfProduct> notReservedAmountOfProductsInAllSectors = new HashMap<>();
+        HashMap<Long, AmountOfProduct> notReservedAmountOfProductsInAllSectors = new HashMap<>();
         findAll().forEach(warehouseSector ->
                 warehouseSector.getNotReservedAmountOfProducts().forEach((aLong, amountOfProduct) -> {
                     notReservedAmountOfProductsInAllSectors.putIfAbsent(aLong, new AmountOfProduct(aLong, 0));
