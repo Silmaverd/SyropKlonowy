@@ -110,6 +110,10 @@ public class SaleOrderService {
         saleOrderRepository.deleteById(id);
     }
 
+    public List<SaleOrder> findAllBySaleOrderStatus(SaleOrderStatus saleOrderStatus){
+        return Lists.newArrayList(saleOrderRepository.findAllBySaleOrderStatus(saleOrderStatus));
+    }
+
     @Transactional
     public boolean closeById(Long id) {
         SaleOrder orderById = saleOrderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
@@ -227,8 +231,8 @@ public class SaleOrderService {
         return AmountOfProductConverter.getAmountOfProductListFromBigIntegerAndBigDecimal(listOfBoughtProductsSum);
     }
 
-    public BigDecimal findIncomeFromOrders(String fromDate, String toDate){
-        return saleOrderRepository.findIncomeFromOrders(fromDate, toDate);
+    public BigDecimal findIncomeFromOrders(Date startDate, Date endDate){
+        return saleOrderRepository.findIncomeFromOrders(startDate, endDate);
     }
 
     public Optional<SaleOrder> findTemporaryOrderOfClient(Long clientId) {
@@ -237,6 +241,40 @@ public class SaleOrderService {
 
     public List<SaleOrder> findAllSaleOrdersSince(Date date){
         return saleOrderRepository.findAllByDateOfOrderAfter(date);
+    }
+
+    public List<SaleOrder> findAllSaleOrdersBetweenDates(Date fromDate, Date toDate) {
+        return saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate);
+    }
+
+    public Map<Enterprise, Integer> findEnterpriseClientsWithOrderVolumeBetweenDates(Date fromDate, Date toDate) {
+        Map<Enterprise, Integer> enterpriseVolumeMap = new HashMap<>();
+        for (Enterprise enterpriseValue : Enterprise.values()) {
+            enterpriseVolumeMap.putIfAbsent(enterpriseValue, 0);
+        }
+        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder -> {
+            if (saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.PAID) || saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.SENT)) {
+                clientService.findById(saleOrder.getClientId()).ifPresent(client ->
+                        enterpriseVolumeMap.put(client.getEnterpriseType(),
+                                enterpriseVolumeMap.get(client.getEnterpriseType()) + saleOrder.getTotalVolumeOfProducts()));
+            }
+        });
+        return enterpriseVolumeMap;
+    }
+
+    public Map<Enterprise, BigDecimal> findEnterpriseClientsWithOrderValueBetweenDates(Date fromDate, Date toDate) {
+        Map<Enterprise, BigDecimal> enterpriseValueMap = new HashMap<>();
+        for (Enterprise enterpriseValue : Enterprise.values()) {
+            enterpriseValueMap.putIfAbsent(enterpriseValue, new BigDecimal(0));
+        }
+        saleOrderRepository.findAllByDateOfOrderBetween(fromDate, toDate).forEach(saleOrder -> {
+            if (saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.PAID) || saleOrder.getSaleOrderStatus().equals(SaleOrderStatus.SENT)) {
+                clientService.findById(saleOrder.getClientId()).ifPresent(client ->
+                    enterpriseValueMap.put(client.getEnterpriseType(),
+                            enterpriseValueMap.get(client.getEnterpriseType()).add(saleOrder.getTotalPrice())));
+            }
+        });
+        return enterpriseValueMap;
     }
 
 }

@@ -1,9 +1,8 @@
 package com.blinenterprise.SyropKlonowy.api;
 
-import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Product.Category;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
-import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.Response;
@@ -41,13 +40,12 @@ public class DeliveryApi {
             @RequestParam(value = "price") String price,
             @RequestParam(value = "category") String category,
             @ApiParam(value = "Date in DD/MM/YYYY")
-            @RequestParam(value = "production date") String date,
+            @RequestParam(value = "productionDate") String date,
             @RequestParam(value = "description") String description,
-            @RequestParam(value = "quantity") int quantity,
-            @RequestParam(value = "code") String code
+            @RequestParam(value = "quantity") int quantity
     ){
         try{
-            Product product = new Product(name, MoneyConverter.getBigDecimal(price), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description, code);
+            Product product = new Product(name, MoneyConverter.getBigDecimal(price), Category.valueOf(category.toUpperCase()), dateFormatter.parse(date), description);
             deliveryService.addProductToDelivery(product, quantity);
             return new Response<DeliveryView>(true, Optional.empty());
         }
@@ -66,33 +64,31 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to perform a delivery "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
 
     @RequestMapping(path = "/delivery/getDeliveryWithId", method = {RequestMethod.GET})
-    public Response<DeliveryView> getDelivery(@RequestParam(value = "id", required = true) Long id){
+    public Response<DeliveryView> getDeliveryWithId(@RequestParam(value = "id", required = true) Long id){
         try {
             return new Response<DeliveryView>(true, Arrays.asList(DeliveryView.from(deliveryService.findById(id).orElseThrow(IllegalArgumentException::new))));
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
     @RequestMapping(path = "/delivery/getAllDeliveriesAfter", method = {RequestMethod.GET})
-    public Response<DeliveryView> getAllDeliveriesForWarehouseWithId(@ApiParam(value = "Date in DD/MM/YYYY")
-                                                                     @RequestParam(value = "date") String date){
+    public Response<DeliveryView> getAllDeliveriesAfter(@ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "date") String date){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAllFrom(dateFormatter.parse(date)).stream().map(delivery ->
-                    DeliveryView.from(delivery)
-            ).collect(Collectors.toList()));
+            return new Response<DeliveryView>(true, deliveryService.findAllFrom(dateFormatter.parse(date)).stream().map(DeliveryView::from)
+                    .collect(Collectors.toList()));
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
@@ -103,12 +99,12 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to retrive current delivery template"+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
     @RequestMapping(path = "/delivery/removeProductFromCurrentTemplate", method = {RequestMethod.GET})
-    public Response<DeliveryView> removeProductFromCurrentTemplate(@RequestParam(value = "product name") String productName,
+    public Response<DeliveryView> removeProductFromCurrentTemplate(@RequestParam(value = "productName") String productName,
                                                                    @RequestParam(value = "quantity") Integer quantity){
         try {
             deliveryService.removeProductFromDelivery(productName, quantity);
@@ -116,7 +112,7 @@ public class DeliveryApi {
         }
         catch (Exception e){
             log.error("Failed to retrive current delivery template"+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 }

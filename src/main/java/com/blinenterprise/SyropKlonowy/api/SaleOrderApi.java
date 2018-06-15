@@ -1,5 +1,6 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.domain.SaleOrder.SaleOrderStatus;
 import com.blinenterprise.SyropKlonowy.order.OrderClosureExecutor;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
 import com.blinenterprise.SyropKlonowy.view.SaleOrderView;
@@ -8,10 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -81,7 +79,7 @@ public class SaleOrderApi {
         }
     }
 
-    @RequestMapping(path = "removeProductFromTemporaryOrder", method = {RequestMethod.POST})
+    @RequestMapping(path = "removeProductFromTemporaryOrder", method = {RequestMethod.GET})
     @ApiOperation(value = "Remove product from order that has not been yet confirmed", response = Response.class)
     public Response<SaleOrderView> removeProductFromTemporaryOrder(@RequestParam(value = "clientId", required = true) Long clientId,
                                                                    @RequestParam(value = "productId", required = true) Long productId,
@@ -100,6 +98,21 @@ public class SaleOrderApi {
     public Response<SaleOrderView> getAllOrders() {
         try {
             return new Response<SaleOrderView>(true, saleOrderService.findAll().stream().map(saleOrder ->
+                    SaleOrderView.from(saleOrder)
+            ).collect(Collectors.toList()));
+        } catch (Exception e) {
+            log.error("Failed to retrieve orders. Exception:" + e.toString());
+            return new Response<SaleOrderView>(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "getAllOrdersBySaleOrderStatus", method = {RequestMethod.GET})
+    @ApiOperation(value = "Display orders", response = Response.class)
+    public Response<SaleOrderView> getAllOrdersBySaleOrderStatus(
+            @RequestParam(value = "status") String saleOrderStatus) {
+        try {
+            return new Response<SaleOrderView>(true, saleOrderService.findAllBySaleOrderStatus(
+                    SaleOrderStatus.valueOf(saleOrderStatus)).stream().map(saleOrder ->
                     SaleOrderView.from(saleOrder)
             ).collect(Collectors.toList()));
         } catch (Exception e) {
@@ -129,8 +142,7 @@ public class SaleOrderApi {
     @RequestMapping(path = "sendOrderById", method = {RequestMethod.PUT})
     @ApiOperation(value = "Set the order with given ID as sent", response = Response.class)
     public Response<SaleOrderView> sendOrderById(
-            @RequestParam(value = "orderId") Long orderId
-    ) {
+            @RequestParam(value = "orderId") Long orderId) {
         try {
             if (saleOrderService.sendById(orderId)) {
                 return new Response<SaleOrderView>(true, Optional.empty());

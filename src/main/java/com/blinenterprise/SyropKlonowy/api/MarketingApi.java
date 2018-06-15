@@ -1,7 +1,9 @@
 package com.blinenterprise.SyropKlonowy.api;
 
+import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.service.SaleOrderReportService;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.marketing.Recommendations;
@@ -10,8 +12,10 @@ import com.blinenterprise.SyropKlonowy.view.DataView;
 import com.blinenterprise.SyropKlonowy.view.DataViewValue;
 import com.blinenterprise.SyropKlonowy.view.ProductView;
 import com.blinenterprise.SyropKlonowy.view.Response;
+import com.blinenterprise.SyropKlonowy.view.SaleReportView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +40,9 @@ public class MarketingApi {
 
     @Autowired
     SaleOrderService saleOrderService;
+    @Autowired
+    SaleOrderReportService saleOrderReportService;
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     @Autowired
     Recommendations recommendations;
 
@@ -67,7 +75,7 @@ public class MarketingApi {
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
-            log.error("Failed to show price range. Exception:" + e.getMessage());
+            log.error("Failed to show price range. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -83,7 +91,7 @@ public class MarketingApi {
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
-            log.error("Failed to show price range. Exception:" + e.getMessage());
+            log.error("Failed to show price range. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -100,7 +108,7 @@ public class MarketingApi {
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
-            log.error("Failed to show average price. Exception:" + e.getMessage());
+            log.error("Failed to show average price. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -117,7 +125,7 @@ public class MarketingApi {
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
-            log.error("Failed to show average price. Exception:" + e.getMessage());
+            log.error("Failed to show average price. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -134,7 +142,7 @@ public class MarketingApi {
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
-            log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
+            log.error("Failed to show frequently bought products. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -152,7 +160,7 @@ public class MarketingApi {
 
 
         } catch (Exception e) {
-            log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
+            log.error("Failed to show frequently bought products. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -170,7 +178,7 @@ public class MarketingApi {
 
 
         } catch (Exception e) {
-            log.error("Failed to show frequently bought products. Exception:" + e.getMessage());
+            log.error("Failed to show frequently bought products. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -186,7 +194,7 @@ public class MarketingApi {
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
-            log.error("Failed to show bought products sum. Exception:" + e.getMessage());
+            log.error("Failed to show bought products sum. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
@@ -194,18 +202,37 @@ public class MarketingApi {
     @RequestMapping(path = "/product/showIncomeFromOrders", method = {RequestMethod.GET})
     @ApiOperation(value = "show income from orders", response = Response.class)
     public Response<DataView> findIncomeFromOrders(
-            @RequestParam(value = "dateFrom in 'YYYY-MM-DD'") String dateFrom,
-            @RequestParam(value = "toDate in 'YYYY-MM-DD'") String toDate
+            @ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "startDate") String startDate,
+            @ApiParam(value = "Date in DD/MM/YYYY") @RequestParam(value = "endDate") String endDate
     ) {
         try {
-            BigDecimal incomeFromOrders = saleOrderService.findIncomeFromOrders(dateFrom, toDate);
+            BigDecimal incomeFromOrders = saleOrderService.findIncomeFromOrders(dateFormatter.parse(startDate), dateFormatter.parse(endDate));
             DataView<String, String> marketingDataView = new DataView<>(Arrays.asList(new DataViewValue<String,String>("gain", incomeFromOrders.toString())));
             return new Response<DataView>(true, Lists.newArrayList(marketingDataView));
 
         } catch (Exception e) {
-            log.error("Failed to show income from orders. Exception:" + e.getMessage());
+            log.error("Failed to show income from orders. Exception:" + e.toString());
             return new Response<DataView>(false, Optional.of(e.toString()));
         }
     }
+
+    @RequestMapping(path = "/product/showSalesReportForPeriod", method = {RequestMethod.GET})
+    @ApiOperation(value = "show a sales report for the period of time provided", response = Response.class)
+    public Response<SaleReportView> showSalesReportForPeriod(
+            @ApiParam(value = "Date in DD/MM/YYYY")
+            @RequestParam(value = "startDate") String startDate,
+            @ApiParam(value = "Date in DD/MM/YYYY")
+            @RequestParam(value = "endDate") String endDate
+    ) {
+        try {
+            SaleReportView saleReportView = saleOrderReportService.generateWithinPeriod(
+                    dateFormatter.parse(startDate), dateFormatter.parse(endDate));
+            return new Response<>(true, Lists.newArrayList(saleReportView));
+        } catch (Exception e) {
+            log.error("Failed to create a sale order report. Exception:" + e.toString());
+            return new Response<>(true, Optional.of(e.toString()));
+        }
+    }
+
 
 }

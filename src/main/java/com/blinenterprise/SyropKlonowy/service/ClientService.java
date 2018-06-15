@@ -29,4 +29,7 @@ public class ClientService {
         return Lists.newArrayList(clientRepository.findAllByName(name));
     }
 
+    public List<Client> findAll(){
+        return Lists.newArrayList(clientRepository.findAll());
+    }
 }

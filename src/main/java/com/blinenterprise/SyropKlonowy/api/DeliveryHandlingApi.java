@@ -1,8 +1,10 @@
 package com.blinenterprise.SyropKlonowy.api;
 
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.DeliveryStatus;
 import com.blinenterprise.SyropKlonowy.view.DeliveryInProcess.DeliveryInProcessView;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
+import com.blinenterprise.SyropKlonowy.view.DeliveryInProcess.DeliveryInProcessView;
 import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
@@ -29,54 +31,54 @@ public class DeliveryHandlingApi {
 
     @RequestMapping(path = "/deliveryHandling/beginDelivery", method = {RequestMethod.PUT})
     @ApiOperation(value = "Start handling a delivery", response = Response.class)
-    private Response startDelivery(@RequestParam(value = "delivery id") Long id){
+    private Response<DeliveryInProcessView> startDelivery(@RequestParam(value = "deliveryId") Long id){
         try{
             deliveryService.startHandlingADelivery(id);
-            return new Response(true, Optional.empty());
+            return new Response<DeliveryInProcessView>(true, Optional.empty());
         } catch (Exception e){
             log.error("Failed to start a delivery " + e.toString());
-            return new Response(false, Optional.of(e.toString()));
+            return new Response<DeliveryInProcessView>(false, Optional.of(e.toString()));
         }
     }
 
     @RequestMapping(path = "/deliveryHandling/placeProduct", method = {RequestMethod.PUT})
     @ApiOperation(value = "Place product from a delivery", response = Response.class)
-    private Response placeProduct(@RequestParam(value = "delivery id") Long deliveryId,
-                                  @RequestParam(value = "product id") Long productId,
-                                  @RequestParam(value = "amount placed") int amount,
-                                  @RequestParam(value = "sector id") Long sectorId) {
+    private Response<DeliveryInProcessView> placeProduct(@RequestParam(value = "deliveryId") Long deliveryId,
+                                  @RequestParam(value = "productId") Long productId,
+                                  @RequestParam(value = "amount") int amount,
+                                  @RequestParam(value = "sectorId") Long sectorId) {
         try{
             deliveryService.placeProduct(deliveryId, productId, amount, sectorId);
-            return new Response(true, Optional.empty());
+            return new Response<DeliveryInProcessView>(true, Optional.empty());
         } catch (Exception e){
             log.error("Failed to place given amount of product in given sector " + e.toString());
-            return new Response(false, Optional.of(e.toString()));
+            return new Response<DeliveryInProcessView>(false, Optional.of(e.toString()));
         }
     }
 
     @RequestMapping(path = "/deliveryHandling/getProcessedDelivery", method = {RequestMethod.GET})
     @ApiOperation(value = "Get delivery in progres with ID", response = Response.class)
-    private Response getDeliveryInProgressWithId(@RequestParam("delivery id") Long id){
+    private Response<DeliveryInProcessView> getDeliveryInProgressWithId(@RequestParam("deliveryId") Long id){
         try{
             Delivery deliveryInProgress = deliveryService.findById(id).get();
             DeliveryInProcessView deliveryInProcessView = DeliveryInProcessView.from(deliveryInProgress);
-            return new Response(true, Arrays.asList(deliveryInProcessView));
+            return new Response<DeliveryInProcessView>(true, Arrays.asList(deliveryInProcessView));
         } catch (Exception e){
             log.error("Could not retrive delivery in progress with given id " + e.toString());
-            return new Response(false, Optional.of(e.toString()));
+            return new Response<DeliveryInProcessView>(false, Optional.of(e.toString()));
         }
     }
 
     @RequestMapping(path = "/deliveryHandling/getAllDeliveriesWithStatus", method = {RequestMethod.GET})
     public Response<DeliveryView> getAllDeliveriesForWithStatus(@RequestParam(value = "status") String status){
         try {
-            return new Response<DeliveryView>(true, deliveryService.findAllWithStatus(status).stream().map(delivery ->
+            return new Response<DeliveryView>(true, deliveryService.findAllWithStatus(DeliveryStatus.valueOf(status.toUpperCase())).stream().map(delivery ->
                     DeliveryView.from(delivery)
             ).collect(Collectors.toList()));
         }
         catch (Exception e){
             log.error("Failed to fetch deliveries "+e.toString());
-            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
+            return new Response<DeliveryView>(false, Optional.of(e.toString()));
         }
     }
 
