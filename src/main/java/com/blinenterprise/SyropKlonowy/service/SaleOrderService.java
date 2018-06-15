@@ -157,7 +157,7 @@ public class SaleOrderService {
         ArrayList<Product> results = new ArrayList<>();
         saleOrderRepository.findAllByClientId(clientId).forEach(
                 saleOrder ->
-                        saleOrder.getAmountsOfProducts().forEach(
+                        saleOrder.getProductsToOrder().forEach(
                                 amountOfProduct ->
                                         results.add(productService.findById(amountOfProduct.getProductId()).get())));
 
