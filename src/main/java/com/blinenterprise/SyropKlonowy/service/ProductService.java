@@ -20,10 +20,6 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public List<Product> findAll() {
-        return Lists.newArrayList(productRepository.findAll());
-    }
-
     public List<Product> findAllByName(String name) {
         return Lists.newArrayList(productRepository.findAllByName(name));
     }

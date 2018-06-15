@@ -3,6 +3,7 @@ package com.blinenterprise.SyropKlonowy.api;
 import com.blinenterprise.SyropKlonowy.domain.Delivery.Delivery;
 import com.blinenterprise.SyropKlonowy.view.DeliveryInProcess.DeliveryInProcessView;
 import com.blinenterprise.SyropKlonowy.service.DeliveryService;
+import com.blinenterprise.SyropKlonowy.view.DeliveryView;
 import com.blinenterprise.SyropKlonowy.view.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -62,6 +64,19 @@ public class DeliveryHandlingApi {
         } catch (Exception e){
             log.error("Could not retrive delivery in progress with given id " + e.toString());
             return new Response(false, Optional.of(e.toString()));
+        }
+    }
+
+    @RequestMapping(path = "/deliveryHandling/getAllDeliveriesWithStatus", method = {RequestMethod.GET})
+    public Response<DeliveryView> getAllDeliveriesForWithStatus(@RequestParam(value = "status") String status){
+        try {
+            return new Response<DeliveryView>(true, deliveryService.findAllWithStatus(status).stream().map(delivery ->
+                    DeliveryView.from(delivery)
+            ).collect(Collectors.toList()));
+        }
+        catch (Exception e){
+            log.error("Failed to fetch deliveries "+e.toString());
+            return new Response<DeliveryView>(false, Optional.of(e.getMessage()));
         }
     }
 

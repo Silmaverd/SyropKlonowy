@@ -25,8 +25,8 @@ public class Delivery {
     @OneToMany
     private List<ProductWithQuantity> listOfProducts;
 
-    public Delivery(List<ProductWithQuantity> listOfProducts) {
-        this.deliveryStatus = DeliveryStatus.NEW;
+    public Delivery(List<ProductWithQuantity> listOfProducts, DeliveryStatus status) {
+        this.deliveryStatus = status;
         this.listOfProducts = listOfProducts;
         productsPlacedInDeliveryProcess = new HashMap<>();
     }

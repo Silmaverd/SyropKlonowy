@@ -1,7 +1,8 @@
 package com.blinenterprise.SyropKlonowy.service;
 
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.domain.Delivery.ProductWithQuantity;
 import com.blinenterprise.SyropKlonowy.domain.Product.Product;
+import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.WarehouseSector;
 import com.blinenterprise.SyropKlonowy.repository.WarehouseSectorRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +10,11 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,16 +45,58 @@ public class WarehouseSectorService {
         return warehouseSectorRepository.save(warehouseSector);
     }
 
-    private List<WarehouseSector> findAllContainingNotReservedProductOrderedASCByProductId(Long productId) {
+    public List<WarehouseSector> findAllContainingNotReservedProductOrderedASCByProductId(Long productId) {
         return warehouseSectorRepository.findAllContainingNotReservedProductOrderedASCByProductId(productId);
     }
 
-    private List<WarehouseSector> findAllContainingReservedProductOrderedASCByProductId(Long productId) {
+    public List<WarehouseSector> findAllContainingReservedProductOrderedASCByProductId(Long productId) {
         return warehouseSectorRepository.findAllContainingReservedProductOrderedASCByProductId(productId);
     }
 
-    private List<WarehouseSector> findAllContainingReservedProductOrderedDESCByProductId(Long productId) {
+    public List<WarehouseSector> findAllContainingReservedProductOrderedDESCByProductId(Long productId) {
         return warehouseSectorRepository.findAllContainingReservedProductOrderedDESCByProductId(productId);
+    }
+
+    public Integer findQuantityOfReservedProductOnSectorByProductId(Long sectorId, Long productId) {
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        return warehouseSector.getQuantityOfReservedProductByIdIfExist(productId);
+    }
+
+    public Integer findQuantityOfNotReservedProductOnSectorByProductId(Long sectorId, Long productId) {
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        return warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId);
+    }
+
+    public Integer findQuantityOfNotReservedProductOnAllSectorsByProductId(Long productId) {
+        return findAllContainingNotReservedProductOrderedASCByProductId(productId)
+                .stream()
+                .mapToInt(warehouseSector -> warehouseSector.getQuantityOfNotReservedProductByIdIfExist(productId))
+                .sum();
+    }
+
+    public List<AmountOfProduct> findAllAmountsOfProductOnSector(Long sectorId) {
+        WarehouseSector warehouseSector = findById(sectorId).orElseThrow(IllegalArgumentException::new);
+        Collection<AmountOfProduct> products = warehouseSector.getNotReservedAmountOfProducts().values();
+        warehouseSector.getReservedAmountOfProducts().values().forEach(amountOfProduct -> {
+            if(products.stream().anyMatch(product -> product.getProductId().equals(amountOfProduct.getProductId()))){
+                products.stream()
+                        .filter(product -> product.getProductId().equals(amountOfProduct.getProductId()))
+                        .findFirst()
+                        .get()
+                        .increaseQuantityBy(amountOfProduct.getQuantity());
+            } else {
+                products.add(amountOfProduct);
+            }
+        });
+        return new ArrayList<>(products);
+    }
+
+    public List<ProductWithQuantity> findAllProductWithQuantitiesOnSector(Long sectorId) {
+        List<AmountOfProduct> amountsOfProduct = findAllAmountsOfProductOnSector(sectorId);
+        return amountsOfProduct.stream().map(amountOfProduct -> {
+            return new ProductWithQuantity(productService.findById(amountOfProduct.getProductId()).orElseThrow(IllegalArgumentException::new),
+                    amountOfProduct.getQuantity());
+        }).collect(Collectors.toList());
     }
 
     public boolean addProductWithQuantityBySectorId(Product deliveredProduct, Integer quantityOfProduct, Long sectorId) {
