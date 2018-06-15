@@ -155,11 +155,12 @@ public class SaleOrderService {
 
     public List<Product> findAllProductsOrderedByClient(Long clientId) {
         clientService.findById(clientId).orElseThrow(IllegalArgumentException::new);
-        if (saleOrderRepository.findAllByClientId(clientId).isEmpty()) {
+        ArrayList<SaleOrder> ordersByClient = Lists.newArrayList(saleOrderRepository.findAllByClientId(clientId));
+        if (ordersByClient.isEmpty()) {
             throw new IllegalArgumentException("Client has no orders.");
         }
         ArrayList<Product> results = new ArrayList<>();
-        saleOrderRepository.findAllByClientId(clientId).forEach(
+        ordersByClient.forEach(
                 saleOrder ->
                         saleOrder.getProductsToOrder().forEach(
                                 amountOfProduct ->
