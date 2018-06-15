@@ -3,21 +3,14 @@ package com.blinenterprise.SyropKlonowy.api;
 import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
 import com.blinenterprise.SyropKlonowy.domain.Client.Enterprise;
 import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
+import com.blinenterprise.SyropKlonowy.service.ProductRecommendationService;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderReportService;
-import com.blinenterprise.SyropKlonowy.converter.MoneyConverter;
-import com.blinenterprise.SyropKlonowy.domain.WarehouseSector.AmountOfProduct;
-import com.blinenterprise.SyropKlonowy.marketing.Recommendations;
 import com.blinenterprise.SyropKlonowy.service.SaleOrderService;
-import com.blinenterprise.SyropKlonowy.view.DataView;
-import com.blinenterprise.SyropKlonowy.view.DataViewValue;
-import com.blinenterprise.SyropKlonowy.view.ProductView;
-import com.blinenterprise.SyropKlonowy.view.Response;
-import com.blinenterprise.SyropKlonowy.view.SaleReportView;
+import com.blinenterprise.SyropKlonowy.view.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +37,7 @@ public class MarketingApi {
     SaleOrderReportService saleOrderReportService;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     @Autowired
-    Recommendations recommendations;
+    ProductRecommendationService productRecommendationService;
 
 
     @RequestMapping(path = "/client/recommendProducts", method = {RequestMethod.GET})
@@ -53,7 +46,7 @@ public class MarketingApi {
             @RequestParam(value = "clientId") Long clientId
     ) {
         try {
-            List<ProductView> results = ProductView.from(recommendations.recommendProductsForClientId(clientId));
+            List<ProductView> results = ProductView.from(productRecommendationService.recommendProductsForClientId(clientId));
             return new Response<ProductView>(true, results);
 
         } catch (Exception e) {
